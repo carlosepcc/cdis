@@ -28,7 +28,7 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
 
     @Autowired
     JwtEntryPoint jwtEntryPoint;
-    
+
     @Autowired
     JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
@@ -69,15 +69,15 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 //para crear nuevo usuario y logearse no hay q estar autenticado
-                .antMatchers("/Usuario/crearUsuario", "/Usuario/loginUsuario").permitAll()
+                .antMatchers("/Usuario/crearUsuario","/Usuario/loginUsuario").permitAll()
                 //para todo lo demas hay q estar autenticado
                 .antMatchers("/").permitAll()
-            .antMatchers("/swagger-ui/index.html").permitAll()
-            .antMatchers("/swagger-ui/swagger-ui.css").permitAll()
-            .antMatchers("/swagger-ui/swagger-ui-bundle.js").permitAll()
-            .antMatchers("/swagger-ui/swagger-ui-standalone-preset.js").permitAll()
-            .antMatchers("/v3/api-docs").permitAll()
-            .antMatchers("/v3/api-docs/swagger-config").permitAll()
+                .antMatchers("/swagger-ui/index.html").permitAll()
+                .antMatchers("/swagger-ui/swagger-ui.css").permitAll()
+                .antMatchers("/swagger-ui/swagger-ui-bundle.js").permitAll()
+                .antMatchers("/swagger-ui/swagger-ui-standalone-preset.js").permitAll()
+                .antMatchers("/v3/api-docs").permitAll()
+                .antMatchers("/v3/api-docs/swagger-config").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint).accessDeniedHandler(jwtAccessDeniedHandler) // control de excepciones

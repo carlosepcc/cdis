@@ -1,15 +1,14 @@
 package com.pid.proyecto.controller;
 
-import com.pid.proyecto.entity.Caso;
 import com.pid.proyecto.entity.Declaracion;
-import com.pid.proyecto.entity.RolSistema;
-import com.pid.proyecto.entity.Usuario;
+import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
-import com.pid.proyecto.seguridad.dto.NuevaDeclaracion;
+import com.pid.proyecto.Json.NuevaDeclaracion;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.DeclaracionService;
+import com.pid.proyecto.service.UserDetailsServiceImpl;
 import com.pid.proyecto.service.UsuarioService;
 import java.util.Date;
 import java.util.LinkedList;
@@ -31,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Declaracion")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class DeclaracionController {
+public class declaracionController {
 
     @Autowired
     DeclaracionService declaracionService;
@@ -47,6 +46,9 @@ public class DeclaracionController {
 
     @Autowired
     CasoService casoService;
+    
+    @Autowired
+    UserDetailsServiceImpl userDetailsServiceImpl;
 
     @GetMapping()
     public ResponseEntity<List<Declaracion>> list() {
@@ -71,9 +73,9 @@ public class DeclaracionController {
         }
 
         // preparamos una lista de roles para verificar la autoridad en el sistema del estudiante
-        List<RolSistema> rolEstudiante;
+        List<Permiso> rolEstudiante;
         rolEstudiante = new LinkedList<>();
-        rolEstudiante.addAll(usuarioService.getByUsuario(estudiante).get().getRolsistemaList());
+        rolEstudiante.addAll(userDetailsServiceImpl.devolverPermisosDeRol(usuarioService.getByUsuario(estudiante).get().getRol()));
 
         // si el usuario introducido en el json no coincide con el que esta en sesion
         if (!estudiante.equals(usuario)) {
@@ -81,22 +83,14 @@ public class DeclaracionController {
             return new ResponseEntity<>(new Mensaje("USTED NO PUEDE DECLARAR EN NOMBRE DE OTRO ESTUDIANTE"), HttpStatus.BAD_REQUEST);
         }
         // creamos la declaracion parcialmente
-        Declaracion declaracion = new Declaracion(nuevaDeclaracion.getDescripcion(), new Date());
-
+        Declaracion declaracion = new Declaracion();
+        declaracion.setDescripcion(nuevaDeclaracion.getDescripcion());
+        declaracion.setFecha(new Date());
         // preparamos la lista de relaciones de nuestra declaracion con los usuarios
-        List<Usuario> u = new LinkedList<>();
-
-        // añadimos el objeto usuario de nuestro estudiante a la relacion con esta declaracion 
-        // pues ya sabemos que existe dicho usuario
-        u.add(usuarioService.getByUsuario(estudiante).get());
 
         // añadimos la lista con todas nuestras relaciones a la declaracion que se está creando
-        declaracion.setUsuarioList(u);
-
-        List<Caso> casoList = new LinkedList<>();
-        casoList.add(casoService.getById(nuevaDeclaracion.getIdCaso()).get());
-
-        declaracion.setCasoList(casoList);
+        declaracion.setUsuario(usuarioService.getByUsuario(estudiante).get());
+        declaracion.setCaso(casoService.getById(nuevaDeclaracion.getIdCaso()).get());
 
         // salvamos la declaracion
         declaracionService.save(declaracion);

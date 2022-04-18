@@ -1,17 +1,17 @@
 package com.pid.proyecto.controller;
 
-import com.pid.proyecto.entity.ComdiscUsuario;
-import com.pid.proyecto.entity.ComdiscUsuarioPK;
-import com.pid.proyecto.entity.Comisiondisciplinaria;
+import com.pid.proyecto.entity.ComDiscUsuario;
+import com.pid.proyecto.entity.ComDiscUsuarioPK;
+import com.pid.proyecto.entity.ComisionDisciplinaria;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Filtrador;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.seguridad.dto.NuevaComision;
+import com.pid.proyecto.Json.NuevaComision;
 import com.pid.proyecto.seguridad.enums.RolNombre;
 import com.pid.proyecto.service.ComDiscUsuarioService;
 import com.pid.proyecto.service.ComisionDisciplinariaService;
-import com.pid.proyecto.service.RolSistemaService;
+import com.pid.proyecto.service.RolService;
 import com.pid.proyecto.service.UsuarioService;
 import java.util.Date;
 import java.util.LinkedList;
@@ -32,10 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/Comision")
 @CrossOrigin("*")
-public class ComisionDisciplinariaController {
+public class comisionDisciplinariaController {
 
     @Autowired
-    RolSistemaService rolSistemaService;
+    RolService rolSistemaService;
 
     @Autowired
     ComisionDisciplinariaService ComisionDisciplinariaService;
@@ -55,8 +55,8 @@ public class ComisionDisciplinariaController {
     @GetMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN') "
             + "or hasRole('ROLE_DECANO')")
-    public ResponseEntity<List<Comisiondisciplinaria>> list() {
-        List<Comisiondisciplinaria> list = ComisionDisciplinariaService.Listar();
+    public ResponseEntity<List<ComisionDisciplinaria>> list() {
+        List<ComisionDisciplinaria> list = ComisionDisciplinariaService.Listar();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 
@@ -72,15 +72,14 @@ public class ComisionDisciplinariaController {
         List<Integer> idUsuarios;
         List<Usuario> usuarios;
         List<String> rolComision;
-        List<ComdiscUsuario> comdiscUsuarios = new LinkedList<>();
-        ComdiscUsuario comDiscUsuario = null;
-        ComdiscUsuarioPK comDiscUsuarioPK;
+        List<ComDiscUsuario> comdiscUsuarios = new LinkedList<>();
+        ComDiscUsuario comDiscUsuario = null;
+        ComDiscUsuarioPK comDiscUsuarioPK;
         boolean presidente = false;
         boolean secretario = false;
 
         // si todo esta bien creamos la comision
-        Comisiondisciplinaria comisionDisciplinaria
-                = new Comisiondisciplinaria(nuevaComision.getTipoComision(), new Date());
+        ComisionDisciplinaria comisionDisciplinaria = new ComisionDisciplinaria();
 
         // si ya existen los usuarios
         if (filtrador.todosExisten(nuevaComision.getUsuarios())) {
@@ -104,7 +103,7 @@ public class ComisionDisciplinariaController {
 
         for (int i = 0; i < idUsuarios.size(); i++) {
 
-            comDiscUsuarioPK = new ComdiscUsuarioPK(idComision, idUsuarios.get(i));
+            comDiscUsuarioPK = new ComDiscUsuarioPK(idComision, idUsuarios.get(i));
 
             if (!nuevaComision.getRolComision().get(i).contains("presidente") && !nuevaComision.getRolComision().get(i).contains("secretario") && !nuevaComision.getRolComision().get(i).contains("integrante")) {
                 ComisionDisciplinariaService.delete(comisionDisciplinaria.getIdcomision());
@@ -119,7 +118,7 @@ public class ComisionDisciplinariaController {
                 }
 
                 if (presidente == false) {
-                    comDiscUsuario = new ComdiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_PRESIDENTE.toString());
+                    comDiscUsuario = new ComDiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_PRESIDENTE_COMISION.toString());
                     presidente = true;
                 }
             } else if (nuevaComision.getRolComision().get(i).contains("secretario")) {
@@ -130,11 +129,11 @@ public class ComisionDisciplinariaController {
                 }
 
                 if (secretario == false) {
-                    comDiscUsuario = new ComdiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_SECRETARIO.toString());
+                    comDiscUsuario = new ComDiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_SECRETARIO_COMISION.toString());
                     secretario = true;
                 }
             } else if (nuevaComision.getRolComision().get(i).contains("integrante")) {
-                comDiscUsuario = new ComdiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_INTEGRANTE.toString());
+                comDiscUsuario = new ComDiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_DECLARANTE_COMISION.toString());
             } else {
                 ComisionDisciplinariaService.delete(comisionDisciplinaria.getIdcomision());
                 return new ResponseEntity<>(new Mensaje("ERROR AL DEFINIR LOS ROLES, VUELVA A CREAR LA COMISION"), HttpStatus.BAD_REQUEST);

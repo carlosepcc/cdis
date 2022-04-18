@@ -2,6 +2,25 @@
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="com.pid_proyecto3.0_jar_0.0.1-SNAPSHOTPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>com.pid.proyecto.entity.Denuncia</class>
+    <class>com.pid.proyecto.entity.Declaracion</class>
+    <class>com.pid.proyecto.entity.Caso</class>
+    <class>com.pid.proyecto.entity.Usuario</class>
+    <class>com.pid.proyecto.entity.ComdiscUsuario</class>
+    <class>com.pid.proyecto.entity.Pdfdictamen</class>
+    <class>com.pid.proyecto.entity.Pdfexpediente</class>
+    <class>com.pid.proyecto.entity.Rolsistema</class>
+    <class>com.pid.proyecto.entity.Comisiondisciplinaria</class>
+    <class>com.pid.proyecto.entity.Pdfresolucioncomisiones</class>
+    <class>com.pid.proyecto.entity.PdfExpediente</class>
+    <class>com.pid.proyecto.entity.ComDiscUsuario</class>
+    <class>com.pid.proyecto.entity.PdfDictamen</class>
+    <class>com.pid.proyecto.entity.DenunciaUsuario</class>
+    <class>com.pid.proyecto.entity.PdfResolucionComisiones</class>
+    <class>com.pid.proyecto.entity.ComisionDisciplinaria</class>
+    <class>com.pid.proyecto.entity.Rol</class>
+    <class>com.pid.proyecto.entity.Permiso</class>
+    <class>com.pid.proyecto.entity.RolPermiso</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/PID"/>
       <property name="javax.persistence.jdbc.user" value="postgres"/>

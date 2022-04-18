@@ -27,8 +27,8 @@ public class CasoService {
         casoRepo.save(caso);
     }
     
-    public boolean existsByIddenuncia(Denuncia iddenuncia) {
-        return casoRepo.existsByIddenuncia(iddenuncia);
+    public boolean existsByDenuncia(Denuncia iddenuncia) {
+        return casoRepo.existsByDenuncia(iddenuncia);
     }
     
     public Optional<Caso> getById(int id) {

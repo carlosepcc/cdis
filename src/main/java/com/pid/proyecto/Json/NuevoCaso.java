@@ -1,24 +1,34 @@
-package com.pid.proyecto.seguridad.dto;
+package com.pid.proyecto.Json;
 
 import java.util.Date;
 import javax.validation.constraints.NotBlank;
 
 public class NuevoCaso {
 
-    @NotBlank
-    private char estado;
+    private boolean abierto;
     @NotBlank
     private int idDenuncia;
     @NotBlank
     private int idComision;
+    @NotBlank
+    private Date fechaExpiracion;
 
-    public NuevoCaso(char estado, int idDenuncia, int idComision) {
-        this.estado = estado;
+    public NuevoCaso(int idDenuncia, int idComision, boolean abierto, Date fechaExpiracion) {
         this.idDenuncia = idDenuncia;
         this.idComision = idComision;
+        this.abierto = abierto;
+        this.fechaExpiracion = fechaExpiracion;
     }
 
     public NuevoCaso() {
+    }
+
+    public Date getFechaExpiracion() {
+        return fechaExpiracion;
+    }
+
+    public void setFechaExpiracion(Date fechaExpiracion) {
+        this.fechaExpiracion = fechaExpiracion;
     }
 
     public int getIdComision() {
@@ -37,11 +47,12 @@ public class NuevoCaso {
         this.idDenuncia = idDenuncia;
     }
 
-    public char getEstado() {
-        return estado;
+    public boolean isAbierto() {
+        return abierto;
     }
 
-    public void setEstado(char estado) {
-        this.estado = estado;
+    public void setAbierto(boolean abierto) {
+        this.abierto = abierto;
     }
+
 }

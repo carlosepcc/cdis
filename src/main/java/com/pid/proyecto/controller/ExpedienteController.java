@@ -1,18 +1,18 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.entity.Caso;
-import com.pid.proyecto.entity.Expediente;
-import com.pid.proyecto.entity.RolSistema;
+import com.pid.proyecto.entity.PdfExpediente;
+import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Filtrador;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.seguridad.dto.NuevoExpediente;
+import com.pid.proyecto.Json.NuevoExpediente;
 import com.pid.proyecto.seguridad.enums.RolNombre;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.ExpedienteService;
-import com.pid.proyecto.service.RolSistemaService;
+import com.pid.proyecto.service.RolService;
 import com.pid.proyecto.service.UsuarioService;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/Expediente")
 @CrossOrigin("*")
-public class ExpedienteController {
+public class expedienteController {
 
     @Autowired
     ExpedienteService expedienteService;
@@ -47,7 +47,7 @@ public class ExpedienteController {
     DenunciaService denunciaService;
 
     @Autowired
-    RolSistemaService rolSistemaService;
+    RolService rolSistemaService;
 
     @Autowired
     ConvertidorToListEntity convertidorToListEntity;
@@ -56,8 +56,8 @@ public class ExpedienteController {
     Filtrador filtrador;
 
     @GetMapping()
-    public ResponseEntity<List<Expediente>> list() {
-        List<Expediente> list = expedienteService.Listar();
+    public ResponseEntity<List<PdfExpediente>> list() {
+        List<PdfExpediente> list = expedienteService.Listar();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 
@@ -84,45 +84,33 @@ public class ExpedienteController {
             return new ResponseEntity<>(new Mensaje("NO EXISTE EL ESTUDIANTE ESPECIFICADO"), HttpStatus.BAD_REQUEST);
         }
 
-        List<Usuario> listaUsuarios = filtrador.listaEstudiantes(casoService.getById(caso.getIdcaso()).get()
-                .getIddenuncia().getUsuarioList());
 
         // comprobamos que todos los usuarios pertenezcan al caso en cuestion
-        boolean existeEnCaso = false;
-        for (Usuario u : listaUsuarios) {
 
-            if (u.getUsuario().equals(nuevoExpediente.getUsuario())) {
-                existeEnCaso = true;
-            }
-        }
-        
         // si no se encuentra el usuario dentro del caso analizado entonces es un error 
-        if (!existeEnCaso) {
-            return new ResponseEntity<>(new Mensaje("ESTE USUARIO NO PERTENECE AL CASO ANALIZADO"), HttpStatus.BAD_REQUEST);
-        }
 
         // añadimos el usuario del que vamos a crear el expediente
         Usuario usuario = usuarioService.getByUsuario(nuevoExpediente.getUsuario()).get();
 
         // sacamos la anterior lista de expedientes del caso en cuestion
-        List<Expediente> Le = caso.getExpedienteList();
+//        List<PdfExpediente> Le = caso.getPdfExpedienteList();
 
         // si todo esta bien creamos el expediente
-        Expediente expediente;
-        expediente = new Expediente(nuevoExpediente.getDescripcion(), nuevoExpediente.getFecha());
-        expediente.setUsuario(usuario);
+//        PdfExpediente expediente = new PdfExpediente();
+//        expediente.setUsuario(usuario);
+//        expediente.setDescripcione(nuevoExpediente.getDescripcion());
 
         // guardamos el expediente
-        expedienteService.save(expediente);
+//        expedienteService.save(expediente);
 
         // creamos la lista de expedientes
-        Le.add(expedienteService.getByIdexpediente(expediente.getIdexpediente()).get());
+//        Le.add(expedienteService.getByIdexpediente(expediente.getIdexpediente()).get());
         // agregamos al caso del que hablamos el expediente nuevo
-        caso.setExpedienteList(Le);
+//        caso.setPdfExpediente(Le);
 
         // actualizamos el caso
         casoService.save(caso);
-        
+
         return new ResponseEntity(new Mensaje("EXPEDIENTE CREADO"), HttpStatus.CREATED);
     }
 

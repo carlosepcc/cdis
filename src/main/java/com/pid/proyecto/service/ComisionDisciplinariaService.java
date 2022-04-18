@@ -1,6 +1,7 @@
 package com.pid.proyecto.service;
 
-import com.pid.proyecto.entity.Comisiondisciplinaria;
+import com.pid.proyecto.entity.ComisionDisciplinaria;
+import com.pid.proyecto.entity.ComisionDisciplinaria;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.repository.ComisionDisciplinariaRepository;
 import java.util.List;
@@ -15,28 +16,28 @@ public class ComisionDisciplinariaService {
 
     @Autowired
     ComisionDisciplinariaRepository comisionDisciplinariaRepository;
-    
-    public List<Comisiondisciplinaria> Listar() {
-        
+
+    public List<ComisionDisciplinaria> Listar() {
+
         return comisionDisciplinariaRepository.findAll();
     }
-    
-    public void save(Comisiondisciplinaria comisionDisciplinaria) {
+
+    public void save(ComisionDisciplinaria comisionDisciplinaria) {
 
         comisionDisciplinariaRepository.save(comisionDisciplinaria);
 
     }
-    
+
     public void delete(int id) {
 
         comisionDisciplinariaRepository.deleteByIdcomision(id);
     }
-    
+
     public boolean existsById(int id) {
         return comisionDisciplinariaRepository.existsByIdcomision(id);
     }
-    
-    public Optional<Comisiondisciplinaria> getByIdcomision(int id) {
+
+    public Optional<ComisionDisciplinaria> getByIdcomision(int id) {
 
         return comisionDisciplinariaRepository.findByIdcomision(id);
     }

@@ -1,12 +1,12 @@
 package com.pid.proyecto.controller;
 
-import com.pid.proyecto.entity.ComdiscUsuario;
-import com.pid.proyecto.entity.ComdiscUsuarioPK;
+import com.pid.proyecto.entity.ComDiscUsuario;
+import com.pid.proyecto.entity.ComDiscUsuarioPK;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.seguridad.dto.NuevoComDiscUsuario;
+import com.pid.proyecto.Json.NuevoComDiscUsuario;
 import com.pid.proyecto.seguridad.enums.RolNombre;
 import com.pid.proyecto.service.ComDiscUsuarioService;
-import com.pid.proyecto.service.RolSistemaService;
+import com.pid.proyecto.service.RolService;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ComDiscUsuario")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class ComDiscUsuarioController {
+public class comDiscUsuarioController {
 
     @Autowired
-    RolSistemaService rolSistemaService;
+    RolService rolSistemaService;
 
     @Autowired
     ComDiscUsuarioService comDiscUsuarioService;
 
     @GetMapping()
-    public ResponseEntity<List<ComdiscUsuario>> list() {
-        List<ComdiscUsuario> list = comDiscUsuarioService.Listar();
+    public ResponseEntity<List<ComDiscUsuario>> list() {
+        List<ComDiscUsuario> list = comDiscUsuarioService.Listar();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 
@@ -50,16 +50,16 @@ public class ComDiscUsuarioController {
         }
 
 // si todo esta bien creamos la comision
-        ComdiscUsuario comDiscUsuario = null;
+        ComDiscUsuario comDiscUsuario = null;
 
-        ComdiscUsuarioPK comDiscUsuarioPK = new ComdiscUsuarioPK(nuevoComDiscUsuario.getIdComision(), nuevoComDiscUsuario.getIdComision());
+        ComDiscUsuarioPK comDiscUsuarioPK = new ComDiscUsuarioPK(nuevoComDiscUsuario.getIdComision(), nuevoComDiscUsuario.getIdComision());
 
         if (nuevoComDiscUsuario.getRol().contains("presidente")) {
-            comDiscUsuario = new ComdiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_PRESIDENTE.toString());
+            comDiscUsuario = new ComDiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_PRESIDENTE_COMISION.toString());
         } else if (nuevoComDiscUsuario.getRol().contains("integrante")) {
-            comDiscUsuario = new ComdiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_INTEGRANTE.toString());
+            comDiscUsuario = new ComDiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_DECLARANTE_COMISION.toString());
         } else if (nuevoComDiscUsuario.getRol().contains("secretario")) {
-            comDiscUsuario = new ComdiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_SECRETARIO.toString());
+            comDiscUsuario = new ComDiscUsuario(comDiscUsuarioPK, RolNombre.ROLE_SECRETARIO_COMISION.toString());
         }
         comDiscUsuarioService.save(comDiscUsuario);
 

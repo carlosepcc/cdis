@@ -1,6 +1,6 @@
 package com.pid.proyecto.service;
 
-import com.pid.proyecto.entity.ComdiscUsuario;
+import com.pid.proyecto.entity.ComDiscUsuario;
 import com.pid.proyecto.repository.ComDiscUsuarioRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,20 +14,20 @@ public class ComDiscUsuarioService {
     @Autowired
     ComDiscUsuarioRepository comDiscUsuarioRepository;
 
-    public List<ComdiscUsuario> Listar() {
+    public List<ComDiscUsuario> Listar() {
 
         return comDiscUsuarioRepository.findAll();
     }
 
-    public void save(ComdiscUsuario comDiscUsuario) {
+    public void save(ComDiscUsuario comDiscUsuario) {
 
         comDiscUsuarioRepository.save(comDiscUsuario);
 
     }
 
-    public void saveAll(List<ComdiscUsuario> comDiscUsuarios) {
+    public void saveAll(List<ComDiscUsuario> comDiscUsuarios) {
 
-        for (ComdiscUsuario comdiscUsuario : comDiscUsuarios) {
+        for (ComDiscUsuario comdiscUsuario : comDiscUsuarios) {
             comDiscUsuarioRepository.save(comdiscUsuario);
         }
     }

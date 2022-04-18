@@ -1,14 +1,15 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.entity.Denuncia;
-import com.pid.proyecto.entity.RolSistema;
+import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Filtrador;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
-import com.pid.proyecto.seguridad.dto.NuevaDenuncia;
+import com.pid.proyecto.Json.NuevaDenuncia;
 import com.pid.proyecto.service.DenunciaService;
+import com.pid.proyecto.service.UserDetailsServiceImpl;
 import com.pid.proyecto.service.UsuarioService;
 import java.util.Date;
 import java.util.LinkedList;
@@ -30,7 +31,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Denuncia")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class DenunciaController {
+public class denunciaController {
+
+    @Autowired
+    UserDetailsServiceImpl userDetailsServiceImpl;
 
     @Autowired
     DenunciaService denunciaService;
@@ -74,18 +78,15 @@ public class DenunciaController {
             return new ResponseEntity<>(new Mensaje("REGISTRE ANTES A TODOS LOS ESTUDIANTES"), HttpStatus.BAD_REQUEST);
         }
 
-        // verificamos que la lista sea solo de usuarios estudiantes
-        if (!filtrador.soloEstudiantes(convertidor.convertirListaStringToListaUsuario(nuevaDenuncia.getEstudiantes()))) {
-            return new ResponseEntity<>(new Mensaje("SOLO PUEDE DENUNCIAR A ESTUDIANTES"), HttpStatus.BAD_REQUEST);
-        }
-
         // preparamos una lista de roles para verificar la autoridad en el sistema del denunciante
-        List<RolSistema> rolDenunciante;
+        List<Permiso> rolDenunciante;
         rolDenunciante = new LinkedList<>();
-        rolDenunciante.addAll(usuarioService.getByUsuario(denunciante).get().getRolsistemaList());
+        rolDenunciante.addAll(userDetailsServiceImpl.devolverPermisosDeRol(usuarioService.getByUsuario(denunciante).get().getRol()));
 
         // creamos la denuncia parcialmente
-        Denuncia denuncia = new Denuncia(nuevaDenuncia.getDescripcion(), new Date());
+        Denuncia denuncia = new Denuncia();
+        denuncia.setDescripcionden(nuevaDenuncia.getDescripcion());
+        denuncia.setFecha(new Date());
 
         // preparamos la lista de relaciones de nuestra denuncia con los usuarios
         List<Usuario> LU = new LinkedList<>();
@@ -99,9 +100,6 @@ public class DenunciaController {
         if (!LU.isEmpty()) {
             return new ResponseEntity(new Mensaje(sesionDetails.getUsuario()), HttpStatus.CONFLICT);
         }
-
-        // añadimos la lista con todas nuestras relaciones a la denuncia que se está creando
-        denuncia.setUsuarioList(LU);
 
         // salvamos la denuncia
         denunciaService.save(denuncia);

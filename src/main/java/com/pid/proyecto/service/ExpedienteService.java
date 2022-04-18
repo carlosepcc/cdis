@@ -1,7 +1,7 @@
 package com.pid.proyecto.service;
 
-import com.pid.proyecto.entity.Expediente;
-import com.pid.proyecto.repository.ExpedienteRepository;
+import com.pid.proyecto.entity.PdfExpediente;
+import com.pid.proyecto.repository.PdfExpedienteRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,20 +13,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class ExpedienteService {
 
     @Autowired
-    ExpedienteRepository expedienteRepo;
+    PdfExpedienteRepository pdfExpedienteRepo;
 
-    public List<Expediente> Listar() {
+    public List<PdfExpediente> Listar() {
 
-        return expedienteRepo.findAll();
+        return pdfExpedienteRepo.findAll();
     }
 
-    public void save(Expediente expediente) {
+    public void save(PdfExpediente expediente) {
         
-        expedienteRepo.save(expediente);
+        pdfExpedienteRepo.save(expediente);
     }
     
-     public Optional<Expediente> getByIdexpediente(int id) {
+     public Optional<PdfExpediente> getByIdexpediente(int id) {
 
-        return expedienteRepo.findByIdexpediente(id);
+        return pdfExpedienteRepo.findByIdexpediente(id);
     }
 }

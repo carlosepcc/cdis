@@ -58,7 +58,7 @@ public class UsuarioService {
         usuarioRepo.deleteByIdusuario(id);
     }
 
-    public List<Usuario> Listar() {
+    public List<Usuario> findAll() {
         
         return usuarioRepo.findAll();
     }

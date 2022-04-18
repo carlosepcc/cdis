@@ -1,4 +1,4 @@
-package com.pid.proyecto.seguridad.dto;
+package com.pid.proyecto.Json;
 
 import java.util.Date;
 import java.util.List;

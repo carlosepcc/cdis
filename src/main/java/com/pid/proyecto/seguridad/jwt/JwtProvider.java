@@ -1,7 +1,7 @@
 package com.pid.proyecto.seguridad.jwt;
 
 import com.pid.proyecto.seguridad.auxiliares.UsuarioPrincipal;
-import com.pid.proyecto.seguridad.dto.NuevoUsuario;
+import com.pid.proyecto.Json.NuevoUsuario;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -38,20 +38,27 @@ public class JwtProvider {
     // crear el token
     public String generateToken(Authentication authentication) {
 
+        // getPrincipal() castea a la clase UserDetailsServiceImpl usando su metodo loadUserByUsername()
+        // lo cual desencadena toda nuestra logica de permisos
+        
         //guardamos el usuario autenticado como uno de tipo UsuarioPrincipal
         UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
 
         //convertimos las autoridades en cadenas String 
         List<String> roles = usuarioPrincipal.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
-        
-        NuevoUsuario usuario = new NuevoUsuario(usuarioPrincipal.getNombre(), usuarioPrincipal.getApellidos(), usuarioPrincipal.getUsername(), null, usuarioPrincipal.isProfesor(), new HashSet<>(roles));
+
+        NuevoUsuario usuario = new NuevoUsuario();
+        usuario.setNombre(usuarioPrincipal.getNombre());
+        usuario.setApellidos(usuarioPrincipal.getApellidos());
+        usuario.setUsuario(usuarioPrincipal.getUsername());
+        usuario.setRol(roles.get(0));
 
         //construir el token
         return Jwts.builder() // estamos construyendo el token con lo siguiente
-              .setSubject(usuarioPrincipal.getUsername()) // le pasamos el nombre de usuario
+                .setSubject(usuarioPrincipal.getUsername()) // le pasamos el nombre de usuario
                 .claim("user", usuario)
-//                .claim("roles", roles)
+                //.claim("roles", roles)
                 .setIssuedAt(new Date()) // le pasamos la fecha de creacion
                 .setExpiration(new Date(new Date().getTime() + expiration * 1000)) // le decimos el tiempo de expiracion
                 .signWith(SignatureAlgorithm.HS512, secret.getBytes()) // firmamos el token con el secret

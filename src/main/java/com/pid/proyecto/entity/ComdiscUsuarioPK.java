@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
 import java.io.Serializable;
@@ -6,8 +10,12 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
+/**
+ *
+ * @author Angel
+ */
 @Embeddable
-public class ComdiscUsuarioPK implements Serializable {
+public class ComDiscUsuarioPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
@@ -18,10 +26,10 @@ public class ComdiscUsuarioPK implements Serializable {
     @Column(name = "idusuario")
     private int idusuario;
 
-    public ComdiscUsuarioPK() {
+    public ComDiscUsuarioPK() {
     }
 
-    public ComdiscUsuarioPK(int idcomision, int idusuario) {
+    public ComDiscUsuarioPK(int idcomision, int idusuario) {
         this.idcomision = idcomision;
         this.idusuario = idusuario;
     }
@@ -53,10 +61,10 @@ public class ComdiscUsuarioPK implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof ComdiscUsuarioPK)) {
+        if (!(object instanceof ComDiscUsuarioPK)) {
             return false;
         }
-        ComdiscUsuarioPK other = (ComdiscUsuarioPK) object;
+        ComDiscUsuarioPK other = (ComDiscUsuarioPK) object;
         if (this.idcomision != other.idcomision) {
             return false;
         }
@@ -68,7 +76,7 @@ public class ComdiscUsuarioPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.ComdiscUsuarioPK[ idcomision=" + idcomision + ", idusuario=" + idusuario + " ]";
+        return "com.pid.proyecto.entity.ComDiscUsuarioPK[ idcomision=" + idcomision + ", idusuario=" + idusuario + " ]";
     }
     
 }

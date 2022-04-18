@@ -1,28 +1,35 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+/**
+ *
+ * @author Angel
+ */
 @Entity
-@Table(name = "caso", catalog = "PID", schema = "public")
+@Table(name = "caso")
 @NamedQueries({
     @NamedQuery(name = "Caso.findAll", query = "SELECT c FROM Caso c")})
 public class Caso implements Serializable {
@@ -35,35 +42,28 @@ public class Caso implements Serializable {
     private Integer idcaso;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "estado")
-    private Character estado;
+    @Column(name = "abierto")
+    private boolean abierto;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fechaapertura")
     @Temporal(TemporalType.DATE)
     private Date fechaapertura;
-    @Column(name = "fechacierre")
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "fechaexpiracion")
     @Temporal(TemporalType.DATE)
-    private Date fechacierre;
-    @JoinTable(name = "caso_comdisc", joinColumns = {
-        @JoinColumn(name = "idcaso", referencedColumnName = "idcaso")}, inverseJoinColumns = {
-        @JoinColumn(name = "idcomision", referencedColumnName = "idcomision")})
-    @ManyToMany
-    @JsonIgnoreProperties({ "casoList","comdiscUsuarioList" })
-    private List<Comisiondisciplinaria> comisiondisciplinariaList;
-    @JoinTable(name = "caso_expediente", joinColumns = {
-        @JoinColumn(name = "idcaso", referencedColumnName = "idcaso")}, inverseJoinColumns = {
-        @JoinColumn(name = "idexpediente", referencedColumnName = "idexpediente")})
-    @ManyToMany
-    @JsonIgnoreProperties({"casoList","idusuario"})
-    private List<Expediente> expedienteList;
-    @ManyToMany(mappedBy = "casoList")
-    @JsonIgnoreProperties({"usuarioList", "casoList"})
+    private Date fechaexpiracion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
+    private List<PdfDictamen> pdfDictamenList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
     private List<Declaracion> declaracionList;
-    @JoinColumn(name = "iddenuncia", referencedColumnName = "iddenuncia")
+    @JoinColumn(name = "comision", referencedColumnName = "idcomision")
     @ManyToOne(optional = false)
-    @JsonIgnoreProperties({"usuarioList","casoList"})
-    private Denuncia iddenuncia;
+    private ComisionDisciplinaria comision;
+    @JoinColumn(name = "denuncia", referencedColumnName = "iddenuncia")
+    @ManyToOne(optional = false)
+    private Denuncia denuncia;
 
     public Caso() {
     }
@@ -72,14 +72,11 @@ public class Caso implements Serializable {
         this.idcaso = idcaso;
     }
 
-    public Caso(Integer idcaso, Character estado, Date fechaapertura) {
+    public Caso(Integer idcaso, boolean abierto, Date fechaapertura, Date fechaexpiracion) {
         this.idcaso = idcaso;
-        this.estado = estado;
+        this.abierto = abierto;
         this.fechaapertura = fechaapertura;
-    }
-    public Caso(Character estado, Date fechaapertura) {
-        this.estado = estado;
-        this.fechaapertura = fechaapertura;
+        this.fechaexpiracion = fechaexpiracion;
     }
 
     public Integer getIdcaso() {
@@ -90,12 +87,12 @@ public class Caso implements Serializable {
         this.idcaso = idcaso;
     }
 
-    public Character getEstado() {
-        return estado;
+    public boolean getAbierto() {
+        return abierto;
     }
 
-    public void setEstado(Character estado) {
-        this.estado = estado;
+    public void setAbierto(boolean abierto) {
+        this.abierto = abierto;
     }
 
     public Date getFechaapertura() {
@@ -106,28 +103,20 @@ public class Caso implements Serializable {
         this.fechaapertura = fechaapertura;
     }
 
-    public Date getFechacierre() {
-        return fechacierre;
+    public Date getFechaexpiracion() {
+        return fechaexpiracion;
     }
 
-    public void setFechacierre(Date fechacierre) {
-        this.fechacierre = fechacierre;
+    public void setFechaexpiracion(Date fechaexpiracion) {
+        this.fechaexpiracion = fechaexpiracion;
     }
 
-    public List<Comisiondisciplinaria> getComisiondisciplinariaList() {
-        return comisiondisciplinariaList;
+    public List<PdfDictamen> getPdfDictamenList() {
+        return pdfDictamenList;
     }
 
-    public void setComisiondisciplinariaList(List<Comisiondisciplinaria> comisiondisciplinariaList) {
-        this.comisiondisciplinariaList = comisiondisciplinariaList;
-    }
-
-    public List<Expediente> getExpedienteList() {
-        return expedienteList;
-    }
-
-    public void setExpedienteList(List<Expediente> expedienteList) {
-        this.expedienteList = expedienteList;
+    public void setPdfDictamenList(List<PdfDictamen> pdfDictamenList) {
+        this.pdfDictamenList = pdfDictamenList;
     }
 
     public List<Declaracion> getDeclaracionList() {
@@ -138,12 +127,20 @@ public class Caso implements Serializable {
         this.declaracionList = declaracionList;
     }
 
-    public Denuncia getIddenuncia() {
-        return iddenuncia;
+    public ComisionDisciplinaria getComision() {
+        return comision;
     }
 
-    public void setIddenuncia(Denuncia iddenuncia) {
-        this.iddenuncia = iddenuncia;
+    public void setComision(ComisionDisciplinaria comision) {
+        this.comision = comision;
+    }
+
+    public Denuncia getDenuncia() {
+        return denuncia;
+    }
+
+    public void setDenuncia(Denuncia denuncia) {
+        this.denuncia = denuncia;
     }
 
     @Override

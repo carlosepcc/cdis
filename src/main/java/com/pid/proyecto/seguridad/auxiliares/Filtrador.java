@@ -13,24 +13,6 @@ public class Filtrador {
     @Autowired
     UsuarioService us;
 
-    // devuelve falso si alguno de los elementos de la lista de usuarios no es un estudiante
-    public boolean soloEstudiantes(List<Usuario> Lu) {
-
-        return Lu.stream().noneMatch((u) -> (u.getEstudiante() == false));
-    }
-
-    public List<Usuario> listaEstudiantes(List<Usuario> Lu) {
-
-        List<Usuario> L = new LinkedList<>();
-        for (Usuario u : Lu) {
-            if (u.getEstudiante()) {
-                L.add(u);
-            }
-        }
-
-        return Lu;
-    }
-
     // devuelve falso si alguno de los elementos de la lista de String no es un usuario existente
     public boolean todosExisten(List<String> Ls) {
 

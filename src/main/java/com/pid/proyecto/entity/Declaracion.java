@@ -1,28 +1,36 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ *
+ * @author Angel
+ */
 @Entity
-@Table(name = "declaracion", catalog = "PID", schema = "public")
+@Table(name = "declaracion")
 @NamedQueries({
     @NamedQuery(name = "Declaracion.findAll", query = "SELECT d FROM Declaracion d")})
 public class Declaracion implements Serializable {
@@ -35,26 +43,22 @@ public class Declaracion implements Serializable {
     private Integer iddeclaracion;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "descripciondec")
-    private String descripciondec;
-    @Basic(optional = false)
-    @NotNull
+    @Column(name = "abierta")
+    private boolean abierta;
+    @Size(max = 255)
+    @Column(name = "descripcion")
+    private String descripcion;
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    @JoinTable(name = "usuario_declaracion", joinColumns = {
-        @JoinColumn(name = "iddeclaracion", referencedColumnName = "iddeclaracion")}, inverseJoinColumns = {
-        @JoinColumn(name = "idusuario", referencedColumnName = "idusuario")})
-    @ManyToMany
-    @JsonIgnoreProperties({ "denunciaList","rolsistemaList","declaracionList","expedienteList","comdiscUsuarioList"})
-    private List<Usuario> usuarioList;
-    @JoinTable(name = "caso_declaracion", joinColumns = {
-        @JoinColumn(name = "iddeclaracion", referencedColumnName = "iddeclaracion")}, inverseJoinColumns = {
-        @JoinColumn(name = "idcaso", referencedColumnName = "idcaso")})
-    @ManyToMany
-    @JsonIgnoreProperties({"comisiondisciplinariaList","expedienteList","declaracionList","iddenuncia"})
-    private List<Caso> casoList;
+    @JoinColumn(name = "caso", referencedColumnName = "idcaso")
+    @ManyToOne(optional = false)
+    private Caso caso;
+    @JoinColumn(name = "usuario", referencedColumnName = "idusuario")
+    @ManyToOne(optional = false)
+    private Usuario usuario;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "declaracion")
+    private List<PdfExpediente> pdfExpedienteList;
 
     public Declaracion() {
     }
@@ -63,15 +67,9 @@ public class Declaracion implements Serializable {
         this.iddeclaracion = iddeclaracion;
     }
 
-    public Declaracion(Integer iddeclaracion, String descripciondec, Date fecha) {
+    public Declaracion(Integer iddeclaracion, boolean abierta) {
         this.iddeclaracion = iddeclaracion;
-        this.descripciondec = descripciondec;
-        this.fecha = fecha;
-    }
-
-    public Declaracion(String descripciondec, Date fecha) {
-        this.descripciondec = descripciondec;
-        this.fecha = fecha;
+        this.abierta = abierta;
     }
 
     public Integer getIddeclaracion() {
@@ -82,12 +80,20 @@ public class Declaracion implements Serializable {
         this.iddeclaracion = iddeclaracion;
     }
 
-    public String getDescripciondec() {
-        return descripciondec;
+    public boolean getAbierta() {
+        return abierta;
     }
 
-    public void setDescripciondec(String descripciondec) {
-        this.descripciondec = descripciondec;
+    public void setAbierta(boolean abierta) {
+        this.abierta = abierta;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public Date getFecha() {
@@ -98,20 +104,28 @@ public class Declaracion implements Serializable {
         this.fecha = fecha;
     }
 
-    public List<Usuario> getUsuarioList() {
-        return usuarioList;
+    public Caso getCaso() {
+        return caso;
     }
 
-    public void setUsuarioList(List<Usuario> usuarioList) {
-        this.usuarioList = usuarioList;
+    public void setCaso(Caso caso) {
+        this.caso = caso;
     }
 
-    public List<Caso> getCasoList() {
-        return casoList;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setCasoList(List<Caso> casoList) {
-        this.casoList = casoList;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public List<PdfExpediente> getPdfExpedienteList() {
+        return pdfExpedienteList;
+    }
+
+    public void setPdfExpedienteList(List<PdfExpediente> pdfExpedienteList) {
+        this.pdfExpedienteList = pdfExpedienteList;
     }
 
     @Override
@@ -138,5 +152,5 @@ public class Declaracion implements Serializable {
     public String toString() {
         return "com.pid.proyecto.entity.Declaracion[ iddeclaracion=" + iddeclaracion + " ]";
     }
-
+    
 }

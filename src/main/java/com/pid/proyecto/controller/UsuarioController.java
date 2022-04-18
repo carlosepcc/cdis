@@ -1,19 +1,20 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.seguridad.dto.JwtDto;
-import com.pid.proyecto.seguridad.dto.LoginUsuario;
-import com.pid.proyecto.seguridad.dto.NuevoUsuario;
-import com.pid.proyecto.entity.RolSistema;
+import com.pid.proyecto.Json.JwtDto;
+import com.pid.proyecto.Json.LoginUsuario;
+import com.pid.proyecto.Json.NuevoUsuario;
+import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
+import com.pid.proyecto.Json.ModificarUsuario;
+import com.pid.proyecto.seguridad.auxiliares.UsuarioPrincipal;
 import com.pid.proyecto.seguridad.enums.RolNombre;
 import com.pid.proyecto.seguridad.jwt.JwtProvider;
-import com.pid.proyecto.service.RolSistemaService;
+import com.pid.proyecto.service.RolService;
 import com.pid.proyecto.service.UsuarioService;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Usuario")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class UsuarioController {
+public class usuarioController {
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -52,7 +55,7 @@ public class UsuarioController {
     UsuarioService usuarioService;
 
     @Autowired
-    RolSistemaService rolSistemaService;
+    RolService rolSistemaService;
 
     @Autowired
     JwtProvider jwtProvider;
@@ -60,152 +63,187 @@ public class UsuarioController {
     @Autowired
     SesionDetails sesionDetails;
 
+    @Autowired
+    UserDetailsService userDetailsService;
+
+    // MOSTRAMOS TODOS LOS USUARIOS
     @GetMapping()
     public ResponseEntity<List<Usuario>> list() {
-        List<Usuario> list = usuarioService.Listar();
+        List<Usuario> list = usuarioService.findAll();
         return new ResponseEntity(list, HttpStatus.OK);
     }
 
+    // CREAMOS UN NUEVO USUARIO
     @PutMapping("/crearUsuario")
-    @PreAuthorize("hasRole('ROLE_ADMIN') "
-            + "or hasRole('ROLE_DECANO')"
-            + "or hasRole('ROLE_TRABAJADOR')"
-            + "or hasRole('ROLE_PROFESOR')")
-    public ResponseEntity<?> crear(@Valid @RequestBody NuevoUsuario nuevoUsuario, BindingResult bindingResult) {
+    @PreAuthorize("hasRole('ROLE_C_USUARIO')")
+    public ResponseEntity<?> crear(@Valid @RequestBody NuevoUsuario NU, BindingResult BR) {
+        // DECLARAMOS VARIABLES Y LAS LLENAMOS CON NUESTRO JSON
+        Usuario usuario = new Usuario();
+        String nombre = NU.getNombre();
+        String apellidos = NU.getApellidos();
+        String username = NU.getUsuario();
+        String password = NU.getContrasena();
+        Rol rol;
 
-        // si tiene errores en el binding result
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(new Mensaje("CAMPOS MAL PUESTOS"), HttpStatus.BAD_REQUEST);
-        }
-
-        // si ya existe el usuario
-        if (usuarioService.existsByUsuario(nuevoUsuario.getUsuario())) {
-            return new ResponseEntity<>(new Mensaje("ESE USUARIO YA EXISTE"), HttpStatus.BAD_REQUEST);
-        }
-
-        Set<RolSistema> roles = new HashSet<>();
-        boolean estudiante = false;
-
-        roles.add(rolSistemaService.getByRol(RolNombre.ROLE_USER).get());
-
-        // VERIFICAMOS QUE SOLO SE PUEDAN CREAR ESTUDIANTES LIBREMENTE Y LOS ADMINISTRADORES SON LOS QUE CREAN LOS DEMAS USUARIOS
-        if (nuevoUsuario.getRoles().contains("admin") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_ADMIN).get());
-        }
-        if (nuevoUsuario.getRoles().contains("admin") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO ADMINISTRADOR"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.getRoles().contains("decano") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_DECANO).get());
-        }
-        if (nuevoUsuario.getRoles().contains("decano") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO DECANO"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.getRoles().contains("profesor") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_PROFESOR).get());
-        }
-        if (nuevoUsuario.getRoles().contains("profesor") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO PROFESOR"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.getRoles().contains("trabajador") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_TRABAJADOR).get());
-        }
-        if (nuevoUsuario.getRoles().contains("trabajador") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO TRABAJADOR"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.isEstudiante() || nuevoUsuario.getRoles().contains("estudiante")) {
-            estudiante = true;
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_ESTUDIANTE).get());
-
+        // VALIDAR ERRORES
+        if (BR.hasErrors()) {
+            List<String> errores = new LinkedList<>();
+            for (FieldError FE : BR.getFieldErrors()) {
+                errores.add(FE.getDefaultMessage());
+            }
+            return new ResponseEntity(new Mensaje(errores.toString()), HttpStatus.BAD_REQUEST);
         }
 
-// si todo esta bien creamos el usuario
-        Usuario usuario;
-        usuario = new Usuario(nuevoUsuario.getNombre(), nuevoUsuario.getApellidos(),
-                nuevoUsuario.getUsuario(), passwordEncoder.encode(nuevoUsuario.getContrasena()), estudiante);
+        // PREGUNTAMOS SI YA EXISTE ESE USUARIO EN NUESTRO SISTEMA
+        if (usuarioService.existsByUsuario(NU.getUsuario())) {
+            return new ResponseEntity(new Mensaje("ESE USUARIO YA EXISTE"), HttpStatus.BAD_REQUEST);
+        }
 
-        usuario.setRolsistemaList(roles);
+        // CONFIRMAMOS QUE EXISTA EL ROL QUE ESTAMOS PASANDO EN EL JSON
+        if (rolSistemaService.existsByRol(NU.getRol())) {
+            // ASIGNAMOS EL ROL AL QUE SE HACE REFERENCIA
+            rol = rolSistemaService.getByRol(NU.getRol()).get();
+            // SI SE INTENTA CREAR OTRO ADMINISTRADOR
+            if (rol.getRol().equals(RolNombre.ROLE_ADMIN_SISTEMA.name())) {
+                // SI LA PERSONA AUTENTICADA NO POSEE EL ROL DE ADMINISTRADOR NO PODEMOS CREAR OTRO ADMINISTRADOR
+                if (!sesionDetails.getPrivilegios().contains(RolNombre.ROLE_ADMIN_SISTEMA.name())) {
+                    return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO ADMINISTRADOR"), HttpStatus.BAD_REQUEST);
+                }
+            }
+        } // SI NO EXISTE EL ROL LANZAMOS UN ERROR
+        else {
+            return new ResponseEntity(new Mensaje("EL ROL QUE INTENTA ASIGNAR NO EXISTE"), HttpStatus.BAD_REQUEST);
+        }
+
+        // CREAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
+        usuario.setNombre(nombre);
+        usuario.setApellidos(apellidos);
+        usuario.setUsuario(username);
+        usuario.setContrasena(passwordEncoder.encode(password));
+        usuario.setRol(rol);
+
+        // SALVAMOS ESE USUARIO
         usuarioService.save(usuario);
+
+        // RETORNAMOS CONFIRMACION
         return new ResponseEntity(new Mensaje("USUARIO GUARDADO"), HttpStatus.CREATED);
     }
 
     @PutMapping("/actualizarUsuario/{id}")
-    //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> actualizar(@PathVariable("id") int id, @RequestBody NuevoUsuario nuevoUsuario) {
+    @PreAuthorize("hasRole('ROLE_U_USUARIO')")
+    public ResponseEntity<?> actualizar(@PathVariable("id") int id, @Valid @RequestBody ModificarUsuario MU, BindingResult BR) {
 
-        // si todo esta bien creamos el usuario
-        Usuario usuario = usuarioService.getByIdusuario(id).get();
-        usuario.setNombre(nuevoUsuario.getNombre());
-        usuario.setApellidos(nuevoUsuario.getApellidos());
-        usuario.setUsuario(nuevoUsuario.getUsuario());
-        usuario.setContrasena(passwordEncoder.encode(nuevoUsuario.getContrasena()));
-        usuario.setEstudiante(nuevoUsuario.isEstudiante());
+        // VALIDAR ERRORES
+        if (BR.hasErrors()) {
+            List<String> errores = new LinkedList<>();
+            for (FieldError FE : BR.getFieldErrors()) {
+                errores.add(FE.getDefaultMessage());
+            }
+            return new ResponseEntity(new Mensaje(errores.toString()), HttpStatus.BAD_REQUEST);
+        }
 
-        Set<RolSistema> roles = new HashSet<>();
+        // DECLARAMOS VARIABLES Y LAS LLENAMOS CON NUESTRO JSON
+        Usuario usuario;
+        String nombre = MU.getNombre();
+        String apellidos = MU.getApellidos();
+        String username = MU.getUsuario();
+        String password = MU.getContrasena();
+        Rol rol = new Rol();
 
-        roles.add(rolSistemaService.getByRol(RolNombre.ROLE_USER).get());
-        boolean estudiante = false;
-        // VERIFICAMOS QUE SOLO SE PUEDAN CREAR ESTUDIANTES LIBREMENTE Y LOS ADMINISTRADORES SON LOS QUE CREAN LOS DEMAS USUARIOS
-        if (nuevoUsuario.getRoles().contains("admin") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_ADMIN).get());
+        if (!MU.getRol().isBlank()) {
+            rol = rolSistemaService.getByRol(MU.getRol()).get();
         }
-        if (nuevoUsuario.getRoles().contains("admin") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO ADMINISTRADOR"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.getRoles().contains("decano") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_DECANO).get());
-        }
-        if (nuevoUsuario.getRoles().contains("decano") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO DECANO"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.getRoles().contains("profesor") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_PROFESOR).get());
-        }
-        if (nuevoUsuario.getRoles().contains("profesor") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO PROFESOR"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.getRoles().contains("trabajador") && sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_TRABAJADOR).get());
-        }
-        if (nuevoUsuario.getRoles().contains("trabajador") && !sesionDetails.getPrivilegios().contains("ROLE_ADMIN")) {
-            return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO TRABAJADOR"), HttpStatus.BAD_REQUEST);
-        }
-        if (nuevoUsuario.isEstudiante() || nuevoUsuario.getRoles().contains("estudiante")) {
-            estudiante = true;
-            roles.add(rolSistemaService.getByRol(RolNombre.ROLE_ESTUDIANTE).get());
 
+        // VERIFICAMOS QUE EXISTA EL ID DE USUARIO Y LLENAMOS NUESTRA VARIABLE usuario
+        if (usuarioService.existsById(id)) {
+            usuario = usuarioService.getByIdusuario(id).get();
+        } else {
+            return new ResponseEntity(new Mensaje("ESE ID DE USUARIO NO EXISTE"), HttpStatus.BAD_REQUEST);
         }
-        usuario.setRolsistemaList(roles);
+
+        // LLENAMOS NUESTRO rol SOLO SI SE PASO POR PARAMETRO SU INFORMACION
+        if (MU.getRol().isEmpty() || MU.getRol().isBlank()) {
+            // CONFIRMAMOS QUE EXISTA EL ROL QUE ESTAMOS PASANDO EN EL JSON
+            if (rolSistemaService.existsByRol(MU.getRol())) {
+                // ASIGNAMOS EL ROL AL QUE SE HACE REFERENCIA
+                rol = rolSistemaService.getByRol(MU.getRol()).get();
+                // SI SE INTENTA CREAR OTRO ADMINISTRADOR
+                if (rol.getRol().equals(RolNombre.ROLE_ADMIN_SISTEMA.name())) {
+                    // SI LA PERSONA AUTENTICADA NO POSEE EL ROL DE ADMINISTRADOR NO PODEMOS CREAR OTRO ADMINISTRADOR
+                    if (!sesionDetails.getPrivilegios().contains(RolNombre.ROLE_ADMIN_SISTEMA.name())) {
+                        return new ResponseEntity(new Mensaje("USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO ADMINISTRADOR"), HttpStatus.BAD_REQUEST);
+                    }
+                }
+            } // SI NO EXISTE EL ROL LANZAMOS UN ERROR
+            else {
+                return new ResponseEntity(new Mensaje("EL ROL QUE INTENTA ASIGNAR NO EXISTE"), HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        // CREAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
+        if (!nombre.isBlank()) {
+            usuario.setNombre(nombre);
+        }
+        if (!apellidos.isBlank()) {
+            usuario.setApellidos(apellidos);
+        }
+        if (!username.isBlank()) {
+            usuario.setUsuario(username);
+        }
+        if (!password.isBlank()) {
+            usuario.setContrasena(passwordEncoder.encode(password));
+        }
+        if (!MU.getRol().isBlank()) {
+            usuario.setRol(rol);
+        }
+
+        // SALVAMOS ESE USUARIO
         usuarioService.save(usuario);
-        return new ResponseEntity(new Mensaje("USUARIO ACTUALIZADO"), HttpStatus.CREATED);
+
+        // RETORNAMOS CONFIRMACION
+        return new ResponseEntity(new Mensaje("USUARIO GUARDADO"), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{ids}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_D_USUARIO')")
     public ResponseEntity<?> borrar(@PathVariable("ids") List<Integer> ids) {
 
-        for (int i = 0; i < ids.size(); i++) {
-            if (!usuarioService.existsById(ids.get(i))) {
+        List<Integer> ID = new LinkedList<>();
+
+        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
+        for (int id : ids) {
+            if (!usuarioService.existsById(ids.get(id))) {
                 return new ResponseEntity(new Mensaje("NO EXISTE ALGUNO DE LOS ID ESPECIFICADOS"), HttpStatus.NOT_FOUND);
             }
-        }
-        for (int i = 0; i < ids.size(); i++) {
-            usuarioService.delete(ids.get(i));
+            ID.add(id);
         }
 
-        return new ResponseEntity(new Mensaje("USUARIOS BORRADOS"), HttpStatus.OK);
+        // SI TODOS EXISTEN LOS BORRAMOS DE LA BASE DE DATOS
+        for (int id : ID) {
+            usuarioService.delete(id);
+        }
+        return new ResponseEntity(new Mensaje(ids.size() + " USUARIOS BORRADOS"), HttpStatus.OK);
     }
 
     @PostMapping("/loginUsuario")
-    public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginUsuario loginUsuario, BindingResult bindingResult) {
+    public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginUsuario loginUsuario, BindingResult BR) {
 
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity(new Mensaje("CAMPOS MAL PUESTOS"), HttpStatus.BAD_REQUEST);
+        // VALIDAR ERRORES
+        if (BR.hasErrors()) {
+            List<String> errores = new LinkedList<>();
+            for (FieldError FE : BR.getFieldErrors()) {
+                errores.add(FE.getDefaultMessage());
+            }
+            return new ResponseEntity(new Mensaje(errores.toString()), HttpStatus.BAD_REQUEST);
         }
 
         Authentication authentication
                 = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginUsuario.getUsuario(), loginUsuario.getContrasena()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        
+        // ESTE METODO DESENCADENA LA CREACION DEL TOKEN Y RESUELVE MEDIANTE EL NOMBRE DE USUARIO
+        // EL RESTO DE SU INFORMACION
         String jwt = jwtProvider.generateToken(authentication);
 
         JwtDto jwtDto = new JwtDto(jwt); //CONSTRUIMOS EL TOKEN

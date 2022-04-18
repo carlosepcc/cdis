@@ -1,28 +1,36 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+
+/**
+ *
+ * @author Angel
+ */
 @Entity
-@Table(name = "usuario", catalog = "PID", schema = "public")
+@Table(name = "usuario")
+@NamedQueries({
+    @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")})
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,41 +56,31 @@ public class Usuario implements Serializable {
     private String usuario;
     @Basic(optional = false)
     @NotNull
-    @Size(min = 1, max = 12)
     @Column(name = "contrasena")
     private String contrasena;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "estudiante")
-    private boolean estudiante;
-    @ManyToMany(mappedBy = "usuarioList")
-    @JsonIgnoreProperties({"usuarioList","casoList"})
-    private List<Denuncia> denunciaList;
-
-    @NotNull
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "usuario_rol", joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id"))
-    private Set<RolSistema> rolsistemaList = new HashSet<>();
-    @ManyToMany(mappedBy = "usuarioList")
-    @JsonIgnoreProperties({"usuarioList", "casoList"})
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
     private List<Declaracion> declaracionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
-    @JsonIgnoreProperties({"casoList","idusuario"})
-    private List<Expediente> expedienteList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idusuario")
-    @JsonIgnoreProperties({"comisiondisciplinaria","usuario"})
-    private List<ComdiscUsuario> comdiscUsuarioList;
+    private List<ComDiscUsuario> comDiscUsuarioList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
+    private List<DenunciaUsuario> denunciaUsuarioList;
+    @JoinColumn(name = "rol", referencedColumnName = "idrol")
+    @ManyToOne(optional = false)
+    private Rol rol;
 
     public Usuario() {
     }
 
-    public Usuario(String nombre, String apellidos, String usuario, String contrasena, boolean profesor) {
+    public Usuario(Integer idusuario) {
+        this.idusuario = idusuario;
+    }
+
+    public Usuario(Integer idusuario, String nombre, String apellidos, String usuario, String contrasena) {
+        this.idusuario = idusuario;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.usuario = usuario;
         this.contrasena = contrasena;
-        this.estudiante = profesor;
     }
 
     public Integer getIdusuario() {
@@ -125,30 +123,6 @@ public class Usuario implements Serializable {
         this.contrasena = contrasena;
     }
 
-    public boolean getEstudiante() {
-        return estudiante;
-    }
-
-    public void setEstudiante(boolean estudiante) {
-        this.estudiante = estudiante;
-    }
-
-    public List<Denuncia> getDenunciaList() {
-        return denunciaList;
-    }
-
-    public void setDenunciaList(List<Denuncia> denunciaList) {
-        this.denunciaList = denunciaList;
-    }
-
-    public Set<RolSistema> getRolsistemaList() {
-        return rolsistemaList;
-    }
-
-    public void setRolsistemaList(Set<RolSistema> rolsistemaList) {
-        this.rolsistemaList = rolsistemaList;
-    }
-
     public List<Declaracion> getDeclaracionList() {
         return declaracionList;
     }
@@ -157,20 +131,28 @@ public class Usuario implements Serializable {
         this.declaracionList = declaracionList;
     }
 
-    public List<Expediente> getExpedienteList() {
-        return expedienteList;
+    public List<ComDiscUsuario> getComDiscUsuarioList() {
+        return comDiscUsuarioList;
     }
 
-    public void setExpedienteList(List<Expediente> expedienteList) {
-        this.expedienteList = expedienteList;
+    public void setComDiscUsuarioList(List<ComDiscUsuario> comDiscUsuarioList) {
+        this.comDiscUsuarioList = comDiscUsuarioList;
     }
 
-    public List<ComdiscUsuario> getComdiscUsuarioList() {
-        return comdiscUsuarioList;
+    public List<DenunciaUsuario> getDenunciaUsuarioList() {
+        return denunciaUsuarioList;
     }
 
-    public void setComdiscUsuarioList(List<ComdiscUsuario> comdiscUsuarioList) {
-        this.comdiscUsuarioList = comdiscUsuarioList;
+    public void setDenunciaUsuarioList(List<DenunciaUsuario> denunciaUsuarioList) {
+        this.denunciaUsuarioList = denunciaUsuarioList;
+    }
+
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
     }
 
     @Override
@@ -197,5 +179,5 @@ public class Usuario implements Serializable {
     public String toString() {
         return "com.pid.proyecto.entity.Usuario[ idusuario=" + idusuario + " ]";
     }
-
+    
 }

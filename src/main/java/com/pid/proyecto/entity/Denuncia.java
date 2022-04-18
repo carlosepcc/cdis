@@ -1,6 +1,9 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -11,9 +14,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -23,8 +23,12 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ *
+ * @author Angel
+ */
 @Entity
-@Table(name = "denuncia", catalog = "PID", schema = "public")
+@Table(name = "denuncia")
 @NamedQueries({
     @NamedQuery(name = "Denuncia.findAll", query = "SELECT d FROM Denuncia d")})
 public class Denuncia implements Serializable {
@@ -35,7 +39,9 @@ public class Denuncia implements Serializable {
     @Basic(optional = false)
     @Column(name = "iddenuncia")
     private Integer iddenuncia;
-    @Size(max = 255)
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "descripcionden")
     private String descripcionden;
     @Basic(optional = false)
@@ -43,17 +49,14 @@ public class Denuncia implements Serializable {
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    
-    
-    @JoinTable(name = "denuncia_usuario", joinColumns = {
-        @JoinColumn(name = "iddenuncia", referencedColumnName = "iddenuncia")}, inverseJoinColumns = {
-        @JoinColumn(name = "idusuario", referencedColumnName = "idusuario")})
-    @ManyToMany
-    @JsonIgnoreProperties({ "denunciaList","rolsistemaList","declaracionList","expedienteList","comdiscUsuarioList"})
-    private List<Usuario> usuarioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "iddenuncia")
-    @JsonIgnoreProperties({"comisiondisciplinariaList","expedienteList","declaracionList","iddenuncia"})
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "procesada")
+    private boolean procesada;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia")
     private List<Caso> casoList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia")
+    private List<DenunciaUsuario> denunciaUsuarioList;
 
     public Denuncia() {
     }
@@ -62,13 +65,11 @@ public class Denuncia implements Serializable {
         this.iddenuncia = iddenuncia;
     }
 
-    public Denuncia(Integer iddenuncia, Date fecha) {
+    public Denuncia(Integer iddenuncia, String descripcionden, Date fecha, boolean procesada) {
         this.iddenuncia = iddenuncia;
+        this.descripcionden = descripcionden;
         this.fecha = fecha;
-    }
-    public Denuncia(String descripcion, Date fecha) {
-        this.descripcionden = descripcion;
-        this.fecha = fecha;
+        this.procesada = procesada;
     }
 
     public Integer getIddenuncia() {
@@ -95,12 +96,12 @@ public class Denuncia implements Serializable {
         this.fecha = fecha;
     }
 
-    public List<Usuario> getUsuarioList() {
-        return usuarioList;
+    public boolean getProcesada() {
+        return procesada;
     }
 
-    public void setUsuarioList(List<Usuario> usuarioList) {
-        this.usuarioList = usuarioList;
+    public void setProcesada(boolean procesada) {
+        this.procesada = procesada;
     }
 
     public List<Caso> getCasoList() {
@@ -109,6 +110,14 @@ public class Denuncia implements Serializable {
 
     public void setCasoList(List<Caso> casoList) {
         this.casoList = casoList;
+    }
+
+    public List<DenunciaUsuario> getDenunciaUsuarioList() {
+        return denunciaUsuarioList;
+    }
+
+    public void setDenunciaUsuarioList(List<DenunciaUsuario> denunciaUsuarioList) {
+        this.denunciaUsuarioList = denunciaUsuarioList;
     }
 
     @Override
