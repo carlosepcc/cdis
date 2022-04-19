@@ -1,7 +1,8 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.CrearEntidad;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class NuevoUsuario {
 
@@ -17,7 +18,7 @@ public class NuevoUsuario {
     @Pattern(regexp = "[a-z]*" , message = "FORMATO DE USUARIO INCORRECTO")
     private String usuario;
     
-    
+    @Size(min = 4, max = 8, message = "LA CONTRASEÑA NO DEBE CONTENER DE 4 - 8 CARACTERES")
     @NotBlank(message = "DEBES ESPECIFICAR UNA CONTRASEÑA")
     private String contrasena;
 

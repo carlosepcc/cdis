@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 //clase encargada de la seguridad
 public class UsuarioPrincipal implements UserDetails {
 
-
     private final String nombre;
     private final String apellidos;
     private final String usuario;
@@ -29,8 +28,7 @@ public class UsuarioPrincipal implements UserDetails {
         this.authoritys = authoritys;
     }
 
-    // convertimos un objeto de la entidad Usuario en UsuarioPrincipal para obtener sus privilegios (roles)
-    // obtenemos los roles y los guardamos en una lista
+    // OBTENEMOS EL USUARIO DEL CONTEXTO DE SEGURIDAD DADO POR EL LOGIN
     public static UsuarioPrincipal build(Usuario usuario, List<Permiso> LP) {
         List<GrantedAuthority> authoritys = new LinkedList<>();
         // SIEMPRE LO PRIMERO QUE VA A CONTENER EL LISTADO DE AUTORIDADES ES EL ROL
@@ -38,27 +36,18 @@ public class UsuarioPrincipal implements UserDetails {
         List<Rol> LR = new LinkedList<>();
         LR.add(usuario.getRol());
 
-
-        
-
+        // AÑADIMOS EN PRIMER LUGAR EL ROL
         authoritys.addAll(LR
                 .stream()
                 .map(permiso -> new SimpleGrantedAuthority(permiso.getRol()))
                 .collect(Collectors.toList()));
-        
+
+        // AÑADIMOS LUEGO TODOS SUS PERMISOS
         authoritys.addAll(LP
                 .stream()
                 .map(permiso -> new SimpleGrantedAuthority(permiso.getPermiso()))
                 .collect(Collectors.toList()));
-        
 
-//        // AHORA AÑADIMOS A LA LISTA DE AUTORIDADES LOS PERMISOS QUE SI NECESITAMOS PARA TRABAJAR
-//        authoritys.addAll(usuario.getRolSistema().getPermisosList() // Obtenemos el rol y luego los permisos de ese rol
-//                .stream() //recogemos cada objeto de la lista de Rolsistema obtenida antes
-//                .map(permisos -> new SimpleGrantedAuthority(permisos.getPermiso().name())) //convertimos esos permisos obtenidos en authoritys a partir del nombre del permiso
-//                // y estos son los que usamos en las clases controladoras en el preautorize
-//                .collect(Collectors.toList())); //recolectamos lo que convertimos
-        //devolvemos ese UsuarioPrincipal creado con su lista de roles
         return new UsuarioPrincipal(usuario.getNombre(),
                 usuario.getApellidos(),
                 usuario.getUsuario(),

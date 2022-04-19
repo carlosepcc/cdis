@@ -1,11 +1,11 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.ModificarEntidad;
 
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 //Esta es la clase encargada de recibir los datos desde el json
-public class NuevaComision {
+public class ModificarComision {
 
     @NotBlank
     private String tipoComision;
@@ -18,7 +18,7 @@ public class NuevaComision {
     
     
 
-    public NuevaComision() {
+    public ModificarComision() {
     }
 
     public List<String> getRolComision() {

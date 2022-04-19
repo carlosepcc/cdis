@@ -4,7 +4,7 @@ import com.pid.proyecto.entity.Caso;
 import com.pid.proyecto.entity.ComisionDisciplinaria;
 import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.Json.NuevoCaso;
+import com.pid.proyecto.Json.CrearEntidad.NuevoCaso;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionDisciplinariaService;
 import com.pid.proyecto.service.DenunciaService;

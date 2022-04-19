@@ -1,4 +1,4 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.Login;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;

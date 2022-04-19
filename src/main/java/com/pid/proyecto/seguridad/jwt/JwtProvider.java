@@ -1,7 +1,7 @@
 package com.pid.proyecto.seguridad.jwt;
 
+import com.pid.proyecto.Json.CrearEntidad.NuevoUsuario;
 import com.pid.proyecto.seguridad.auxiliares.UsuarioPrincipal;
-import com.pid.proyecto.Json.NuevoUsuario;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -9,7 +9,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;

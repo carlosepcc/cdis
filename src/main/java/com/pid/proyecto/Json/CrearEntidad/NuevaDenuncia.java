@@ -1,4 +1,4 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.CrearEntidad;
 
 import java.util.Date;
 import java.util.List;

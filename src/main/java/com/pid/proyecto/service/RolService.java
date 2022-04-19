@@ -1,7 +1,7 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.seguridad.enums.RolNombre;
+import com.pid.proyecto.enums.RolNombre;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;

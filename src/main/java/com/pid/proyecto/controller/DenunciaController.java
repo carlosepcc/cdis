@@ -7,7 +7,7 @@ import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Filtrador;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
-import com.pid.proyecto.Json.NuevaDenuncia;
+import com.pid.proyecto.Json.CrearEntidad.NuevaDenuncia;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.UserDetailsServiceImpl;
 import com.pid.proyecto.service.UsuarioService;

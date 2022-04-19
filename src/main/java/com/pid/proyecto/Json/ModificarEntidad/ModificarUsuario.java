@@ -1,6 +1,7 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.ModificarEntidad;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class ModificarUsuario {
 
@@ -13,19 +14,12 @@ public class ModificarUsuario {
     @Pattern(regexp = "[a-z]*", message = "FORMATO DE USUARIO INCORRECTO")
     private String usuario;
 
+    @Size(min = 4, max = 8, message = "LA CONTRASEÑA NO DEBE CONTENER DE 4 - 8 CARACTERES")
     private String contrasena;
 
     private String rol;
 
     public ModificarUsuario() {
-    }
-
-    public ModificarUsuario(String nombre, String apellidos, String usuario, String contrasena, String rol) {
-        this.nombre = nombre;
-        this.apellidos = apellidos;
-        this.usuario = usuario;
-        this.contrasena = contrasena;
-        this.rol = rol;
     }
 
     public String getRol() {

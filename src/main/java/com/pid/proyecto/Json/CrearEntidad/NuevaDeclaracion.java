@@ -1,22 +1,41 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.CrearEntidad;
 
-import java.util.Date;
-import java.util.List;
 import javax.validation.constraints.NotBlank;
 
-public class NuevoExpediente {
+public class NuevaDeclaracion {
 
-    @NotBlank
+    private boolean abierta;
+    
     private String descripcion;
     @NotBlank
-    private Date fecha;
+    private String usuario;
     @NotBlank
     private int idCaso;
     @NotBlank
-    private String usuario;
-
-    public NuevoExpediente() {
+    private int idUsuario;
+    
+    public NuevaDeclaracion() {
     }
+
+    public boolean isAbierta() {
+        return abierta;
+    }
+
+    public void setAbierta(boolean abierta) {
+        this.abierta = abierta;
+    }
+    
+    
+
+    public int getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(int idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+    
+    
 
     public int getIdCaso() {
         return idCaso;
@@ -40,14 +59,6 @@ public class NuevoExpediente {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
     }
 
 }
