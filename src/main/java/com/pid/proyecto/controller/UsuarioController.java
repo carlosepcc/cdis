@@ -46,7 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Usuario")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class usuarioController {
+public class UsuarioController {
   @Autowired
   PasswordEncoder passwordEncoder;
 
@@ -220,7 +220,8 @@ public class usuarioController {
       }
     }
 
-    // ACTUALIZAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
+    // ACTUALIZAMOS CON LAS VARIABLES LLENAS
+    
     if (!nombre.isBlank()) {
       if (nombre.matches("[A-Z][a-z]*")) {
         return new ResponseEntity<>(
@@ -230,6 +231,9 @@ public class usuarioController {
       }
       usuario.setNombre(nombre);
     }
+
+
+
     if (!apellidos.isBlank()) {
       if (apellidos.matches("[A-Z][a-z]*")) {
         return new ResponseEntity<>(
