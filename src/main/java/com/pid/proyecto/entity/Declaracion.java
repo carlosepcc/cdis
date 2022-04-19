@@ -4,6 +4,8 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +60,7 @@ public class Declaracion implements Serializable {
     @ManyToOne(optional = false)
     private Usuario usuario;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "declaracion")
+    @JsonIgnore
     private List<PdfExpediente> pdfExpedienteList;
 
     public Declaracion() {

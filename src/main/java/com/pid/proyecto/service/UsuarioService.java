@@ -38,7 +38,7 @@ public class UsuarioService {
 
     // Comprobamos si existe el apellido (apellidos)
     public boolean existsById(int id) {
-        return usuarioRepo.existsByIdusuario(id);
+        return usuarioRepo.existsById(id);
     }
 
     // salvamos el objeto usuario en la base de datos
@@ -50,13 +50,23 @@ public class UsuarioService {
 
     public Optional<Usuario> getByIdusuario(int id) {
 
-        return usuarioRepo.findByIdusuario(id);
+        return usuarioRepo.findById(id);
     }
 
     public void delete(int id) {
 
-        usuarioRepo.deleteByIdusuario(id);
+        usuarioRepo.deleteById(id);
     }
+    
+    public void deleteByUsuario(Usuario us) {
+
+        usuarioRepo.delete(us);
+    }
+    public void deleteAll(List<Usuario> us) {
+
+        usuarioRepo.deleteAll(us);
+    }
+    
 
     public List<Usuario> findAll() {
         

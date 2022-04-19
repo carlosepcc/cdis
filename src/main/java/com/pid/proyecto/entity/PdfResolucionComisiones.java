@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -49,6 +50,7 @@ public class PdfResolucionComisiones implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaexpiracion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolucion")
+    @JsonIgnore
     private List<ComisionDisciplinaria> comisionDisciplinariaList;
 
     public PdfResolucionComisiones() {

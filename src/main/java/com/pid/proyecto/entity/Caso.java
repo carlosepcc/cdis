@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -55,8 +56,10 @@ public class Caso implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaexpiracion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
+    @JsonIgnore
     private List<PdfDictamen> pdfDictamenList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
+    @JsonIgnore
     private List<Declaracion> declaracionList;
     @JoinColumn(name = "comision", referencedColumnName = "idcomision")
     @ManyToOne(optional = false)

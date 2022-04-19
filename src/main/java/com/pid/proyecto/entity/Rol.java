@@ -4,6 +4,8 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -28,6 +30,7 @@ import javax.validation.constraints.Size;
 @Table(name = "rol")
 @NamedQueries({
     @NamedQuery(name = "Rol.findAll", query = "SELECT r FROM Rol r")})
+@JsonIgnoreProperties({ "rolPermisoList", "usuarioList" })
 public class Rol implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -42,8 +45,10 @@ public class Rol implements Serializable {
     @Column(name = "rol")
     private String rol;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol1")
+    @JsonIgnore
     private List<RolPermiso> rolPermisoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
+    @JsonIgnore
     private List<Usuario> usuarioList;
 
     public Rol() {
