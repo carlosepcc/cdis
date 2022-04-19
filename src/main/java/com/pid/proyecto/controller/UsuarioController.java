@@ -6,7 +6,6 @@ import com.pid.proyecto.Json.Login.LoginUsuario;
 import com.pid.proyecto.Json.ModificarEntidad.ModificarUsuario;
 import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.entity.Usuario;
-import com.pid.proyecto.enums.RolNombre;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
 import com.pid.proyecto.seguridad.jwt.JwtProvider;
@@ -14,10 +13,7 @@ import com.pid.proyecto.service.RolService;
 import com.pid.proyecto.service.UsuarioService;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Matcher;
 import javax.validation.Valid;
-import javax.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,7 +64,7 @@ public class UsuarioController {
   @Autowired
   UserDetailsService userDetailsService;
 
-  // CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+  // CCC
   // CREAMOS UN NUEVO USUARIO
   @PutMapping("/crearUsuario")
   @PreAuthorize("hasRole('ROLE_C_USUARIO')")
@@ -76,13 +72,6 @@ public class UsuarioController {
     @Valid @RequestBody NuevoUsuario NU,
     BindingResult BR
   ) {
-    // DECLARAMOS VARIABLES Y LAS LLENAMOS CON NUESTRO JSON
-    Usuario usuario = new Usuario();
-    String nombre = NU.getNombre();
-    String apellidos = NU.getApellidos();
-    String username = NU.getUsuario();
-    String password = NU.getContrasena();
-    Rol rol;
 
     // VALIDAR ERRORES
     if (BR.hasErrors()) {
@@ -92,43 +81,48 @@ public class UsuarioController {
       }
       return new ResponseEntity<>(
         new Mensaje(errores.toString()),
-        HttpStatus.BAD_REQUEST
+        HttpStatus.PRECONDITION_FAILED
       );
     }
 
-    // PREGUNTAMOS SI YA EXISTE ESE USUARIO EN NUESTRO SISTEMA
-    if (usuarioService.existsByUsuario(NU.getUsuario())) {
-      return new ResponseEntity<>(
-        new Mensaje("ESE USUARIO YA EXISTE"),
-        HttpStatus.BAD_REQUEST
-      );
-    }
+    // DECLARAMOS VARIABLES
+    Usuario usuario = new Usuario();
+    String nombre = NU.getNombre();
+    String apellidos = NU.getApellidos();
+    String username = NU.getUsuario();
+    String password = NU.getContrasena();
+    String Srol = NU.getRol();
+    Rol rol;
 
+    //LLENAMOS LAS VARIABLES A USAR
+
+    // usuario en espera
+    // nombre lleno
+    // apellidos lleno
+    // username lleno
+    // password lleno
+    // Srol lleno
+
+    // rol
     // CONFIRMAMOS QUE EXISTA EL ROL QUE ESTAMOS PASANDO EN EL JSON
-    if (rolSistemaService.existsByRol(NU.getRol())) {
+    if (rolSistemaService.existsByRol(Srol)) {
       // ASIGNAMOS EL ROL AL QUE SE HACE REFERENCIA
-      rol = rolSistemaService.getByRol(NU.getRol()).get();
-      // SI SE INTENTA CREAR OTRO ADMINISTRADOR
-      if (rol.getRol().equals(RolNombre.ROLE_ADMIN_SISTEMA.name())) {
-        // SI LA PERSONA AUTENTICADA NO POSEE EL ROL DE ADMINISTRADOR NO PODEMOS CREAR OTRO ADMINISTRADOR
-        if (
-          !sesionDetails
-            .getPrivilegios()
-            .contains(RolNombre.ROLE_ADMIN_SISTEMA.name())
-        ) {
-          return new ResponseEntity<>(
-            new Mensaje(
-              "USTED NO POSEE PRIVILEGIOS PARA CREAR UN USUARIO ADMINISTRADOR"
-            ),
-            HttpStatus.BAD_REQUEST
-          );
-        }
-      }
+      rol = rolSistemaService.getByRol(Srol).get();
     } // SI NO EXISTE EL ROL LANZAMOS UN ERROR
     else {
       return new ResponseEntity<>(
         new Mensaje("EL ROL QUE INTENTA ASIGNAR NO EXISTE"),
-        HttpStatus.BAD_REQUEST
+        HttpStatus.NOT_FOUND
+      );
+    }
+
+    // VERIFICAMOS SI YA EXISTE LA ENTIDAD QUE ESTAMOS CREANDO
+
+    // PREGUNTAMOS SI YA EXISTE ESA ENTIDAD EN NUESTRO SISTEMA
+    if (usuarioService.existsByUsuario(username)) {
+      return new ResponseEntity<>(
+        new Mensaje("ESE USUARIO YA EXISTE"),
+        HttpStatus.CONFLICT
       );
     }
 
@@ -149,7 +143,7 @@ public class UsuarioController {
     );
   }
 
-  // RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+  // RRR
   // MOSTRAMOS TODOS LOS USUARIOS
   @GetMapping
   @PreAuthorize("hasRole('ROLE_R_USUARIO')")
@@ -158,8 +152,8 @@ public class UsuarioController {
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
 
-  // UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
-  @PutMapping("/actualizarUsuario/{id}")
+  // UUU
+  @PostMapping("/actualizarUsuario/{id}")
   @PreAuthorize("hasRole('ROLE_U_USUARIO')")
   public ResponseEntity<?> actualizar(
     @PathVariable("id") int id,
@@ -195,7 +189,7 @@ public class UsuarioController {
     } else {
       return new ResponseEntity<>(
         new Mensaje("ESE ID DE USUARIO NO EXISTE"),
-        HttpStatus.BAD_REQUEST
+        HttpStatus.NOT_FOUND
       );
     }
     // nombre lleno
@@ -215,56 +209,151 @@ public class UsuarioController {
       else {
         return new ResponseEntity<>(
           new Mensaje("EL ROL QUE INTENTA ASIGNAR NO EXISTE"),
-          HttpStatus.BAD_REQUEST
+          HttpStatus.NOT_FOUND
         );
       }
     }
 
     // ACTUALIZAMOS CON LAS VARIABLES LLENAS
-    
+    // nombre
     if (!nombre.isBlank()) {
-      if (nombre.matches("[A-Z][a-z]*")) {
+      if (!nombre.matches("([A-Z][a-z]*)|([A-Z][a-z]* [A-Z][a-z]*)")) {
         return new ResponseEntity<>(
-          new Mensaje("FORMATO DE NOMBRE INCORRECTO"),
-          HttpStatus.BAD_REQUEST
+          new Mensaje(
+            "FORMATO DE NOMBRE INCORRECTO, DEBE COMENZAR CON MAYÚSCULA SEGUIDO DE MINÚSCULAS Y SOLO ADMITE DOS ENTRADAS"
+          ),
+          HttpStatus.PRECONDITION_FAILED
         );
       }
       usuario.setNombre(nombre);
     }
-
-
-
+    // apellidos
     if (!apellidos.isBlank()) {
-      if (apellidos.matches("[A-Z][a-z]*")) {
+      if (!apellidos.matches("([A-Z][a-z]*)|([A-Z][a-z]* [A-Z][a-z]*)")) {
         return new ResponseEntity<>(
-          new Mensaje("FORMATO DE APELLIDO INCORRECTO"),
-          HttpStatus.BAD_REQUEST
+          new Mensaje(
+            "FORMATO DE APELLIDO INCORRECTO, DEBE COMENZAR CON MAYÚSCULA SEGUIDO DE MINÚSCULAS Y SOLO ADMITE DOS ENTRADAS"
+          ),
+          HttpStatus.PRECONDITION_FAILED
         );
       }
       usuario.setApellidos(apellidos);
     }
-
+    // usuario
     if (!username.isBlank()) {
+      if (!username.matches("[a-z]*")) {
+        return new ResponseEntity<>(
+          new Mensaje("FORMATO DE USUARIO INCORRECTO, SOLO LETRAS MINÚSCULAS"),
+          HttpStatus.PRECONDITION_FAILED
+        );
+      }
       usuario.setUsuario(username);
     }
+    // contraseña
     if (!password.isBlank()) {
+      if (!(password.length() <= 8)) {
+        return new ResponseEntity<>(
+          new Mensaje("LA CONTRASEÑA DEBE CONTENER DE 4 - 10 CARACTERES"),
+          HttpStatus.PRECONDITION_FAILED
+        );
+      }
       usuario.setContrasena(passwordEncoder.encode(password));
     }
+
+    // rol
     if (!Srol.isBlank()) {
       usuario.setRol(rol);
     }
 
     // SALVAMOS ESE USUARIO
-    usuarioService.save(usuario);
+    if (
+      !nombre.isBlank() ||
+      !apellidos.isBlank() ||
+      !username.isBlank() ||
+      !password.isBlank() ||
+      !Srol.isBlank()
+    ) {
+      usuarioService.save(usuario);
 
-    // RETORNAMOS CONFIRMACION
-    return new ResponseEntity<>(
-      new Mensaje("USUARIO GUARDADO"),
-      HttpStatus.CREATED
+      // RETORNAMOS CONFIRMACION
+      return new ResponseEntity<>(
+        new Mensaje("USUARIO GUARDADO"),
+        HttpStatus.OK
+      );
+    } else return new ResponseEntity<>(
+      new Mensaje("NO SE EFECTUARON CAMBIOS EN ESTE USUARIO"),
+      HttpStatus.NOT_MODIFIED
     );
   }
 
-  // DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+  // UUUP
+  @PostMapping("/actualizarUsuarioPropio")
+  @PreAuthorize("hasRole('ROLE_UP_USUARIO')")
+  public ResponseEntity<?> actualizarPropio(
+    @Valid @RequestBody ModificarUsuario MU,
+    BindingResult BR
+  ) {
+    // VALIDAR ERRORES
+    if (BR.hasErrors()) {
+      List<String> errores = new LinkedList<>();
+      for (FieldError FE : BR.getFieldErrors()) {
+        errores.add(FE.getDefaultMessage());
+      }
+      return new ResponseEntity<>(
+        new Mensaje(errores.toString()),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    // DECLARAMOS VARIABLES
+    int id = usuarioService
+      .getByUsuario(sesionDetails.getUsuario())
+      .get()
+      .getIdusuario();
+    Usuario usuario;
+    String password = MU.getContrasena();
+
+    // LLENAMOS LAS VARIABLES
+
+    // usuario
+    if (usuarioService.existsById(id)) {
+      usuario = usuarioService.getByIdusuario(id).get();
+    } else {
+      return new ResponseEntity<>(
+        new Mensaje("ESE ID DE USUARIO NO EXISTE"),
+        HttpStatus.NOT_FOUND
+      );
+    }
+    // password lleno
+
+    // ACTUALIZAMOS CON LAS VARIABLES LLENAS
+    // contraseña
+    if (!password.isBlank()) {
+      if (!(password.length() <= 8)) {
+        return new ResponseEntity<>(
+          new Mensaje("LA CONTRASEÑA DEBE CONTENER DE 4 - 10 CARACTERES"),
+          HttpStatus.PRECONDITION_FAILED
+        );
+      }
+      usuario.setContrasena(passwordEncoder.encode(password));
+    }
+
+    // SALVAMOS ESE USUARIO
+    if (!password.isBlank()) {
+      usuarioService.save(usuario);
+
+      // RETORNAMOS CONFIRMACION
+      return new ResponseEntity<>(
+        new Mensaje("USUARIO GUARDADO"),
+        HttpStatus.OK
+      );
+    } else return new ResponseEntity<>(
+      new Mensaje("NO SE EFECTUARON CAMBIOS EN ESTE USUARIO"),
+      HttpStatus.NOT_MODIFIED
+    );
+  }
+
+  // DDD
   @DeleteMapping("/borrarUsuarios/{ids}")
   @PreAuthorize("hasRole('ROLE_D_USUARIO')")
   @ResponseBody
@@ -282,10 +371,11 @@ public class UsuarioController {
       LU.add(usuarioService.getByIdusuario(id).get());
     }
 
-    for (Usuario u : LU) {
-      usuarioService.delete(u.getIdusuario());
-    }
-    //usuarioService.deleteAll(LU);
+    // for (Usuario u : LU) {
+    //   usuarioService.delete(u.getIdusuario());
+    // }
+
+    usuarioService.deleteAll(LU);
     return new ResponseEntity<>(
       new Mensaje(" USUARIOS BORRADOS: [ " + ids.size() + " ]"),
       HttpStatus.OK

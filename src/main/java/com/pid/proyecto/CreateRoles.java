@@ -51,6 +51,7 @@ public class CreateRoles implements CommandLineRunner {
       Lc.add('c');
       Lc.add('r');
       Lc.add('u');
+      Lc.add('p');
       Lc.add('d');
 
       // LISTA CON TODOS LOS PERMISOS QUE SE VAN A CREAR
@@ -97,13 +98,10 @@ public class CreateRoles implements CommandLineRunner {
       // ENLAZAR PERMISOS DE USUARIO CON EL ROL DE USUARIO
       List<Permiso> permisosUser = new LinkedList<>();
       permisosUser.add(
-        permisosService.getByPermiso(PermisoNombre.ROLE_C_USUARIO.name()).get()
-      );
-      permisosUser.add(
         permisosService.getByPermiso(PermisoNombre.ROLE_R_USUARIO.name()).get()
       );
       permisosUser.add(
-        permisosService.getByPermiso(PermisoNombre.ROLE_D_USUARIO.name()).get()
+        permisosService.getByPermiso(PermisoNombre.ROLE_UP_USUARIO.name()).get()
       );
       Rol rolUser = rolSistemaService
         .getByRol(RolNombre.ROLE_USUARIO_SISTEMA.name())
@@ -154,6 +152,10 @@ public class CreateRoles implements CommandLineRunner {
       if (c == 'u') {
         lista.add(new Permiso(PermisoNombre.ROLE_U_USUARIO.name()));
       }
+      if (c == 'p') {
+        lista.add(new Permiso(PermisoNombre.ROLE_UP_USUARIO.name()));
+      }
+
       if (c == 'd') {
         lista.add(new Permiso(PermisoNombre.ROLE_D_USUARIO.name()));
       }

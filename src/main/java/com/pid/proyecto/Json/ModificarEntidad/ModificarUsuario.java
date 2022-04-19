@@ -1,61 +1,55 @@
 package com.pid.proyecto.Json.ModificarEntidad;
 
 public class ModificarUsuario {
+  private String nombre = "";
 
-    //@Pattern(regexp = "[A-Z][a-z]*", message = "FORMATO DE NOMBRE INCORRECTO")
-    private String nombre = "";
+  private String apellidos = "";
 
-    //@Pattern(regexp = "[A-Z][a-z]*", message = "FORMATO DE APELLIDO INCORRECTO")
-    private String apellidos = "";
+  private String usuario = "";
 
-    //@Pattern(regexp = "[a-z]*", message = "FORMATO DE USUARIO INCORRECTO")
-    private String usuario = "";
+  private String contrasena = "";
 
-    //@Size(min = 4, max = 8, message = "LA CONTRASEÑA DEBE CONTENER DE 4 - 8 CARACTERES")
-    private String contrasena = "";
-    
-    private String rol = "";
+  private String rol = "";
 
-    public ModificarUsuario() {
-    }
+  public ModificarUsuario() {}
 
-    public String getRol() {
-        return rol;
-    }
+  public String getRol() {
+    return rol;
+  }
 
-    public void setRol(String rol) {
-        this.rol = rol;
-    }
+  public void setRol(String rol) {
+    this.rol = rol;
+  }
 
-    public String getNombre() {
-        return nombre;
-    }
+  public String getNombre() {
+    return nombre;
+  }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
 
-    public String getApellidos() {
-        return apellidos;
-    }
+  public String getApellidos() {
+    return apellidos;
+  }
 
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
-    }
+  public void setApellidos(String apellidos) {
+    this.apellidos = apellidos;
+  }
 
-    public String getUsuario() {
-        return usuario;
-    }
+  public String getUsuario() {
+    return usuario;
+  }
 
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
+  public void setUsuario(String usuario) {
+    this.usuario = usuario;
+  }
 
-    public String getContrasena() {
-        return contrasena;
-    }
+  public String getContrasena() {
+    return contrasena;
+  }
 
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
+  public void setContrasena(String contrasena) {
+    this.contrasena = contrasena;
+  }
 }

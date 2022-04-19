@@ -13,6 +13,7 @@ public enum PermisoNombre {
     ROLE_C_USUARIO,  // CREAR             
     ROLE_R_USUARIO,  // VISUALIZAR    
     ROLE_U_USUARIO,  // MODIFICAR
+    ROLE_UP_USUARIO,  // MODIFICAR SU PROPIO USUARIO
     ROLE_D_USUARIO,  // BORRAR         
 //
     ROLE_C_DENUNCIA_USUARIO,  // CREAR             
