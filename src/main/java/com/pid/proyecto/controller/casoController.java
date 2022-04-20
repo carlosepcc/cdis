@@ -4,7 +4,7 @@ import com.pid.proyecto.entity.Caso;
 import com.pid.proyecto.entity.ComisionDisciplinaria;
 import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.Json.CrearEntidad.NuevoCaso;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevoCaso;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionDisciplinariaService;
 import com.pid.proyecto.service.DenunciaService;
@@ -48,7 +48,7 @@ public class casoController {
     @PutMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN') "
             + "or hasRole('ROLE_DECANO')")
-    public ResponseEntity<?> crear(@Valid @RequestBody NuevoCaso nuevoCaso, BindingResult bindingResult) {
+    public ResponseEntity<?> crear(@Valid @RequestBody JsonNuevoCaso nuevoCaso, BindingResult bindingResult) {
         // si tiene errores en el binding result
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(new Mensaje("CAMPOS MAL PUESTOS"), HttpStatus.BAD_REQUEST);
@@ -83,7 +83,7 @@ public class casoController {
 
     @PutMapping("/actualizarCaso/{id}")
     //@PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> actualizar(@PathVariable("id") int id, @RequestBody NuevoCaso nuevoCaso) {
+    public ResponseEntity<?> actualizar(@PathVariable("id") int id, @RequestBody JsonNuevoCaso nuevoCaso) {
 
         // si todo esta bien creamos el usuario
         Caso caso = casoService.getById(id).get();

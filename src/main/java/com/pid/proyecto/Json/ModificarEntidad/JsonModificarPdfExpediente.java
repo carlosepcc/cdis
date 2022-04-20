@@ -1,12 +1,12 @@
 package com.pid.proyecto.Json.ModificarEntidad;
 
-public class ModificarPdfExpediente {
+public class JsonModificarPdfExpediente {
 
     private String descripcion;
 
     private int idDeclaracion;
     
-    public ModificarPdfExpediente() {
+    public JsonModificarPdfExpediente() {
     }
 
     public int getIdDeclaracion() {

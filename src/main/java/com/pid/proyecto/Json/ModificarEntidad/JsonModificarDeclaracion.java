@@ -2,7 +2,7 @@ package com.pid.proyecto.Json.ModificarEntidad;
 
 import javax.validation.constraints.NotBlank;
 
-public class ModificarDeclaracion {
+public class JsonModificarDeclaracion {
 
     @NotBlank
     private String descripcion;
@@ -11,7 +11,7 @@ public class ModificarDeclaracion {
     @NotBlank
     private int idCaso;
 
-    public ModificarDeclaracion() {
+    public JsonModificarDeclaracion() {
     }
 
     public int getIdCaso() {

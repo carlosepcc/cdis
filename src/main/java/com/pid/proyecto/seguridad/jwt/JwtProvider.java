@@ -1,6 +1,6 @@
 package com.pid.proyecto.seguridad.jwt;
 
-import com.pid.proyecto.Json.CrearEntidad.NuevoUsuario;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevoUsuario;
 import com.pid.proyecto.seguridad.auxiliares.UsuarioPrincipal;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -47,7 +47,7 @@ public class JwtProvider {
         List<String> roles = usuarioPrincipal.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
-        NuevoUsuario usuario = new NuevoUsuario();
+        JsonNuevoUsuario usuario = new JsonNuevoUsuario();
         usuario.setNombre(usuarioPrincipal.getNombre());
         usuario.setApellidos(usuarioPrincipal.getApellidos());
         usuario.setUsuario(usuarioPrincipal.getUsername());

@@ -3,7 +3,7 @@ package com.pid.proyecto.Json.Login;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-public class LoginUsuario {
+public class JsonLoginUsuario {
 
     @NotBlank(message = "INTRODUZCA SU USUARIO")
     @Pattern(regexp = "[a-z]*", message = "FORMATO DE USUARIO INCORRECTO")

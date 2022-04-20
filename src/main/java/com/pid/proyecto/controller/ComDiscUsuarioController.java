@@ -3,7 +3,7 @@ package com.pid.proyecto.controller;
 import com.pid.proyecto.entity.ComDiscUsuario;
 import com.pid.proyecto.entity.ComDiscUsuarioPK;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.Json.CrearEntidad.NuevoComDiscUsuario;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevoComDiscUsuario;
 import com.pid.proyecto.enums.RolNombre;
 import com.pid.proyecto.service.ComDiscUsuarioService;
 import com.pid.proyecto.service.RolService;
@@ -42,7 +42,7 @@ public class comDiscUsuarioController {
     @PutMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN') "
             + "or hasRole('ROLE_DECANO')")
-    public ResponseEntity<?> crear(@Valid @RequestBody NuevoComDiscUsuario nuevoComDiscUsuario, BindingResult bindingResult) {
+    public ResponseEntity<?> crear(@Valid @RequestBody JsonNuevoComDiscUsuario nuevoComDiscUsuario, BindingResult bindingResult) {
 
         // si tiene errores en el binding result
         if (bindingResult.hasErrors()) {

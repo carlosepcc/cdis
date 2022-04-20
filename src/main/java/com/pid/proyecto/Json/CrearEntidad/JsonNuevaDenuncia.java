@@ -1,15 +1,15 @@
-package com.pid.proyecto.Json.ModificarEntidad;
+package com.pid.proyecto.Json.CrearEntidad;
 
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 
-public class ModificarDenuncia {
+public class JsonNuevaDenuncia {
 
     private String descripcion;
     @NotBlank
     private List<String> estudiantes;
 
-    public ModificarDenuncia() {
+    public JsonNuevaDenuncia() {
     }
 
     public String getDescripcion() {

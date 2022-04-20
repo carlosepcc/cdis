@@ -1,8 +1,8 @@
-package com.pid.proyecto.Json.CrearEntidad;
+package com.pid.proyecto.Json.ModificarEntidad;
 
 import javax.validation.constraints.NotBlank;
 
-public class NuevoComDiscUsuario {
+public class JsonModificarComDiscUsuario {
 
     @NotBlank
     private int idComision;
@@ -14,7 +14,7 @@ public class NuevoComDiscUsuario {
     private String rol;
 
 
-    public NuevoComDiscUsuario() {
+    public JsonModificarComDiscUsuario() {
 
     }
 

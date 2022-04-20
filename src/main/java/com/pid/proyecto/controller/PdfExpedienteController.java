@@ -1,7 +1,7 @@
 package com.pid.proyecto.controller;
 
-import com.pid.proyecto.Json.CrearEntidad.NuevoPdfExpediente;
-import com.pid.proyecto.Json.ModificarEntidad.ModificarPdfExpediente;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevoPdfExpediente;
+import com.pid.proyecto.Json.ModificarEntidad.JsonModificarPdfExpediente;
 import com.pid.proyecto.entity.Declaracion;
 import com.pid.proyecto.entity.PdfExpediente;
 import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
@@ -57,7 +57,7 @@ public class PdfExpedienteController {
     @PutMapping
     @PreAuthorize("hasRole('ROLE_C_EXPEDIENTE')")
     public ResponseEntity<?> crear(
-            @Valid @RequestBody NuevoPdfExpediente NE,
+            @Valid @RequestBody JsonNuevoPdfExpediente NE,
             BindingResult BR
     ) {
         // si tiene errores en el binding result
@@ -100,7 +100,7 @@ public class PdfExpedienteController {
     @PostMapping
     @PreAuthorize("hasRole('ROLE_U_EXPEDIENTE')")
     public ResponseEntity<?> Modificar(@PathVariable("id") int id,
-            @Valid @RequestBody ModificarPdfExpediente ME,
+            @Valid @RequestBody JsonModificarPdfExpediente ME,
             BindingResult BR
     ) {
         // si tiene errores en el binding result
@@ -148,7 +148,7 @@ public class PdfExpedienteController {
     @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_EXPEDIENTE')")
     public ResponseEntity<?> Eliminar(@PathVariable("ids") List<Integer> ids,
-            @Valid @RequestBody ModificarPdfExpediente ME,
+            @Valid @RequestBody JsonModificarPdfExpediente ME,
             BindingResult BR
     ) {
         List<Integer> ID = new LinkedList<>();

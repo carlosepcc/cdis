@@ -7,7 +7,7 @@ import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Filtrador;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.Json.CrearEntidad.NuevaComision;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevaComision;
 import com.pid.proyecto.enums.RolNombre;
 import com.pid.proyecto.service.ComDiscUsuarioService;
 import com.pid.proyecto.service.ComisionDisciplinariaService;
@@ -62,7 +62,7 @@ public class comisionDisciplinariaController {
 
     @PutMapping()
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DECANO')")
-    public ResponseEntity<?> crear(@Valid @RequestBody NuevaComision nuevaComision, BindingResult bindingResult) {
+    public ResponseEntity<?> crear(@Valid @RequestBody JsonNuevaComision nuevaComision, BindingResult bindingResult) {
         // si tiene errores en el binding result
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(new Mensaje("CAMPOS MAL PUESTOS"), HttpStatus.BAD_REQUEST);

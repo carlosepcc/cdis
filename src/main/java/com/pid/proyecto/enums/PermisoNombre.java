@@ -51,10 +51,10 @@ public enum PermisoNombre {
     ROLE_U_CASO,  // MODIFICAR
     ROLE_D_CASO,  // BORRAR         
 //
-    ROLE_C_ROL_SISTEMA,  // CREAR             
-    ROLE_R_ROL_SISTEMA,  // VISUALIZAR    
-    ROLE_U_ROL_SISTEMA,  // MODIFICAR
-    ROLE_D_ROL_SISTEMA,  // BORRAR         
+    ROLE_C_ROL,  // CREAR             
+    ROLE_R_ROL,  // VISUALIZAR    
+    ROLE_U_ROL,  // MODIFICAR
+    ROLE_D_ROL,  // BORRAR         
 //
     C_PDF_RESOLUCION_COMISIONES,  // CREAR             
     R_PDF_RESOLUCION_COMISIONES,  // VISUALIZAR    

@@ -2,17 +2,17 @@ package com.pid.proyecto.Json.CrearEntidad;
 
 import javax.validation.constraints.NotBlank;
 
-public class NuevoPdfExpediente {
+public class JsonNuevoPdfExpediente {
 
     @NotBlank(message = "Debe introducir una descripcion")
     private String descripcion;
 
     private int idDeclaracion;
 
-    public NuevoPdfExpediente() {
+    public JsonNuevoPdfExpediente() {
     }
 
-    public NuevoPdfExpediente(int idDeclaracion, String descripcion) {
+    public JsonNuevoPdfExpediente(int idDeclaracion, String descripcion) {
         this.idDeclaracion = idDeclaracion;
         this.descripcion = descripcion;
     }

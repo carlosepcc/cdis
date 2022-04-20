@@ -1,6 +1,6 @@
 package com.pid.proyecto.Json.ModificarEntidad;
 
-public class ModificarUsuario {
+public class JsonModificarUsuario {
   private String nombre = "";
 
   private String apellidos = "";
@@ -11,7 +11,7 @@ public class ModificarUsuario {
 
   private String rol = "";
 
-  public ModificarUsuario() {}
+  public JsonModificarUsuario() {}
 
   public String getRol() {
     return rol;

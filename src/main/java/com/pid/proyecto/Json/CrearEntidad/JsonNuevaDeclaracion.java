@@ -2,7 +2,7 @@ package com.pid.proyecto.Json.CrearEntidad;
 
 import javax.validation.constraints.NotBlank;
 
-public class NuevaDeclaracion {
+public class JsonNuevaDeclaracion {
 
     private boolean abierta;
     
@@ -14,7 +14,7 @@ public class NuevaDeclaracion {
     @NotBlank
     private int idUsuario;
     
-    public NuevaDeclaracion() {
+    public JsonNuevaDeclaracion() {
     }
 
     public boolean isAbierta() {

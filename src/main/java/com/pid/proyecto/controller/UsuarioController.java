@@ -1,11 +1,13 @@
 package com.pid.proyecto.controller;
 
-import com.pid.proyecto.Json.CrearEntidad.NuevoUsuario;
-import com.pid.proyecto.Json.Login.JwtDto;
-import com.pid.proyecto.Json.Login.LoginUsuario;
-import com.pid.proyecto.Json.ModificarEntidad.ModificarUsuario;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevoUsuario;
+import com.pid.proyecto.Json.CrearEntidad.JsonRegistrarUsuario;
+import com.pid.proyecto.Json.Login.JsonJwtDto;
+import com.pid.proyecto.Json.Login.JsonLoginUsuario;
+import com.pid.proyecto.Json.ModificarEntidad.JsonModificarUsuario;
 import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.entity.Usuario;
+import com.pid.proyecto.enums.RolNombre;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
 import com.pid.proyecto.seguridad.jwt.JwtProvider;
@@ -53,7 +55,7 @@ public class UsuarioController {
   UsuarioService usuarioService;
 
   @Autowired
-  RolService rolSistemaService;
+  RolService rolService;
 
   @Autowired
   JwtProvider jwtProvider;
@@ -69,10 +71,9 @@ public class UsuarioController {
   @PutMapping("/crearUsuario")
   @PreAuthorize("hasRole('ROLE_C_USUARIO')")
   public ResponseEntity<?> crear(
-    @Valid @RequestBody NuevoUsuario NU,
+    @Valid @RequestBody JsonNuevoUsuario NU,
     BindingResult BR
   ) {
-
     // VALIDAR ERRORES
     if (BR.hasErrors()) {
       List<String> errores = new LinkedList<>();
@@ -105,9 +106,9 @@ public class UsuarioController {
 
     // rol
     // CONFIRMAMOS QUE EXISTA EL ROL QUE ESTAMOS PASANDO EN EL JSON
-    if (rolSistemaService.existsByRol(Srol)) {
+    if (rolService.existsByRol(Srol)) {
       // ASIGNAMOS EL ROL AL QUE SE HACE REFERENCIA
-      rol = rolSistemaService.getByRol(Srol).get();
+      rol = rolService.getByRol(Srol).get();
     } // SI NO EXISTE EL ROL LANZAMOS UN ERROR
     else {
       return new ResponseEntity<>(
@@ -115,8 +116,6 @@ public class UsuarioController {
         HttpStatus.NOT_FOUND
       );
     }
-
-    // VERIFICAMOS SI YA EXISTE LA ENTIDAD QUE ESTAMOS CREANDO
 
     // PREGUNTAMOS SI YA EXISTE ESA ENTIDAD EN NUESTRO SISTEMA
     if (usuarioService.existsByUsuario(username)) {
@@ -126,7 +125,7 @@ public class UsuarioController {
       );
     }
 
-    // CREAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
+    // LLENAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
     usuario.setNombre(nombre);
     usuario.setApellidos(apellidos);
     usuario.setUsuario(username);
@@ -147,7 +146,7 @@ public class UsuarioController {
   // MOSTRAMOS TODOS LOS USUARIOS
   @GetMapping
   @PreAuthorize("hasRole('ROLE_R_USUARIO')")
-  public ResponseEntity<List<Usuario>> list() {
+  public ResponseEntity<List<Usuario>> listar() {
     List<Usuario> list = usuarioService.findAll();
     return new ResponseEntity<>(list, HttpStatus.OK);
   }
@@ -157,7 +156,7 @@ public class UsuarioController {
   @PreAuthorize("hasRole('ROLE_U_USUARIO')")
   public ResponseEntity<?> actualizar(
     @PathVariable("id") int id,
-    @Valid @RequestBody ModificarUsuario MU,
+    @Valid @RequestBody JsonModificarUsuario MU,
     BindingResult BR
   ) {
     // VALIDAR ERRORES
@@ -202,9 +201,9 @@ public class UsuarioController {
     // LLENAMOS NUESTRO rol SOLO SI SE PASO POR PARAMETRO SU INFORMACION
     if (!Srol.isBlank()) {
       // CONFIRMAMOS QUE EXISTA EL ROL QUE ESTAMOS PASANDO EN EL JSON
-      if (rolSistemaService.existsByRol(Srol)) {
+      if (rolService.existsByRol(Srol)) {
         // ASIGNAMOS EL ROL AL QUE SE HACE REFERENCIA
-        rol = rolSistemaService.getByRol(Srol).get();
+        rol = rolService.getByRol(Srol).get();
       } // SI NO EXISTE EL ROL LANZAMOS UN ERROR
       else {
         return new ResponseEntity<>(
@@ -214,10 +213,14 @@ public class UsuarioController {
       }
     }
 
-    // ACTUALIZAMOS CON LAS VARIABLES LLENAS
+    // ACTUALIZAMOS CON LAS VARIABLES LLENAS Y VERIFICAMOS QUE NO COINCIDA CON OTRA ENTIDAD EL PARAMETRO DE USUARIO
     // nombre
     if (!nombre.isBlank()) {
-      if (!nombre.matches("([A-Z][a-z]*)|([A-Z][a-z]* [A-Z][a-z]*)")) {
+      if (
+        !nombre.matches(
+          "([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)|([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]* [A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)"
+        )
+      ) {
         return new ResponseEntity<>(
           new Mensaje(
             "FORMATO DE NOMBRE INCORRECTO, DEBE COMENZAR CON MAYÚSCULA SEGUIDO DE MINÚSCULAS Y SOLO ADMITE DOS ENTRADAS"
@@ -229,7 +232,11 @@ public class UsuarioController {
     }
     // apellidos
     if (!apellidos.isBlank()) {
-      if (!apellidos.matches("([A-Z][a-z]*)|([A-Z][a-z]* [A-Z][a-z]*)")) {
+      if (
+        !apellidos.matches(
+          "([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)|([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]* [A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)"
+        )
+      ) {
         return new ResponseEntity<>(
           new Mensaje(
             "FORMATO DE APELLIDO INCORRECTO, DEBE COMENZAR CON MAYÚSCULA SEGUIDO DE MINÚSCULAS Y SOLO ADMITE DOS ENTRADAS"
@@ -247,7 +254,19 @@ public class UsuarioController {
           HttpStatus.PRECONDITION_FAILED
         );
       }
-      usuario.setUsuario(username);
+      if (
+        (usuario.getUsuario() != username) &&
+        !usuarioService.existsByUsuario(username)
+      ) {
+        usuario.setUsuario(username);
+      } else {
+        return new ResponseEntity<>(
+          new Mensaje(
+            "YA EXISTE ALGUIEN MÁS CON ESE USUARIO, ASIGNE OTRO DISTINTO"
+          ),
+          HttpStatus.PRECONDITION_FAILED
+        );
+      }
     }
     // contraseña
     if (!password.isBlank()) {
@@ -290,7 +309,7 @@ public class UsuarioController {
   @PostMapping("/actualizarUsuarioPropio")
   @PreAuthorize("hasRole('ROLE_UP_USUARIO')")
   public ResponseEntity<?> actualizarPropio(
-    @Valid @RequestBody ModificarUsuario MU,
+    @Valid @RequestBody JsonModificarUsuario MU,
     BindingResult BR
   ) {
     // VALIDAR ERRORES
@@ -316,14 +335,7 @@ public class UsuarioController {
     // LLENAMOS LAS VARIABLES
 
     // usuario
-    if (usuarioService.existsById(id)) {
-      usuario = usuarioService.getByIdusuario(id).get();
-    } else {
-      return new ResponseEntity<>(
-        new Mensaje("ESE ID DE USUARIO NO EXISTE"),
-        HttpStatus.NOT_FOUND
-      );
-    }
+    usuario = usuarioService.getByIdusuario(id).get();
     // password lleno
 
     // ACTUALIZAMOS CON LAS VARIABLES LLENAS
@@ -371,9 +383,6 @@ public class UsuarioController {
       LU.add(usuarioService.getByIdusuario(id).get());
     }
 
-    // for (Usuario u : LU) {
-    //   usuarioService.delete(u.getIdusuario());
-    // }
 
     usuarioService.deleteAll(LU);
     return new ResponseEntity<>(
@@ -382,9 +391,10 @@ public class UsuarioController {
     );
   }
 
+  // LOGIN
   @PostMapping("/loginUsuario")
-  public ResponseEntity<JwtDto> login(
-    @Valid @RequestBody LoginUsuario loginUsuario
+  public ResponseEntity<JsonJwtDto> login(
+    @Valid @RequestBody JsonLoginUsuario loginUsuario
   ) {
     Authentication authentication = authenticationManager.authenticate(
       new UsernamePasswordAuthenticationToken(
@@ -398,7 +408,68 @@ public class UsuarioController {
     // EL RESTO DE SU INFORMACION
     String jwt = jwtProvider.generateToken(authentication);
 
-    JwtDto jwtDto = new JwtDto(jwt); //CONSTRUIMOS EL TOKEN
+    JsonJwtDto jwtDto = new JsonJwtDto(jwt); //CONSTRUIMOS EL TOKEN
     return new ResponseEntity<>(jwtDto, HttpStatus.OK);
+  }
+
+  // REGISTRARSE
+  @PutMapping("/RegistrarUsuario")
+  public ResponseEntity<?> Registrarse(
+    @Valid @RequestBody JsonRegistrarUsuario RU,
+    BindingResult BR
+  ) {
+    // VALIDAR ERRORES
+    if (BR.hasErrors()) {
+      List<String> errores = new LinkedList<>();
+      for (FieldError FE : BR.getFieldErrors()) {
+        errores.add(FE.getDefaultMessage());
+      }
+      return new ResponseEntity<>(
+        new Mensaje(errores.toString()),
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    // DECLARAMOS VARIABLES
+    Usuario usuario = new Usuario();
+    String nombre = RU.getNombre();
+    String apellidos = RU.getApellidos();
+    String username = RU.getUsuario();
+    String password = RU.getContrasena();
+    Rol rol = rolService.getByRol(RolNombre.ROLE_USUARIO_SISTEMA.name()).get();
+
+    // LLENAMOS LAS VARIABLES
+
+    // usuario en espera
+    // nombre lleno
+    // apellidos lleno
+    // username lleno
+    // password lleno
+    // rol lleno
+
+    // ACTUALIZAMOS CON LAS VARIABLES LLENAS
+    // nombre
+    usuario.setNombre(nombre);
+    // apellidos
+    usuario.setApellidos(apellidos);
+    // usuario
+    if (usuarioService.existsByUsuario(username)) {
+      return new ResponseEntity<>(
+        new Mensaje("ESE USUARIO YA ESTA REGISTRADO"),
+        HttpStatus.OK
+      );
+    }
+    usuario.setUsuario(username);
+    // contraseña
+    usuario.setContrasena(passwordEncoder.encode(password));
+    // rol
+    usuario.setRol(rol);
+
+    // SALVAMOS ESE USUARIO
+
+    usuarioService.save(usuario);
+
+    // RETORNAMOS CONFIRMACION
+    return new ResponseEntity<>(new Mensaje("USUARIO GUARDADO"), HttpStatus.OK);
   }
 }

@@ -1,9 +1,6 @@
 package com.pid.proyecto.repository;
 
 import com.pid.proyecto.entity.Permiso;
-import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.enums.PermisoNombre;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

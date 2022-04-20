@@ -4,17 +4,17 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-public class NuevoUsuario {
+public class JsonNuevoUsuario {
   @NotBlank(message = "DEBES ESPECIFICAR EL NOMBRE")
   @Pattern(
-    regexp = "([A-Z][a-z]*)|([A-Z][a-z]* [A-Z][a-z]*)",
+    regexp = "([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)|([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]* [A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)",
     message = "FORMATO DE NOMBRE INCORRECTO, DEBE COMENZAR CON MAYÚSCULA SEGUIDO DE MINÚSCULAS Y SOLO ADMITE DOS ENTRADAS"
   )
   private String nombre;
 
   @NotBlank(message = "DEBES ESPECIFICAR EL APELLIDO")
   @Pattern(
-    regexp = "([A-Z][a-z]*)|([A-Z][a-z]* [A-Z][a-z]*)",
+    regexp = "([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)|([A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]* [A-Z|Á|É|Í|Ó|Ú|Ñ][a-z|á|é|í|ó|ú|ñ|ű]*)",
     message = "FORMATO DE APELLIDO INCORRECTO, DEBE COMENZAR CON MAYÚSCULA SEGUIDO DE MINÚSCULAS Y SOLO ADMITE DOS ENTRADAS"
   )
   private String apellidos;
@@ -37,12 +37,12 @@ public class NuevoUsuario {
   private String contrasena;
 
   @NotBlank(message = "DEBES ESPECIFICAR UN ROL")
-  @Pattern(regexp = "ROLE_[A-Z_]*", message = "FORMATO DE ROL INCORRECTO, EL ROL DEBE COMENZAR CON [ROL_] Y SOLO ADMITE [_] Y [A-Z]")
+  @Pattern(regexp = "ROLE_[A-Z|_]*", message = "FORMATO DE ROL INCORRECTO, EL ROL DEBE COMENZAR CON [ROL_] Y SOLO ADMITE [_] Y [A-Z]")
   private String rol;
 
-  public NuevoUsuario() {}
+  public JsonNuevoUsuario() {}
 
-  public NuevoUsuario(
+  public JsonNuevoUsuario(
     String nombre,
     String apellidos,
     String usuario,

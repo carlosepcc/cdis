@@ -11,65 +11,46 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional //mejora el rendimiento y la coherencia de las consultas
 public class UsuarioService {
+  //inyectamos UsuarioRepository
+  @Autowired
+  UsuarioRepository usuarioRepo;
 
-    //inyectamos UsuarioRepository
-    @Autowired
-    UsuarioRepository usuarioRepo;
+  // Obtenemos el Usuario mediante el nombre de usuario (usuario)
+  public Optional<Usuario> getByUsuario(String usuario) {
+    return usuarioRepo.findByUsuario(usuario);
+  }
 
-    // Obtenemos el Usuario mediante el nombre de usuario (usuario) 
-    public Optional<Usuario> getByUsuario(String usuario) {
+  // Comprobamos si existe el usuario con nombre de usuario (usuario)
+  public boolean existsByUsuario(String usuario) {
+    return usuarioRepo.existsByUsuario(usuario);
+  }
 
-        return usuarioRepo.findByUsuario(usuario);
-    }
+  public boolean existsById(int id) {
+    return usuarioRepo.existsById(id);
+  }
 
-    // Comprobamos si existe el usuario con nombre de usuario (usuario)
-    public boolean existsByUsuario(String usuario) {
+  // salvamos el objeto usuario en la base de datos
+  public void save(Usuario usuario) {
+    usuarioRepo.save(usuario);
+  }
 
-        return usuarioRepo.existsByUsuario(usuario);
+  public Optional<Usuario> getByIdusuario(int id) {
+    return usuarioRepo.findById(id);
+  }
 
-    }
+  public void delete(int id) {
+    usuarioRepo.deleteById(id);
+  }
 
-    // Comprobamos si existe el apellido (apellidos)
-    public boolean existsByApellidos(String apellidos) {
+  public void deleteByUsuario(Usuario us) {
+    usuarioRepo.delete(us);
+  }
 
-        return usuarioRepo.existsByApellidos(apellidos);
+  public void deleteAll(List<Usuario> us) {
+    usuarioRepo.deleteAll(us);
+  }
 
-    }
-
-    // Comprobamos si existe el apellido (apellidos)
-    public boolean existsById(int id) {
-        return usuarioRepo.existsById(id);
-    }
-
-    // salvamos el objeto usuario en la base de datos
-    public void save(Usuario usuario) {
-
-        usuarioRepo.save(usuario);
-
-    }
-
-    public Optional<Usuario> getByIdusuario(int id) {
-
-        return usuarioRepo.findById(id);
-    }
-
-    public void delete(int id) {
-
-        usuarioRepo.deleteById(id);
-    }
-    
-    public void deleteByUsuario(Usuario us) {
-
-        usuarioRepo.delete(us);
-    }
-    public void deleteAll(List<Usuario> us) {
-
-        usuarioRepo.deleteAll(us);
-    }
-    
-
-    public List<Usuario> findAll() {
-        
-        return usuarioRepo.findAll();
-    }
+  public List<Usuario> findAll() {
+    return usuarioRepo.findAll();
+  }
 }

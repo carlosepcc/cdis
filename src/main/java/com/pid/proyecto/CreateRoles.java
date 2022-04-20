@@ -42,8 +42,8 @@ public class CreateRoles implements CommandLineRunner {
     // VERIFICAMOS QUE NO HAYAN ROLES CREADOS NI PERMISOS NI USUARIOS
     // EN RESUMEN QUE LA BASE DE DATOS NO SE HAYA USADO NUNCA
     if (
-      rolSistemaService.Listar().isEmpty() &&
-      permisosService.Listar().isEmpty() &&
+      rolSistemaService.findAll().isEmpty() &&
+      permisosService.findAll().isEmpty() &&
       usuarioService.findAll().isEmpty()
     ) {
       Usuario usuario = new Usuario();
@@ -168,16 +168,16 @@ public class CreateRoles implements CommandLineRunner {
     List<Permiso> lista = new LinkedList<>();
     for (char c : Lc) {
       if (c == 'c') {
-        lista.add(new Permiso(PermisoNombre.ROLE_C_ROL_SISTEMA.name()));
+        lista.add(new Permiso(PermisoNombre.ROLE_C_ROL.name()));
       }
       if (c == 'r') {
-        lista.add(new Permiso(PermisoNombre.ROLE_R_ROL_SISTEMA.name()));
+        lista.add(new Permiso(PermisoNombre.ROLE_R_ROL.name()));
       }
       if (c == 'u') {
-        lista.add(new Permiso(PermisoNombre.ROLE_U_ROL_SISTEMA.name()));
+        lista.add(new Permiso(PermisoNombre.ROLE_U_ROL.name()));
       }
       if (c == 'd') {
-        lista.add(new Permiso(PermisoNombre.ROLE_D_ROL_SISTEMA.name()));
+        lista.add(new Permiso(PermisoNombre.ROLE_D_ROL.name()));
       }
     }
 

@@ -1,16 +1,16 @@
 package com.pid.proyecto.Json.Login;
 
-public class JwtDto {
+public class JsonJwtDto {
 
     // solo vamos a enviar el token
     private String token;
 
     //constructor vacio
-    public JwtDto() {
+    public JsonJwtDto() {
     }
 
     //constructor con campos
-    public JwtDto(String token) {
+    public JsonJwtDto(String token) {
         this.token = token;
     }
 

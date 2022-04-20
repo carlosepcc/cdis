@@ -5,7 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 
 //Esta es la clase encargada de recibir los datos desde el json
-public class NuevaComision {
+public class JsonNuevaComision {
 
     @NotBlank
     private String tipoComision;
@@ -18,7 +18,7 @@ public class NuevaComision {
     
     
 
-    public NuevaComision() {
+    public JsonNuevaComision() {
     }
 
     public List<String> getRolComision() {

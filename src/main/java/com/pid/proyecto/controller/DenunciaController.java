@@ -7,7 +7,7 @@ import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Filtrador;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
-import com.pid.proyecto.Json.CrearEntidad.NuevaDenuncia;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevaDenuncia;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.UserDetailsServiceImpl;
 import com.pid.proyecto.service.UsuarioService;
@@ -62,7 +62,7 @@ public class denunciaController {
             + " or hasRole('ROLE_TRABAJADOR')"
             + " or hasRole('ROLE_DECANO')"
             + " or hasRole('ROLE_PROFESOR')")
-    public ResponseEntity<?> crear(@Valid @RequestBody NuevaDenuncia nuevaDenuncia, BindingResult bindingResult) {
+    public ResponseEntity<?> crear(@Valid @RequestBody JsonNuevaDenuncia nuevaDenuncia, BindingResult bindingResult) {
 
         // si tiene errores en el binding result
         if (bindingResult.hasErrors()) {

@@ -5,63 +5,42 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Permiso;
-import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.enums.PermisoNombre;
+import com.pid.proyecto.repository.PermisoRepository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.pid.proyecto.repository.PermisoRepository;
 
-/**
- *
- * @author Angel
- */
 @Service
 @Transactional
 public class PermisoService {
+  // inyectamos
+  @Autowired
+  PermisoRepository permisosRepository;
 
-    // inyectamos
-    @Autowired
-    PermisoRepository permisosRepository;
+  public List<Permiso> findAll() {
+    return permisosRepository.findAll();
+  }
 
-    public List<Permiso> Listar() {
+  // devolvemos el permiso
+  public Optional<Permiso> getByPermiso(String permisoNombre) {
+    return permisosRepository.findByPermiso(permisoNombre);
+  }
 
-        return permisosRepository.findAll();
-    }
+  public void save(Permiso permiso) {
+    permisosRepository.save(permiso);
+  }
 
-    // devolvemos el permiso
-    public Optional<Permiso> getByPermiso(String permisoNombre) {
-        return permisosRepository.findByPermiso(permisoNombre);
-    }
+  public void saveAll(List<Permiso> permisos) {
+    permisosRepository.saveAll(permisos);
+  }
 
-    public void save(Permiso permiso) {
+  public boolean existsByPermiso(String permiso) {
+    return permisosRepository.existsByPermiso(permiso);
+  }
 
-        permisosRepository.save(permiso);
-
-    }
-
-    public void saveAll(List<Permiso> permisos) {
-
-        permisosRepository.saveAll(permisos);
-
-    }
-
-    public List<Permiso> findAll() {
-        return permisosRepository.findAll();
-    }
-
-
-    public boolean existsByPermiso(String permiso) {
-
-        return permisosRepository.existsByPermiso(permiso);
-
-    }
-
-    public boolean existsByIdpermiso(int idPermiso) {
-
-        return permisosRepository.existsByIdpermiso(idPermiso);
-
-    }
+  public boolean existsByIdpermiso(int idPermiso) {
+    return permisosRepository.existsByIdpermiso(idPermiso);
+  }
 }

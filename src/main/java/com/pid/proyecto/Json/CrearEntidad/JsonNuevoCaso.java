@@ -1,9 +1,9 @@
-package com.pid.proyecto.Json.ModificarEntidad;
+package com.pid.proyecto.Json.CrearEntidad;
 
 import java.util.Date;
 import javax.validation.constraints.NotBlank;
 
-public class ModificarCaso {
+public class JsonNuevoCaso {
 
     private boolean abierto;
     @NotBlank
@@ -13,14 +13,14 @@ public class ModificarCaso {
     @NotBlank
     private Date fechaExpiracion;
 
-    public ModificarCaso(int idDenuncia, int idComision, boolean abierto, Date fechaExpiracion) {
+    public JsonNuevoCaso(int idDenuncia, int idComision, boolean abierto, Date fechaExpiracion) {
         this.idDenuncia = idDenuncia;
         this.idComision = idComision;
         this.abierto = abierto;
         this.fechaExpiracion = fechaExpiracion;
     }
 
-    public ModificarCaso() {
+    public JsonNuevoCaso() {
     }
 
     public Date getFechaExpiracion() {

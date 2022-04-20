@@ -5,7 +5,7 @@ import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
-import com.pid.proyecto.Json.CrearEntidad.NuevaDeclaracion;
+import com.pid.proyecto.Json.CrearEntidad.JsonNuevaDeclaracion;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.DeclaracionService;
 import com.pid.proyecto.service.UserDetailsServiceImpl;
@@ -53,7 +53,7 @@ public class declaracionController {
     
     @PutMapping()
     @PreAuthorize("hasRole('ROLE_C_DECLARACION')")
-    public ResponseEntity<?> crear(@Valid @RequestBody NuevaDeclaracion ND, BindingResult bindingResult) {
+    public ResponseEntity<?> crear(@Valid @RequestBody JsonNuevaDeclaracion ND, BindingResult bindingResult) {
         
         Declaracion declaracion = new Declaracion();
         
@@ -93,7 +93,7 @@ public class declaracionController {
     
     @PostMapping()
     @PreAuthorize("hasRole('ROLE_U_DECLARACION')")
-    public ResponseEntity<?> Modificar(@Valid @RequestBody NuevaDeclaracion ND, BindingResult bindingResult) {
+    public ResponseEntity<?> Modificar(@Valid @RequestBody JsonNuevaDeclaracion ND, BindingResult bindingResult) {
         
         Declaracion declaracion = new Declaracion();
         
