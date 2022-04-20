@@ -382,7 +382,6 @@ public class UsuarioController {
       LU.add(usuarioService.getByIdusuario(id).get());
     }
 
-
     usuarioService.deleteAll(LU);
     return new ResponseEntity<>(
       new Mensaje(" USUARIOS BORRADOS: [ " + ids.size() + " ]"),
