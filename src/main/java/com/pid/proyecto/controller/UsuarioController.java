@@ -40,9 +40,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-//revisamos MainSecurity.class en el configure vemos la direccion para crear nuevo usuario
 @RequestMapping("/Usuario")
-//podemos acceder desde cualquier url
+// PODEMOS ACCEDER DESDE CUALQUIER URL
 @CrossOrigin("*")
 public class UsuarioController {
   @Autowired
