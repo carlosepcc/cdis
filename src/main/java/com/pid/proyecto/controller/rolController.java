@@ -202,14 +202,13 @@ public class RolController {
         }
         if (!rolService.existsByRol(Srol)) {
           rol.setRol(Srol);
-
+          // CAMBIAMOS LOS NOMBRES DEL ROL TAMBIEN EN LA TABLA Q RELACIONA ROLES CON PERMISOS
           for (RolPermiso RP : LRP) {
             if (RP.getRolPermisoPK().getIdrol() == rol.getIdrol()) {
               RP.setRol(rol.getRol());
               rolPermisoService.saveAll(LRP);
             }
           }
-
         } else if (!MR.getRol().equals(rol.getRol())) {
           return new ResponseEntity<>(
             new Mensaje("YA EXISTE ESE ROL, ASIGNE OTRO DISTINTO"),
