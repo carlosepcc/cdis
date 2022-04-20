@@ -253,23 +253,22 @@ public class UsuarioController {
           HttpStatus.PRECONDITION_FAILED
         );
       }
-      if (
-        (usuario.getUsuario() != username) &&
-        !usuarioService.existsByUsuario(username)
-      ) {
+      if (!usuarioService.existsByUsuario(username)) {
         usuario.setUsuario(username);
       } else {
-        return new ResponseEntity<>(
-          new Mensaje(
-            "YA EXISTE ALGUIEN MÁS CON ESE USUARIO, ASIGNE OTRO DISTINTO"
-          ),
-          HttpStatus.PRECONDITION_FAILED
-        );
+        if (!usuario.getUsuario().equalsIgnoreCase(username)) {
+          return new ResponseEntity<>(
+            new Mensaje(
+              "YA EXISTE ALGUIEN MÁS CON ESE USUARIO, ASIGNE OTRO DISTINTO "
+            ),
+            HttpStatus.PRECONDITION_FAILED
+          );
+        }
       }
     }
     // contraseña
     if (!password.isBlank()) {
-      if (!(password.length() <= 8)) {
+      if (password.length() > 8) {
         return new ResponseEntity<>(
           new Mensaje("LA CONTRASEÑA DEBE CONTENER DE 4 - 10 CARACTERES"),
           HttpStatus.PRECONDITION_FAILED
@@ -375,7 +374,7 @@ public class UsuarioController {
     for (int id : ids) {
       if (!usuarioService.existsById(id)) {
         return new ResponseEntity<>(
-          new Mensaje("NO EXISTE ALGUNO DE LOS ID ESPECIFICADOS"),
+          new Mensaje("NO EXISTE EL ID ESPECIFICADO: " + id),
           HttpStatus.NOT_FOUND
         );
       }

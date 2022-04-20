@@ -5,6 +5,7 @@ import com.pid.proyecto.Json.CrearEntidad.JsonNuevoRol;
 import com.pid.proyecto.Json.ModificarEntidad.JsonModificarRol;
 import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.entity.Rol;
+import com.pid.proyecto.entity.RolPermiso;
 import com.pid.proyecto.seguridad.auxiliares.Mensaje;
 import com.pid.proyecto.service.PermisoService;
 import com.pid.proyecto.service.RolPermisoService;
@@ -67,9 +68,13 @@ public class RolController {
 
     // DECLARAMOS VARIABLES
     //LLENAMOS LAS VARIABLES A USAR
-    // LLENAMOS LA ENTIDAD UNA VEZ QUE YA TENEMOS TODAS LAS VARIABLES LISTAS
+
     List<Integer> LIP = NR.getPermisos();
     List<Permiso> LP = new LinkedList<>();
+    String Srol = NR.getRol();
+    Rol rol = new Rol();
+
+    // LLENAMOS LA ENTIDAD UNA VEZ QUE YA TENEMOS TODAS LAS VARIABLES LISTAS Y VERIFICAMOS QUE LO QUE ESTAMOS CREANDO NO EXISTA YA
     for (int idp : LIP) {
       if (permisoService.existsByIdpermiso(idp)) {
         LP.add(permisoService.findByIdPermiso(idp).get());
@@ -79,8 +84,6 @@ public class RolController {
       );
     }
 
-    String Srol = NR.getRol();
-    Rol rol = new Rol();
     if (!Srol.isBlank()) {
       if (rolService.existsByRol(Srol)) return new ResponseEntity<>(
         new Mensaje("ESE ROL YA EXISTE"),
@@ -146,6 +149,8 @@ public class RolController {
     // DECLARAMOS VARIABLES
     // LLENAMOS LAS VARIABLES
     // ACTUALIZAMOS CON LAS VARIABLES LLENAS
+
+    List<RolPermiso> LRP = rolPermisoService.Listar();
     String Srol = MR.getRol();
     Rol rol = new Rol();
     if (rolService.existsByIdrol(id)) {
@@ -169,6 +174,7 @@ public class RolController {
         );
       }
     }
+
     for (int idp : eliminarPermisos) {
       if (!permisoService.existsByIdpermiso(idp)) {
         return new ResponseEntity<>(
@@ -196,7 +202,15 @@ public class RolController {
         }
         if (!rolService.existsByRol(Srol)) {
           rol.setRol(Srol);
-        } else {
+
+          for (RolPermiso RP : LRP) {
+            if (RP.getRolPermisoPK().getIdrol() == rol.getIdrol()) {
+              RP.setRol(rol.getRol());
+              rolPermisoService.saveAll(LRP);
+            }
+          }
+
+        } else if (!MR.getRol().equals(rol.getRol())) {
           return new ResponseEntity<>(
             new Mensaje("YA EXISTE ESE ROL, ASIGNE OTRO DISTINTO"),
             HttpStatus.PRECONDITION_FAILED
@@ -210,8 +224,7 @@ public class RolController {
         for (int idp : agregarPermisos) {
           permisos.add(permisoService.findByIdPermiso(idp).get());
         }
-
-        createRoles.GuardarRelaciones(rol, permisos);
+       createRoles.GuardarRelaciones(rol, permisos);
       }
       permisos.clear();
       // SI SE ESTAN ELIMINANDO PERMISOS DE ESTE ROL
