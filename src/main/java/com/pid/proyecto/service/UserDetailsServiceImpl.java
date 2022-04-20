@@ -56,7 +56,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         for (RolPermiso RP : rolPermisosLista) {
 
             if (RP.getRol().equals(rol.getRol())) {
-                permisosLista.add(permisosService.getByPermiso(RP.getPermiso()).get());
+                permisosLista.add(permisosService.findByPermiso(RP.getPermiso()).get());
             }
         }
 

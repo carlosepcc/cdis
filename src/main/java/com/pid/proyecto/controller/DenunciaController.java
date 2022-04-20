@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Denuncia")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class denunciaController {
+public class DenunciaController {
 
     @Autowired
     UserDetailsServiceImpl userDetailsServiceImpl;

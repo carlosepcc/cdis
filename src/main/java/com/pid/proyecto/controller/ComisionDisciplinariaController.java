@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/Comision")
 @CrossOrigin("*")
-public class comisionDisciplinariaController {
+public class ComisionDisciplinariaController {
 
     @Autowired
     RolService rolSistemaService;

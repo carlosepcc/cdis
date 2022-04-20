@@ -98,10 +98,12 @@ public class CreateRoles implements CommandLineRunner {
       // ENLAZAR PERMISOS DE USUARIO CON EL ROL DE USUARIO
       List<Permiso> permisosUser = new LinkedList<>();
       permisosUser.add(
-        permisosService.getByPermiso(PermisoNombre.ROLE_R_USUARIO.name()).get()
+        permisosService.findByPermiso(PermisoNombre.ROLE_R_USUARIO.name()).get()
       );
       permisosUser.add(
-        permisosService.getByPermiso(PermisoNombre.ROLE_UP_USUARIO.name()).get()
+        permisosService
+          .findByPermiso(PermisoNombre.ROLE_UP_USUARIO.name())
+          .get()
       );
       Rol rolUser = rolSistemaService
         .getByRol(RolNombre.ROLE_USUARIO_SISTEMA.name())
@@ -127,17 +129,47 @@ public class CreateRoles implements CommandLineRunner {
   }
 
   public void GuardarRelaciones(Rol rol, List<Permiso> permisos) {
-    int idRol = rol.getIdrol();
     String nombreRol = rol.getRol();
     RolPermiso rolPermiso;
     RolPermisoPK rolPermisosPK;
     List<RolPermiso> LRP = new LinkedList<>();
+
+    boolean yaExiste = false;
+    List<RolPermiso> relacionesExistentes = rolPermisosService.Listar();
+
     for (Permiso p : permisos) {
-      rolPermisosPK = new RolPermisoPK(idRol, p.getIdpermiso());
+      rolPermisosPK = new RolPermisoPK(rol.getIdrol(), p.getIdpermiso());
       rolPermiso = new RolPermiso(rolPermisosPK, nombreRol, p.getPermiso());
-      LRP.add(rolPermiso);
+
+      for (RolPermiso rp : relacionesExistentes) {
+        if (rp.getRolPermisoPK().getIdrol() == rolPermisosPK.getIdrol() && rp.getRolPermisoPK().getIdpermiso() == rolPermisosPK.getIdpermiso()) yaExiste = true;
+      }
+
+      if (!yaExiste) LRP.add(rolPermiso);
     }
     rolPermisosService.saveAll(LRP);
+  }
+
+  public boolean EliminarRelaciones(Rol rol, List<Permiso> permisos) {
+    RolPermisoPK rolPermisosPK;
+    List<RolPermiso> LRP = new LinkedList<>();
+
+    boolean respuesta = true;
+    List<RolPermiso> relacionesExistentes = rolPermisosService.Listar();
+
+    // VERIFICAR QUE TODOS LOS PERMISOS EXISTAN DENTRO DE NUESTRO OBJETO ROL
+    for (Permiso p : permisos) {
+      rolPermisosPK = new RolPermisoPK(rol.getIdrol(), p.getIdpermiso());
+
+      for (RolPermiso rp : relacionesExistentes) {
+        if (!(rp.getRolPermisoPK().getIdrol() == rolPermisosPK.getIdrol() && rp.getRolPermisoPK().getIdpermiso() == rolPermisosPK.getIdpermiso())) respuesta = false;
+        if (respuesta) LRP.add(rp);
+      }
+      if (respuesta == true) {
+        rolPermisosService.deleteAll(LRP);
+      }
+    }
+    return respuesta;
   }
 
   public List<Permiso> PermisosUsuario(List<Character> Lc) {

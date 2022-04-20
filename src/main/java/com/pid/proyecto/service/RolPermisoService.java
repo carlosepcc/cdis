@@ -5,11 +5,11 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.RolPermiso;
+import com.pid.proyecto.repository.RolPermisoRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.pid.proyecto.repository.RolPermisoRepository;
 
 /**
  *
@@ -18,26 +18,28 @@ import com.pid.proyecto.repository.RolPermisoRepository;
 @Service
 @Transactional
 public class RolPermisoService {
-    
-    @Autowired
-    RolPermisoRepository rolPermisosRepository;
+  @Autowired
+  RolPermisoRepository rolPermisosRepository;
 
-    public List<RolPermiso> Listar() {
+  public List<RolPermiso> Listar() {
+    return rolPermisosRepository.findAll();
+  }
 
-        return rolPermisosRepository.findAll();
+  public void save(RolPermiso rolPermisos) {
+    rolPermisosRepository.save(rolPermisos);
+  }
+
+  public void deleteAll(List<RolPermiso> LRP) {
+    rolPermisosRepository.deleteAll(LRP);
+  }
+
+  public void saveAll(List<RolPermiso> rolPermisos) {
+    for (RolPermiso rolPermiso : rolPermisos) {
+      rolPermisosRepository.save(rolPermiso);
     }
+  }
 
-    public void save(RolPermiso rolPermisos) {
-
-        rolPermisosRepository.save(rolPermisos);
-
-    }
-
-    public void saveAll(List<RolPermiso> rolPermisos) {
-
-        for (RolPermiso rolPermiso : rolPermisos) {
-            rolPermisosRepository.save(rolPermiso);
-        }
-    }
-    
+  public boolean existsById(int id) {
+    return rolPermisosRepository.existsById(id);
+  }
 }

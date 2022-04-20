@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Declaracion")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class declaracionController {
+public class DeclaracionController {
     
     @Autowired
     DeclaracionService declaracionService;

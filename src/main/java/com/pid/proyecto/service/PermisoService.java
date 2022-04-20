@@ -24,8 +24,11 @@ public class PermisoService {
   }
 
   // devolvemos el permiso
-  public Optional<Permiso> getByPermiso(String permisoNombre) {
+  public Optional<Permiso> findByPermiso(String permisoNombre) {
     return permisosRepository.findByPermiso(permisoNombre);
+  }
+  public Optional<Permiso> findByIdPermiso(int id) {
+    return permisosRepository.findById(id);
   }
 
   public void save(Permiso permiso) {

@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ComDiscUsuario")
 //podemos acceder desde cualquier url
 @CrossOrigin("*")
-public class comDiscUsuarioController {
+public class ComDiscUsuarioController {
 
     @Autowired
     RolService rolSistemaService;
