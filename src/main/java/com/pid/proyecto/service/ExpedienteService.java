@@ -1,6 +1,7 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Expediente;
+import com.pid.proyecto.entity.ExpedientePK;
 import com.pid.proyecto.repository.ExpedienteRepo;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,14 @@ public class ExpedienteService {
 
     public void save(Expediente expediente) {
         repo.save(expediente);
+    }
+
+    public Expediente findByExpedientePK(ExpedientePK PK) {
+        return repo.findByExpedientePK(PK).get();
+    }
+
+    public void deleteAll(List<Expediente> LE) {
+        repo.deleteAll(LE);
     }
 
 }

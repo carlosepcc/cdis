@@ -147,16 +147,12 @@ public class CasoController {
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarCasos JSONB) {
 
         List<Caso> LC = new LinkedList<>();
-        List<CasoPK> LCPK = new LinkedList<>();
+        List<CasoPK> LCPK = JSONB.getLCPK();
 
-        for (int i = 0; i < JSONB.getLC().size(); i++) {
-            
-            LCPK.add(new CasoPK(JSONB.getLD().get(i), JSONB.getLC().get(i)));
+        for (int i = 0; i < LCPK.size(); i++) {
+            LC.add(casoService.findByCasoPK(LCPK.get(i)));
         }
 
-        for (CasoPK id : LCPK) {
-            LC.add(casoService.findByCasoPK(id));
-        }
         casoService.deleteAll(LC);
 
         // VERIFICAMOS QUE TODOS LOS ID EXISTAN

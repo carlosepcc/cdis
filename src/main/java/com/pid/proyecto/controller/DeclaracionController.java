@@ -163,17 +163,13 @@ public class DeclaracionController {
     @DeleteMapping("/borrar")
     @PreAuthorize("hasRole('ROLE_D_DECLARACION')")
     @ResponseBody
-    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSOND) {
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSONBD) {
 
         List<Declaracion> LD = new LinkedList<>();
-        DeclaracionPK PK;
+        List<DeclaracionPK> LDPK = JSONBD.getLDPK();
 
-        for (int i = 0; i < JSOND.getLU().size(); i++) {
-            PK = new DeclaracionPK(JSOND.getLU().get(i),
-                    JSOND.getLD().get(i),
-                    JSOND.getLC().get(i));
-            LD.add(declaracionService.findByDeclaracionPK(PK));
-
+        for (int i = 0; i < LDPK.size(); i++) {
+            LD.add(declaracionService.findByDeclaracionPK(LDPK.get(i)));
         }
 
         declaracionService.deleteAll(LD);
