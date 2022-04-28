@@ -1,7 +1,7 @@
 package com.pid.proyecto.controller;
 
+import com.pid.proyecto.Json.Borrar.JsonBorrarExpedientes;
 import com.pid.proyecto.Json.JsonExpediente;
-import com.pid.proyecto.Json.JsonObjeto;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.Denuncia;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Entidad")
+@RequestMapping("/Expediente")
 @CrossOrigin("*")
 public class ExpedienteController {
 
@@ -92,10 +92,9 @@ public class ExpedienteController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar/{idUsuarioDenunciaComision}")
+    @PostMapping("/modificar")
     @PreAuthorize("hasRole('ROLE_U_ENTIDAD')")
     public ResponseEntity<?> modificar(
-            @PathVariable("idUsuarioDenunciaComision") List<Integer> id,
             @Valid @RequestBody JsonExpediente JSONE,
             BindingResult BR
     ) {
@@ -108,37 +107,49 @@ public class ExpedienteController {
         String descripcion;
 
         // INICIALIZAMOS VARIABLES
-        expediente = new Expediente();
-        usuario = usuarioService.findById(id.get(0));
-        denuncia = denunciaService.findById(id.get(1));
-        comision = comisionService.findById(id.get(2));
-        descripcion = JSONE.getDescripcion();
+        usuario = usuarioService.findById(JSONE.getIdUsuario());
+        denuncia = denunciaService.findById(JSONE.getIdDenuncia());
+        comision = comisionService.findById(JSONE.getIdComision());
         PK = new ExpedientePK(usuario.getId(), denuncia.getId(), comision.getId());
+        expediente = expedienteService.findByExpedientePK(PK);
 
-        expediente.setExpedientePK(PK);
+        if (!JSONE.getDescripcion().isBlank()) {
+            descripcion = JSONE.getDescripcion();
+        } else {
+            descripcion = expediente.getDescripcion();
+        }
+
         expediente.setDescripcion(descripcion);
 
         // GUARDAMOS
         expedienteService.save(expediente);
 
         return new ResponseEntity<>(
-                new Mensaje(" EXPEDIENTE CREADO"),
+                new Mensaje(" EXPEDIENTE MODIFICADO"),
                 HttpStatus.CREATED
         );
     }
 
     // DDD
-    @DeleteMapping("/borrar/{ids}")
-    @PreAuthorize("hasRole('ROLE_D_ENTIDAD')")
+    @DeleteMapping("/borrar")
+    @PreAuthorize("hasRole('ROLE_D_EXPEDIENTE')")
     @ResponseBody
-    public ResponseEntity<?> borrar(@PathVariable("ids") List<Integer> ids) {
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarExpedientes JSONBE) {
 
-        List<Object> LO = new LinkedList<>();
+        List<Expediente> LE = new LinkedList<>();
+        List<ExpedientePK> LPK;
+        
+        LPK = JSONBE.getLPK();
+
+        for (int i = 0; i < LPK.size(); i++) {
+            LE.add(expedienteService.findByExpedientePK(LPK.get(i)));
+        }
 
         // VERIFICAMOS QUE TODOS LOS ID EXISTAN
         // BORRAMOS LOS ID
+        expedienteService.deleteAll(LE);
         return new ResponseEntity<>(
-                new Mensaje(" OBJETOS BORRADOS: [ " + ids.size() + " ]"),
+                new Mensaje(" OBJETOS BORRADOS: [ " + LE.size() + " ]"),
                 HttpStatus.OK
         );
     }

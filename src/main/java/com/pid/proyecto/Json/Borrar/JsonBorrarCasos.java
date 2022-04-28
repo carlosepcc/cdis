@@ -1,14 +1,33 @@
 package com.pid.proyecto.Json.Borrar;
 
+import com.pid.proyecto.entity.CasoPK;
 import java.util.LinkedList;
 import java.util.List;
 
 public class JsonBorrarCasos {
     
-    List<Integer> LD = new LinkedList<>();
-    List<Integer> LC = new LinkedList<>();
+   private List<CasoPK> LCPK = new LinkedList<>();
+   private List<Integer> LD = new LinkedList<>();
+   private List<Integer> LC = new LinkedList<>();
 
     public JsonBorrarCasos() {
+    }
+
+    public List<CasoPK> getLCPK() {
+        
+        CasoPK PK;
+        for (int i = 0; i < LD.size(); i++) {
+
+            PK = new CasoPK(LD.get(i), LC.get(i));
+
+            LCPK.add(PK);
+        }
+
+        return LCPK;
+    }
+
+    public void setLCPK(List<CasoPK> LCPK) {
+        this.LCPK = LCPK;
     }
 
     public List<Integer> getLD() {
