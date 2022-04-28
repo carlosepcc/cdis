@@ -118,6 +118,8 @@ public class CreateRoles implements CommandLineRunner {
             usuario.setContrasena(passwordEncoder.encode("admin"));
             usuario.setRol(rolAdmin);
             usuarioService.save(usuario);
+            
+            
         }
     }
 
