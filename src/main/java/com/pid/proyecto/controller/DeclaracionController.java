@@ -161,7 +161,7 @@ public class DeclaracionController {
 
     // DDD
     @DeleteMapping("/borrar")
-    @PreAuthorize("hasRole('ROLE_D_ENTIDAD')")
+    @PreAuthorize("hasRole('ROLE_D_DECLARACION')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSOND) {
 
