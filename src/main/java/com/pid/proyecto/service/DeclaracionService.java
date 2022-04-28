@@ -1,33 +1,34 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Declaracion;
-import com.pid.proyecto.repository.DeclaracionRepository;
+import com.pid.proyecto.entity.DeclaracionPK;
+import com.pid.proyecto.repository.DeclaracionRepo;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional //mejora el rendimiento y la coherencia de las consultas
+@Transactional
 public class DeclaracionService {
 
     @Autowired
-    DeclaracionRepository declaracionRepo;
-
-    public List<Declaracion> Listar() {
-        return declaracionRepo.findAll();
-    }
+    DeclaracionRepo repo;
 
     public void save(Declaracion declaracion) {
-        declaracionRepo.save(declaracion);
+        repo.save(declaracion);
     }
 
-    public Optional<Declaracion> findById(int id) {
-        return declaracionRepo.findById(id);
+    public List<Declaracion> findAll() {
+        return repo.findAll();
     }
 
-    public boolean ExistsByIddeclaracion(int id) {
-        return declaracionRepo.existsById(id);
+    public Declaracion findByDeclaracionPK(DeclaracionPK declaracionPK) {
+       return repo.findByDeclaracionPK(declaracionPK).get();
     }
+
+    public void deleteAll(List<Declaracion> LD) {
+        repo.deleteAll(LD);
+    }
+
 }

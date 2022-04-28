@@ -1,11 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -39,13 +33,18 @@ public class Denuncia implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "iddenuncia")
-    private Integer iddenuncia;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "descripcionden")
-    private String descripcionden;
+    @Column(name = "descripcion")
+    private String descripcion;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "acusado")
+    private String acusado;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha")
@@ -55,41 +54,48 @@ public class Denuncia implements Serializable {
     @NotNull
     @Column(name = "procesada")
     private boolean procesada;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia")
-    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia1")
     private List<Caso> casoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia")
-    @JsonIgnore
     private List<DenunciaUsuario> denunciaUsuarioList;
 
     public Denuncia() {
     }
 
-    public Denuncia(Integer iddenuncia) {
-        this.iddenuncia = iddenuncia;
+    public Denuncia(Integer id) {
+        this.id = id;
     }
 
-    public Denuncia(Integer iddenuncia, String descripcionden, Date fecha, boolean procesada) {
-        this.iddenuncia = iddenuncia;
-        this.descripcionden = descripcionden;
+    public Denuncia(Integer id, String descripcion, String acusado, Date fecha, boolean procesada) {
+        this.id = id;
+        this.descripcion = descripcion;
+        this.acusado = acusado;
         this.fecha = fecha;
         this.procesada = procesada;
     }
 
-    public Integer getIddenuncia() {
-        return iddenuncia;
+    public String getAcusado() {
+        return acusado;
     }
 
-    public void setIddenuncia(Integer iddenuncia) {
-        this.iddenuncia = iddenuncia;
+    public void setAcusado(String acusado) {
+        this.acusado = acusado;
     }
 
-    public String getDescripcionden() {
-        return descripcionden;
+    public Integer getId() {
+        return id;
     }
 
-    public void setDescripcionden(String descripcionden) {
-        this.descripcionden = descripcionden;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public Date getFecha() {
@@ -127,7 +133,7 @@ public class Denuncia implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (iddenuncia != null ? iddenuncia.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -138,7 +144,7 @@ public class Denuncia implements Serializable {
             return false;
         }
         Denuncia other = (Denuncia) object;
-        if ((this.iddenuncia == null && other.iddenuncia != null) || (this.iddenuncia != null && !this.iddenuncia.equals(other.iddenuncia))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -146,7 +152,7 @@ public class Denuncia implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.Denuncia[ iddenuncia=" + iddenuncia + " ]";
+        return "com.pid.proyecto.entity.Denuncia[ id=" + id + " ]";
     }
     
 }

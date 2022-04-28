@@ -1,7 +1,7 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Usuario;
-import com.pid.proyecto.repository.UsuarioRepository;
+import com.pid.proyecto.repository.UsuarioRepo;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,48 +9,35 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional //mejora el rendimiento y la coherencia de las consultas
+@Transactional
 public class UsuarioService {
-  //inyectamos UsuarioRepository
-  @Autowired
-  UsuarioRepository usuarioRepo;
 
-  // Obtenemos el Usuario mediante el nombre de usuario (usuario)
-  public Optional<Usuario> getByUsuario(String usuario) {
-    return usuarioRepo.findByUsuario(usuario);
-  }
+    @Autowired
+    UsuarioRepo repo;
 
-  // Comprobamos si existe el usuario con nombre de usuario (usuario)
-  public boolean existsByUsuario(String usuario) {
-    return usuarioRepo.existsByUsuario(usuario);
-  }
+    public void save(Usuario usuario) {
+        repo.save(usuario);
+    }
 
-  public boolean existsById(int id) {
-    return usuarioRepo.existsById(id);
-  }
+    public List<Usuario> findAll() {
+       return repo.findAll();
+    }
 
-  // salvamos el objeto usuario en la base de datos
-  public void save(Usuario usuario) {
-    usuarioRepo.save(usuario);
-  }
+    public Usuario findById(int id) {
+        return repo.findById(id).get();
+    }
 
-  public Optional<Usuario> getByIdusuario(int id) {
-    return usuarioRepo.findById(id);
-  }
+    public void deleteAll(List<Usuario> LU) {
+        repo.deleteAll(LU);
+    }
 
-  public void delete(int id) {
-    usuarioRepo.deleteById(id);
-  }
+    public boolean existsByUsuario(String n) {
+        return repo.existsByUsuario(n);
+    }
 
-  public void deleteByUsuario(Usuario us) {
-    usuarioRepo.delete(us);
-  }
+    public Usuario findByUsuario(String n) {
+        return repo.findByUsuario(n).get();
+    }
 
-  public void deleteAll(List<Usuario> us) {
-    usuarioRepo.deleteAll(us);
-  }
-
-  public List<Usuario> findAll() {
-    return usuarioRepo.findAll();
-  }
+    
 }

@@ -1,7 +1,7 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.repository.RolRepository;
+import com.pid.proyecto.repository.RolRepo;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,41 +9,42 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional //mejora el rendimiento de las consultas
+@Transactional
 public class RolService {
-  // inyectamos
-  @Autowired
-  RolRepository rolRepo;
 
-  // devolvemos el rol con nombre (rolNombre)
-  public Optional<Rol> getByRol(String rol) {
-    return rolRepo.findByRol(rol);
-  }
+    @Autowired
+    RolRepo repo;
 
-  public Optional<Rol> getByIdRol(int id) {
-    return rolRepo.findById(id);
-  }
+    public void save(Rol rol) {
+        repo.save(rol);
+    }
 
-  public void save(Rol rol) {
-    rolRepo.save(rol);
-  }
+    public Rol findByRol(String rol) {
+        return repo.findByRol(rol).get();
+    }
 
-  public void saveAll(List<Rol> roles) {
-    rolRepo.saveAll(roles);
-  }
+    public List<Rol> findAll() {
+        return repo.findAll();
+    }
 
-  public List<Rol> findAll() {
-    return rolRepo.findAll();
-  }
+    public Rol findById(int id) {
+        return repo.findById(id).get();
+    }
 
-  public boolean existsByIdrol(int idrol) {
-    return rolRepo.existsByIdrol(idrol);
-  }
-  public boolean existsByRol(String rol) {
-    return rolRepo.existsByRol(rol);
-  }
+    public boolean existsByRol(String rol) {
+        return repo.existsByRol(rol);
+    }
 
-public void deleteAll(List<Rol> lista) {
-  rolRepo.deleteAll(lista);
-}
+    public boolean existsById(int id) {
+        return repo.existsById(id);
+    }
+
+    public void deleteAll(List<Rol> LR) {
+        repo.deleteAll(LR);
+    }
+
+    public void saveAll(List<Rol> TodosLosRoles) {
+        repo.saveAll(TodosLosRoles);
+    }
+
 }

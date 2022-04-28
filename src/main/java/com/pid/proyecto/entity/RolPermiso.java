@@ -40,10 +40,10 @@ public class RolPermiso implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "permiso")
     private String permiso;
-    @JoinColumn(name = "idpermiso", referencedColumnName = "idpermiso", insertable = false, updatable = false)
+    @JoinColumn(name = "idp", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Permiso permiso1;
-    @JoinColumn(name = "idrol", referencedColumnName = "idrol", insertable = false, updatable = false)
+    @JoinColumn(name = "idr", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Rol rol1;
 
@@ -60,8 +60,8 @@ public class RolPermiso implements Serializable {
         this.permiso = permiso;
     }
 
-    public RolPermiso(int idrol, int idpermiso) {
-        this.rolPermisoPK = new RolPermisoPK(idrol, idpermiso);
+    public RolPermiso(int idr, int idp) {
+        this.rolPermisoPK = new RolPermisoPK(idr, idp);
     }
 
     public RolPermisoPK getRolPermisoPK() {

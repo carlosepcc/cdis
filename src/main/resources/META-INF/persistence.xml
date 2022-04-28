@@ -21,6 +21,11 @@
     <class>com.pid.proyecto.entity.Rol</class>
     <class>com.pid.proyecto.entity.Permiso</class>
     <class>com.pid.proyecto.entity.RolPermiso</class>
+    <class>com.pid.proyecto.entity.ComisionUsuario</class>
+    <class>com.pid.proyecto.entity.Expediente</class>
+    <class>com.pid.proyecto.entity.Comision</class>
+    <class>com.pid.proyecto.entity.Resolucion</class>
+    <class>com.pid.proyecto.entity.Dictamen</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/PID"/>
       <property name="javax.persistence.jdbc.user" value="postgres"/>

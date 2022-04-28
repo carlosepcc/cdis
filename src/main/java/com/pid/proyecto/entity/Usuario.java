@@ -4,8 +4,6 @@
  */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -24,7 +22,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-
 /**
  *
  * @author Angel
@@ -33,15 +30,14 @@ import javax.validation.constraints.Size;
 @Table(name = "usuario")
 @NamedQueries({
     @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u")})
-@JsonIgnoreProperties({ "declaracionList", "comDiscUsuarioList", "denunciaUsuarioList"})
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idusuario")
-    private Integer idusuario;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -50,51 +46,49 @@ public class Usuario implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "apellidos")
-    private String apellidos;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
     @Column(name = "usuario")
     private String usuario;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "contrasena")
     private String contrasena;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
-    @JsonIgnore
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "cargo")
+    private String cargo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<Declaracion> declaracionList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
-    @JsonIgnore
-    private List<ComDiscUsuario> comDiscUsuarioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
-    @JsonIgnore
     private List<DenunciaUsuario> denunciaUsuarioList;
-    @JoinColumn(name = "rol", referencedColumnName = "idrol")
+    @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Rol rol;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
+    private List<ComisionUsuario> comisionUsuarioList;
 
     public Usuario() {
     }
 
-    public Usuario(Integer idusuario) {
-        this.idusuario = idusuario;
+    public Usuario(Integer id) {
+        this.id = id;
     }
 
-    public Usuario(Integer idusuario, String nombre, String apellidos, String usuario, String contrasena) {
-        this.idusuario = idusuario;
+    public Usuario(Integer id, String nombre, String usuario, String contrasena, String cargo) {
+        this.id = id;
         this.nombre = nombre;
-        this.apellidos = apellidos;
         this.usuario = usuario;
         this.contrasena = contrasena;
+        this.cargo = cargo;
     }
 
-    public Integer getIdusuario() {
-        return idusuario;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdusuario(Integer idusuario) {
-        this.idusuario = idusuario;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getNombre() {
@@ -103,14 +97,6 @@ public class Usuario implements Serializable {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
-    }
-
-    public String getApellidos() {
-        return apellidos;
-    }
-
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
     }
 
     public String getUsuario() {
@@ -129,20 +115,20 @@ public class Usuario implements Serializable {
         this.contrasena = contrasena;
     }
 
+    public String getCargo() {
+        return cargo;
+    }
+
+    public void setCargo(String cargo) {
+        this.cargo = cargo;
+    }
+
     public List<Declaracion> getDeclaracionList() {
         return declaracionList;
     }
 
     public void setDeclaracionList(List<Declaracion> declaracionList) {
         this.declaracionList = declaracionList;
-    }
-
-    public List<ComDiscUsuario> getComDiscUsuarioList() {
-        return comDiscUsuarioList;
-    }
-
-    public void setComDiscUsuarioList(List<ComDiscUsuario> comDiscUsuarioList) {
-        this.comDiscUsuarioList = comDiscUsuarioList;
     }
 
     public List<DenunciaUsuario> getDenunciaUsuarioList() {
@@ -161,10 +147,18 @@ public class Usuario implements Serializable {
         this.rol = rol;
     }
 
+    public List<ComisionUsuario> getComisionUsuarioList() {
+        return comisionUsuarioList;
+    }
+
+    public void setComisionUsuarioList(List<ComisionUsuario> comisionUsuarioList) {
+        this.comisionUsuarioList = comisionUsuarioList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idusuario != null ? idusuario.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -175,7 +169,7 @@ public class Usuario implements Serializable {
             return false;
         }
         Usuario other = (Usuario) object;
-        if ((this.idusuario == null && other.idusuario != null) || (this.idusuario != null && !this.idusuario.equals(other.idusuario))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -183,7 +177,7 @@ public class Usuario implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.Usuario[ idusuario=" + idusuario + " ]";
+        return "com.pid.proyecto.entity.Usuario[ id=" + id + " ]";
     }
     
 }

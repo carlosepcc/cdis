@@ -19,42 +19,42 @@ public class RolPermisoPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "idrol")
-    private int idrol;
+    @Column(name = "idr")
+    private int idr;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "idpermiso")
-    private int idpermiso;
+    @Column(name = "idp")
+    private int idp;
 
     public RolPermisoPK() {
     }
 
-    public RolPermisoPK(int idrol, int idpermiso) {
-        this.idrol = idrol;
-        this.idpermiso = idpermiso;
+    public RolPermisoPK(int idr, int idp) {
+        this.idr = idr;
+        this.idp = idp;
     }
 
-    public int getIdrol() {
-        return idrol;
+    public int getIdr() {
+        return idr;
     }
 
-    public void setIdrol(int idrol) {
-        this.idrol = idrol;
+    public void setIdr(int idr) {
+        this.idr = idr;
     }
 
-    public int getIdpermiso() {
-        return idpermiso;
+    public int getIdp() {
+        return idp;
     }
 
-    public void setIdpermiso(int idpermiso) {
-        this.idpermiso = idpermiso;
+    public void setIdp(int idp) {
+        this.idp = idp;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) idrol;
-        hash += (int) idpermiso;
+        hash += (int) idr;
+        hash += (int) idp;
         return hash;
     }
 
@@ -65,10 +65,10 @@ public class RolPermisoPK implements Serializable {
             return false;
         }
         RolPermisoPK other = (RolPermisoPK) object;
-        if (this.idrol != other.idrol) {
+        if (this.idr != other.idr) {
             return false;
         }
-        if (this.idpermiso != other.idpermiso) {
+        if (this.idp != other.idp) {
             return false;
         }
         return true;
@@ -76,7 +76,7 @@ public class RolPermisoPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.RolPermisoPK[ idrol=" + idrol + ", idpermiso=" + idpermiso + " ]";
+        return "com.pid.proyecto.entity.RolPermisoPK[ idr=" + idr + ", idp=" + idp + " ]";
     }
     
 }

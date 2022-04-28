@@ -1,36 +1,33 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Denuncia;
-import com.pid.proyecto.entity.Usuario;
-import com.pid.proyecto.repository.DenunciaRepository;
+import com.pid.proyecto.repository.DenunciaRepo;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional //mejora el rendimiento y la coherencia de las consultas
+@Transactional
 public class DenunciaService {
     
     @Autowired
-    DenunciaRepository denunciaRepo;
+    DenunciaRepo repo;
     
-    public List<Denuncia> Listar() {
-        
-        return denunciaRepo.findAll();
-    }
-    public void save(Denuncia denuncia) {
-
-        denunciaRepo.save(denuncia);
+    public Denuncia save(Denuncia denuncia) {
+        return repo.save(denuncia);
     }
     
-    public boolean existsById(int id) {
-        return denunciaRepo.existsByIddenuncia(id);
+    public List<Denuncia> findAll() {
+        return repo.findAll();
     }
     
-    public Optional<Denuncia> getByIddenuncia(int id) {
-
-        return denunciaRepo.findByIddenuncia(id);
+    public Denuncia findById(int id) {
+        return repo.findById(id).get();
     }
+    
+    public void deleteAll(List<Denuncia> LD) {
+        repo.deleteAll(LD);
+    }
+    
 }

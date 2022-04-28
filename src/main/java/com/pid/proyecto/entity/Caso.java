@@ -4,22 +4,20 @@
  */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,11 +34,8 @@ import javax.validation.constraints.NotNull;
 public class Caso implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "idcaso")
-    private Integer idcaso;
+    @EmbeddedId
+    protected CasoPK casoPK;
     @Basic(optional = false)
     @NotNull
     @Column(name = "abierto")
@@ -56,38 +51,40 @@ public class Caso implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaexpiracion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
-    @JsonIgnore
-    private List<PdfDictamen> pdfDictamenList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
-    @JsonIgnore
     private List<Declaracion> declaracionList;
-    @JoinColumn(name = "comision", referencedColumnName = "idcomision")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "caso")
+    private Dictamen dictamen;
+    @JoinColumn(name = "comision", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private ComisionDisciplinaria comision;
-    @JoinColumn(name = "denuncia", referencedColumnName = "iddenuncia")
+    private Comision comision1;
+    @JoinColumn(name = "denuncia", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Denuncia denuncia;
+    private Denuncia denuncia1;
 
     public Caso() {
     }
 
-    public Caso(Integer idcaso) {
-        this.idcaso = idcaso;
+    public Caso(CasoPK casoPK) {
+        this.casoPK = casoPK;
     }
 
-    public Caso(Integer idcaso, boolean abierto, Date fechaapertura, Date fechaexpiracion) {
-        this.idcaso = idcaso;
+    public Caso(CasoPK casoPK, boolean abierto, Date fechaapertura, Date fechaexpiracion) {
+        this.casoPK = casoPK;
         this.abierto = abierto;
         this.fechaapertura = fechaapertura;
         this.fechaexpiracion = fechaexpiracion;
     }
 
-    public Integer getIdcaso() {
-        return idcaso;
+    public Caso(int denuncia, int comision) {
+        this.casoPK = new CasoPK(denuncia, comision);
     }
 
-    public void setIdcaso(Integer idcaso) {
-        this.idcaso = idcaso;
+    public CasoPK getCasoPK() {
+        return casoPK;
+    }
+
+    public void setCasoPK(CasoPK casoPK) {
+        this.casoPK = casoPK;
     }
 
     public boolean getAbierto() {
@@ -114,14 +111,6 @@ public class Caso implements Serializable {
         this.fechaexpiracion = fechaexpiracion;
     }
 
-    public List<PdfDictamen> getPdfDictamenList() {
-        return pdfDictamenList;
-    }
-
-    public void setPdfDictamenList(List<PdfDictamen> pdfDictamenList) {
-        this.pdfDictamenList = pdfDictamenList;
-    }
-
     public List<Declaracion> getDeclaracionList() {
         return declaracionList;
     }
@@ -130,26 +119,34 @@ public class Caso implements Serializable {
         this.declaracionList = declaracionList;
     }
 
-    public ComisionDisciplinaria getComision() {
-        return comision;
+    public Dictamen getDictamen() {
+        return dictamen;
     }
 
-    public void setComision(ComisionDisciplinaria comision) {
-        this.comision = comision;
+    public void setDictamen(Dictamen dictamen) {
+        this.dictamen = dictamen;
     }
 
-    public Denuncia getDenuncia() {
-        return denuncia;
+    public Comision getComision1() {
+        return comision1;
     }
 
-    public void setDenuncia(Denuncia denuncia) {
-        this.denuncia = denuncia;
+    public void setComision1(Comision comision1) {
+        this.comision1 = comision1;
+    }
+
+    public Denuncia getDenuncia1() {
+        return denuncia1;
+    }
+
+    public void setDenuncia1(Denuncia denuncia1) {
+        this.denuncia1 = denuncia1;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idcaso != null ? idcaso.hashCode() : 0);
+        hash += (casoPK != null ? casoPK.hashCode() : 0);
         return hash;
     }
 
@@ -160,7 +157,7 @@ public class Caso implements Serializable {
             return false;
         }
         Caso other = (Caso) object;
-        if ((this.idcaso == null && other.idcaso != null) || (this.idcaso != null && !this.idcaso.equals(other.idcaso))) {
+        if ((this.casoPK == null && other.casoPK != null) || (this.casoPK != null && !this.casoPK.equals(other.casoPK))) {
             return false;
         }
         return true;
@@ -168,7 +165,7 @@ public class Caso implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.Caso[ idcaso=" + idcaso + " ]";
+        return "com.pid.proyecto.entity.Caso[ casoPK=" + casoPK + " ]";
     }
     
 }

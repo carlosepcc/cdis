@@ -19,42 +19,42 @@ public class DenunciaUsuarioPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "iddenuncia")
-    private int iddenuncia;
+    @Column(name = "idd")
+    private int idd;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "idusuario")
-    private int idusuario;
+    @Column(name = "idu")
+    private int idu;
 
     public DenunciaUsuarioPK() {
     }
 
-    public DenunciaUsuarioPK(int iddenuncia, int idusuario) {
-        this.iddenuncia = iddenuncia;
-        this.idusuario = idusuario;
+    public DenunciaUsuarioPK(int idd, int idu) {
+        this.idd = idd;
+        this.idu = idu;
     }
 
-    public int getIddenuncia() {
-        return iddenuncia;
+    public int getIdd() {
+        return idd;
     }
 
-    public void setIddenuncia(int iddenuncia) {
-        this.iddenuncia = iddenuncia;
+    public void setIdd(int idd) {
+        this.idd = idd;
     }
 
-    public int getIdusuario() {
-        return idusuario;
+    public int getIdu() {
+        return idu;
     }
 
-    public void setIdusuario(int idusuario) {
-        this.idusuario = idusuario;
+    public void setIdu(int idu) {
+        this.idu = idu;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) iddenuncia;
-        hash += (int) idusuario;
+        hash += (int) idd;
+        hash += (int) idu;
         return hash;
     }
 
@@ -65,10 +65,10 @@ public class DenunciaUsuarioPK implements Serializable {
             return false;
         }
         DenunciaUsuarioPK other = (DenunciaUsuarioPK) object;
-        if (this.iddenuncia != other.iddenuncia) {
+        if (this.idd != other.idd) {
             return false;
         }
-        if (this.idusuario != other.idusuario) {
+        if (this.idu != other.idu) {
             return false;
         }
         return true;
@@ -76,7 +76,7 @@ public class DenunciaUsuarioPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.DenunciaUsuarioPK[ iddenuncia=" + iddenuncia + ", idusuario=" + idusuario + " ]";
+        return "com.pid.proyecto.entity.DenunciaUsuarioPK[ idd=" + idd + ", idu=" + idu + " ]";
     }
     
 }

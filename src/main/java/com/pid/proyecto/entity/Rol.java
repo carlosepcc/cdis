@@ -4,8 +4,6 @@
  */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -30,49 +28,48 @@ import javax.validation.constraints.Size;
 @Table(name = "rol")
 @NamedQueries({
     @NamedQuery(name = "Rol.findAll", query = "SELECT r FROM Rol r")})
-@JsonIgnoreProperties({ "rolPermisoList", "usuarioList" })
 public class Rol implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idrol")
-    private Integer idrol;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "rol")
     private String rol;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol1")
-    @JsonIgnore
     private List<RolPermiso> rolPermisoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
-    @JsonIgnore
     private List<Usuario> usuarioList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
+    private List<ComisionUsuario> comisionUsuarioList;
 
     public Rol() {
     }
 
-    public Rol(Integer idrol) {
-        this.idrol = idrol;
+    public Rol(Integer id) {
+        this.id = id;
     }
 
-    public Rol(Integer idrol, String rol) {
-        this.idrol = idrol;
+    public Rol(Integer id, String rol) {
+        this.id = id;
         this.rol = rol;
     }
-
+    
     public Rol(String rol) {
         this.rol = rol;
     }
 
-    public Integer getIdrol() {
-        return idrol;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdrol(Integer idrol) {
-        this.idrol = idrol;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getRol() {
@@ -99,10 +96,18 @@ public class Rol implements Serializable {
         this.usuarioList = usuarioList;
     }
 
+    public List<ComisionUsuario> getComisionUsuarioList() {
+        return comisionUsuarioList;
+    }
+
+    public void setComisionUsuarioList(List<ComisionUsuario> comisionUsuarioList) {
+        this.comisionUsuarioList = comisionUsuarioList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idrol != null ? idrol.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -113,7 +118,7 @@ public class Rol implements Serializable {
             return false;
         }
         Rol other = (Rol) object;
-        if ((this.idrol == null && other.idrol != null) || (this.idrol != null && !this.idrol.equals(other.idrol))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -121,7 +126,7 @@ public class Rol implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.Rol[ idrol=" + idrol + " ]";
+        return "com.pid.proyecto.entity.Rol[ id=" + id + " ]";
     }
-
+    
 }

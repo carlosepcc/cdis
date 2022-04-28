@@ -4,23 +4,19 @@
  */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -38,49 +34,57 @@ import javax.validation.constraints.Size;
 public class Declaracion implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "iddeclaracion")
-    private Integer iddeclaracion;
+    @EmbeddedId
+    protected DeclaracionPK declaracionPK;
     @Basic(optional = false)
     @NotNull
     @Column(name = "abierta")
     private boolean abierta;
-    @Size(max = 255)
-    @Column(name = "descripcion")
-    private String descripcion;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "fecha")
     @Temporal(TemporalType.DATE)
     private Date fecha;
-    @JoinColumn(name = "caso", referencedColumnName = "idcaso")
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "descripcion")
+    private String descripcion;
+    @JoinColumns({
+        @JoinColumn(name = "casodenuncia", referencedColumnName = "denuncia", insertable = false, updatable = false),
+        @JoinColumn(name = "casocomision", referencedColumnName = "comision", insertable = false, updatable = false)})
     @ManyToOne(optional = false)
     private Caso caso;
-    @JoinColumn(name = "usuario", referencedColumnName = "idusuario")
+    @JoinColumn(name = "usuario", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Usuario usuario;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "declaracion")
-    @JsonIgnore
-    private List<PdfExpediente> pdfExpedienteList;
+    private Usuario usuario1;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "declaracion")
+    private Expediente expediente;
 
     public Declaracion() {
     }
 
-    public Declaracion(Integer iddeclaracion) {
-        this.iddeclaracion = iddeclaracion;
+    public Declaracion(DeclaracionPK declaracionPK) {
+        this.declaracionPK = declaracionPK;
     }
 
-    public Declaracion(Integer iddeclaracion, boolean abierta) {
-        this.iddeclaracion = iddeclaracion;
+    public Declaracion(DeclaracionPK declaracionPK, boolean abierta, Date fecha, String descripcion) {
+        this.declaracionPK = declaracionPK;
         this.abierta = abierta;
+        this.fecha = fecha;
+        this.descripcion = descripcion;
     }
 
-    public Integer getIddeclaracion() {
-        return iddeclaracion;
+    public Declaracion(int usuario, int casodenuncia, int casocomision) {
+        this.declaracionPK = new DeclaracionPK(usuario, casodenuncia, casocomision);
     }
 
-    public void setIddeclaracion(Integer iddeclaracion) {
-        this.iddeclaracion = iddeclaracion;
+    public DeclaracionPK getDeclaracionPK() {
+        return declaracionPK;
+    }
+
+    public void setDeclaracionPK(DeclaracionPK declaracionPK) {
+        this.declaracionPK = declaracionPK;
     }
 
     public boolean getAbierta() {
@@ -91,20 +95,20 @@ public class Declaracion implements Serializable {
         this.abierta = abierta;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
     public Date getFecha() {
         return fecha;
     }
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public Caso getCaso() {
@@ -115,26 +119,26 @@ public class Declaracion implements Serializable {
         this.caso = caso;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Usuario getUsuario1() {
+        return usuario1;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuario1(Usuario usuario1) {
+        this.usuario1 = usuario1;
     }
 
-    public List<PdfExpediente> getPdfExpedienteList() {
-        return pdfExpedienteList;
+    public Expediente getExpediente() {
+        return expediente;
     }
 
-    public void setPdfExpedienteList(List<PdfExpediente> pdfExpedienteList) {
-        this.pdfExpedienteList = pdfExpedienteList;
+    public void setExpediente(Expediente expediente) {
+        this.expediente = expediente;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (iddeclaracion != null ? iddeclaracion.hashCode() : 0);
+        hash += (declaracionPK != null ? declaracionPK.hashCode() : 0);
         return hash;
     }
 
@@ -145,7 +149,7 @@ public class Declaracion implements Serializable {
             return false;
         }
         Declaracion other = (Declaracion) object;
-        if ((this.iddeclaracion == null && other.iddeclaracion != null) || (this.iddeclaracion != null && !this.iddeclaracion.equals(other.iddeclaracion))) {
+        if ((this.declaracionPK == null && other.declaracionPK != null) || (this.declaracionPK != null && !this.declaracionPK.equals(other.declaracionPK))) {
             return false;
         }
         return true;
@@ -153,7 +157,7 @@ public class Declaracion implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.Declaracion[ iddeclaracion=" + iddeclaracion + " ]";
+        return "com.pid.proyecto.entity.Declaracion[ declaracionPK=" + declaracionPK + " ]";
     }
     
 }

@@ -1,16 +1,21 @@
 package com.pid.proyecto.controller;
 
+import com.pid.proyecto.Json.Borrar.JsonBorrarDeclaraciones;
+import com.pid.proyecto.Json.Login.JsonDeclaracion;
+import com.pid.proyecto.auxiliares.Convertidor;
+import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.auxiliares.SesionDetails;
+import com.pid.proyecto.entity.Caso;
+import com.pid.proyecto.entity.CasoPK;
+import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.Declaracion;
-import com.pid.proyecto.entity.Permiso;
-import com.pid.proyecto.seguridad.auxiliares.ConvertidorToListEntity;
-import com.pid.proyecto.seguridad.auxiliares.Mensaje;
-import com.pid.proyecto.seguridad.auxiliares.SesionDetails;
-import com.pid.proyecto.Json.CrearEntidad.JsonNuevaDeclaracion;
+import com.pid.proyecto.entity.DeclaracionPK;
+import com.pid.proyecto.entity.Denuncia;
+import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.DeclaracionService;
-import com.pid.proyecto.service.UserDetailsServiceImpl;
 import com.pid.proyecto.service.UsuarioService;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 import javax.validation.Valid;
@@ -19,108 +24,165 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/Declaracion")
-//podemos acceder desde cualquier url
 @CrossOrigin("*")
 public class DeclaracionController {
-    
+
     @Autowired
     DeclaracionService declaracionService;
-    
-    @Autowired
-    SesionDetails sesionDetails;
-    
-    @Autowired
-    UsuarioService usuarioService;
-    
-    @Autowired
-    ConvertidorToListEntity convertidor;
-    
+
     @Autowired
     CasoService casoService;
-    
+
     @Autowired
-    UserDetailsServiceImpl userDetailsServiceImpl;
-    
-    @PutMapping()
+    UsuarioService usuarioService;
+
+    @Autowired
+    SesionDetails sesionDetails;
+
+    @Autowired
+    Convertidor convertidor;
+
+    @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_DECLARACION')")
-    public ResponseEntity<?> crear(@Valid @RequestBody JsonNuevaDeclaracion ND, BindingResult bindingResult) {
-        
-        Declaracion declaracion = new Declaracion();
-        
-        // PODEMOS DEJAR LA DECLARACION ABIERTA O CERRADA AL CREARLA
-        if (ND.isAbierta() == true) {
-            declaracion.setAbierta(true);
-        } else {
-            declaracion.setAbierta(false);
-        }
-        
-        if (!ND.getDescripcion().isBlank()) {
-            declaracion.setDescripcion(ND.getDescripcion());
-        }
-        
-        if (casoService.existByIdcaso(ND.getIdCaso())) {
-            declaracion.setCaso(casoService.getById(ND.getIdCaso()).get());
-        } else {
-            return new ResponseEntity(new Mensaje("NO EXISTE EL CASO"), HttpStatus.BAD_REQUEST);
-        }
-        if (usuarioService.existsById(ND.getIdUsuario())) {
-            declaracion.setUsuario(usuarioService.getByIdusuario(ND.getIdUsuario()).get());
-        } else {
-            return new ResponseEntity(new Mensaje("NO EXISTE EL USUARIO"), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> crear(
+            @Valid @RequestBody JsonDeclaracion JSOND,
+            BindingResult BR
+    ) {
 
-        // salvamos la declaracion
+        // DECLARAMOS VARIABLES
+        Declaracion declaracion;
+
+        Usuario usuario;
+        Caso caso;
+
+        DeclaracionPK declaracionPK;
+        CasoPK casoPK;
+
+        boolean abierta;
+        LocalDate fecha;
+        String descripcion;
+
+        // INICIALIZAMOS VARIABLES
+        declaracion = new Declaracion();
+
+        usuario = usuarioService.findByUsuario(sesionDetails.getUsuario());
+
+        casoPK = new CasoPK(JSOND.getIdDenuncia(), JSOND.getIdComision());
+        caso = casoService.findByCasoPK(casoPK);
+
+        declaracionPK = new DeclaracionPK(usuario.getId(),
+                caso.getCasoPK().getDenuncia(),
+                caso.getCasoPK().getComision());
+
+        abierta = JSOND.isAbierta();
+        fecha = JSOND.getFecha();
+        descripcion = JSOND.getDescripcion();
+
+        declaracion.setDeclaracionPK(declaracionPK);
+        declaracion.setAbierta(abierta);
+        declaracion.setFecha(convertidor.LocalDateToSqlDate(fecha));
+        declaracion.setDescripcion(descripcion);
+
+        // GUARDAMOS
         declaracionService.save(declaracion);
-        return new ResponseEntity(new Mensaje("DECLARACION GUARDADA"), HttpStatus.CREATED);
+
+        return new ResponseEntity<>(
+                new Mensaje("DECLARACION CREADA"),
+                HttpStatus.CREATED
+        );
     }
-    
-    @GetMapping()
-    @PreAuthorize("hasrole('ROLE_R_DECLARACION')")
-    public ResponseEntity<List<Declaracion>> list() {
-        List<Declaracion> list = declaracionService.Listar();
-        return new ResponseEntity(list, HttpStatus.OK);
+
+    // RRR
+    // MOSTRAMOS TODOS LOS OBJETOS
+    @GetMapping
+    @PreAuthorize("hasRole('ROLE_R_DECLARACION')")
+    public ResponseEntity<List<Declaracion>> listar() {
+
+        List<Declaracion> list = declaracionService.findAll();
+
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
-    
-    @PostMapping()
+
+    @PostMapping("/modificar/{id}")
     @PreAuthorize("hasRole('ROLE_U_DECLARACION')")
-    public ResponseEntity<?> Modificar(@Valid @RequestBody JsonNuevaDeclaracion ND, BindingResult bindingResult) {
-        
-        Declaracion declaracion = new Declaracion();
-        
-        // PODEMOS DEJAR LA DECLARACION ABIERTA O CERRADA AL CREARLA
-        if (ND.isAbierta() == true) {
-            declaracion.setAbierta(true);
+    public ResponseEntity<?> modificar(
+            @Valid @RequestBody JsonDeclaracion JSOND,
+            BindingResult BR
+    ) {
+        // DECLARAMOS VARIABLES
+        Declaracion declaracion;
+        DeclaracionPK declaracionPK;
+        boolean abierta;
+        LocalDate fecha;
+        String descripcion;
+
+        // INICIALIZAMOS VARIABLES
+        declaracionPK = new DeclaracionPK(JSOND.getIdUsuario(), JSOND.getIdDenuncia(), JSOND.getIdComision());
+        declaracion = declaracionService.findByDeclaracionPK(declaracionPK);
+
+        if (JSOND.isAbierta()) {
+            abierta = JSOND.isAbierta();
         } else {
-            declaracion.setAbierta(false);
+            abierta = declaracion.getAbierta();
         }
-        
-        if (!ND.getDescripcion().isBlank()) {
-            declaracion.setDescripcion(ND.getDescripcion());
-        }
-        
-        if (casoService.existByIdcaso(ND.getIdCaso())) {
-            declaracion.setCaso(casoService.getById(ND.getIdCaso()).get());
+        fecha = JSOND.getFecha();
+        if (!JSOND.getDescripcion().isBlank()) {
+            descripcion = JSOND.getDescripcion();
         } else {
-            return new ResponseEntity(new Mensaje("NO EXISTE EL CASO"), HttpStatus.BAD_REQUEST);
-        }
-        if (usuarioService.existsById(ND.getIdUsuario())) {
-            declaracion.setUsuario(usuarioService.getByIdusuario(ND.getIdUsuario()).get());
-        } else {
-            return new ResponseEntity(new Mensaje("NO EXISTE EL USUARIO"), HttpStatus.BAD_REQUEST);
+            descripcion = declaracion.getDescripcion();
         }
 
-        // salvamos la declaracion
+        declaracion.setAbierta(abierta);
+        declaracion.setFecha(convertidor.LocalDateToSqlDate(fecha));
+        declaracion.setDescripcion(descripcion);
+
+        // GUARDAMOS
         declaracionService.save(declaracion);
-        return new ResponseEntity(new Mensaje("DECLARACION GUARDADA"), HttpStatus.CREATED);
+
+        return new ResponseEntity<>(
+                new Mensaje("DECLARACION MODIFICADA"),
+                HttpStatus.CREATED
+        );
     }
+
+    // DDD
+    @DeleteMapping("/borrar")
+    @PreAuthorize("hasRole('ROLE_D_ENTIDAD')")
+    @ResponseBody
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSOND) {
+
+        List<Declaracion> LD = new LinkedList<>();
+        DeclaracionPK PK;
+
+        for (int i = 0; i < JSOND.getLU().size(); i++) {
+            PK = new DeclaracionPK(JSOND.getLU().get(i),
+                    JSOND.getLD().get(i),
+                    JSOND.getLC().get(i));
+            LD.add(declaracionService.findByDeclaracionPK(PK));
+
+        }
+
+        declaracionService.deleteAll(LD);
+        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
+        // BORRAMOS LOS ID
+        return new ResponseEntity<>(
+                new Mensaje(" OBJETOS BORRADOS: [ " + LD.size() + " ]"),
+                HttpStatus.OK
+        );
+    }
+
 }

@@ -1,42 +1,34 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Caso;
-import com.pid.proyecto.entity.Denuncia;
-import com.pid.proyecto.repository.CasoRepository;
+import com.pid.proyecto.entity.CasoPK;
+import com.pid.proyecto.repository.CasoRepo;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional //mejora el rendimiento y la coherencia de las consultas
+@Transactional
 public class CasoService {
-    
+
     @Autowired
-    CasoRepository casoRepo;
-    
-     public List<Caso> Listar() {
-        
-        return casoRepo.findAll();
-    }
-    
-     // salvamos el objeto caso en la base de datos
+    CasoRepo repo;
+
     public void save(Caso caso) {
-
-        casoRepo.save(caso);
-    }
-    
-    public boolean existsByDenuncia(Denuncia iddenuncia) {
-        return casoRepo.existsByDenuncia(iddenuncia);
-    }
-    
-    public Optional<Caso> getById(int id) {
-
-        return casoRepo.findByIdcaso(id);
+        repo.save(caso);
     }
 
-    public boolean existByIdcaso(int i) {
-       return casoRepo.existsByIdcaso(i);
+    public List<Caso> findAll() {
+        return repo.findAll();
     }
+
+    public Caso findByCasoPK(CasoPK id) {
+        return repo.findByCasoPK(id).get();
+    }
+
+    public void deleteAll(List<Caso> LC) {
+        repo.deleteAll(LC);
+    }
+
 }

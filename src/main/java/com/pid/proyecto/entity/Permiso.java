@@ -4,7 +4,6 @@
  */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -35,26 +34,25 @@ public class Permiso implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "idpermiso")
-    private Integer idpermiso;
+    @Column(name = "id")
+    private Integer id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
     @Column(name = "permiso")
     private String permiso;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "permiso1")
-    @JsonIgnore
     private List<RolPermiso> rolPermisoList;
 
     public Permiso() {
     }
 
-    public Permiso(Integer idpermiso) {
-        this.idpermiso = idpermiso;
+    public Permiso(Integer id) {
+        this.id = id;
     }
 
-    public Permiso(Integer idpermiso, String permiso) {
-        this.idpermiso = idpermiso;
+    public Permiso(Integer id, String permiso) {
+        this.id = id;
         this.permiso = permiso;
     }
 
@@ -62,12 +60,12 @@ public class Permiso implements Serializable {
         this.permiso = permiso;
     }
 
-    public Integer getIdpermiso() {
-        return idpermiso;
+    public Integer getId() {
+        return id;
     }
 
-    public void setIdpermiso(Integer idpermiso) {
-        this.idpermiso = idpermiso;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getPermiso() {
@@ -89,7 +87,7 @@ public class Permiso implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (idpermiso != null ? idpermiso.hashCode() : 0);
+        hash += (id != null ? id.hashCode() : 0);
         return hash;
     }
 
@@ -100,7 +98,7 @@ public class Permiso implements Serializable {
             return false;
         }
         Permiso other = (Permiso) object;
-        if ((this.idpermiso == null && other.idpermiso != null) || (this.idpermiso != null && !this.idpermiso.equals(other.idpermiso))) {
+        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
         return true;
@@ -108,7 +106,7 @@ public class Permiso implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.Permiso[ idpermiso=" + idpermiso + " ]";
+        return "com.pid.proyecto.entity.Permiso[ id=" + id + " ]";
     }
 
 }

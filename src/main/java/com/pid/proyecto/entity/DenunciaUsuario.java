@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.pid.proyecto.entity;
 
 import java.io.Serializable;
@@ -17,10 +13,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- *
- * @author Angel
- */
 @Entity
 @Table(name = "denuncia_usuario")
 @NamedQueries({
@@ -33,12 +25,12 @@ public class DenunciaUsuario implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "rolcomision")
-    private String rolcomision;
-    @JoinColumn(name = "iddenuncia", referencedColumnName = "iddenuncia", insertable = false, updatable = false)
+    @Column(name = "User")
+    private String user;
+    @JoinColumn(name = "idd", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Denuncia denuncia;
-    @JoinColumn(name = "idusuario", referencedColumnName = "idusuario", insertable = false, updatable = false)
+    @JoinColumn(name = "idu", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Usuario usuario;
 
@@ -49,13 +41,13 @@ public class DenunciaUsuario implements Serializable {
         this.denunciaUsuarioPK = denunciaUsuarioPK;
     }
 
-    public DenunciaUsuario(DenunciaUsuarioPK denunciaUsuarioPK, String rolcomision) {
+    public DenunciaUsuario(DenunciaUsuarioPK denunciaUsuarioPK, String user) {
         this.denunciaUsuarioPK = denunciaUsuarioPK;
-        this.rolcomision = rolcomision;
+        this.user = user;
     }
 
-    public DenunciaUsuario(int iddenuncia, int idusuario) {
-        this.denunciaUsuarioPK = new DenunciaUsuarioPK(iddenuncia, idusuario);
+    public DenunciaUsuario(int idd, int idu) {
+        this.denunciaUsuarioPK = new DenunciaUsuarioPK(idd, idu);
     }
 
     public DenunciaUsuarioPK getDenunciaUsuarioPK() {
@@ -66,12 +58,12 @@ public class DenunciaUsuario implements Serializable {
         this.denunciaUsuarioPK = denunciaUsuarioPK;
     }
 
-    public String getRolcomision() {
-        return rolcomision;
+    public String getUser() {
+        return user;
     }
 
-    public void setRolcomision(String rolcomision) {
-        this.rolcomision = rolcomision;
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public Denuncia getDenuncia() {
