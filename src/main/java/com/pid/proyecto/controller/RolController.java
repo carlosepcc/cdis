@@ -249,7 +249,7 @@ public class RolController {
         for (int id : JSONBR.getIDS()) {
             if (!rolService.existsById(id)) {
                 return new ResponseEntity<>(
-                        new Mensaje("NO EXISTE ALGUNO DE LOS ID ESPECIFICADOS"),
+                        new Mensaje("NO EXISTE EL ROL CON ID: " + id),
                         HttpStatus.NOT_FOUND
                 );
             }
