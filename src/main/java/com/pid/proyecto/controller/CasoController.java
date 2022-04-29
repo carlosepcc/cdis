@@ -4,6 +4,7 @@ import com.pid.proyecto.Json.Borrar.JsonBorrarCasos;
 import com.pid.proyecto.Json.JsonCaso;
 import com.pid.proyecto.auxiliares.Convertidor;
 import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.Caso;
 import com.pid.proyecto.entity.CasoPK;
 import com.pid.proyecto.entity.Comision;
@@ -49,6 +50,9 @@ public class CasoController {
 
     @Autowired
     Convertidor convertidor;
+    
+    @Autowired
+    SesionDetails s;
 
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_CASO')")
@@ -146,6 +150,7 @@ public class CasoController {
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarCasos JSONB) {
 
+                
         List<Caso> LC = new LinkedList<>();
         List<CasoPK> LCPK = JSONB.getLCPK();
 

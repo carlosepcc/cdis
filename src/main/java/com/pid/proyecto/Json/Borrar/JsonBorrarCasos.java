@@ -6,7 +6,10 @@ import java.util.List;
 
 public class JsonBorrarCasos {
     
+    // dejar solo esta propiedad
    private List<CasoPK> LCPK = new LinkedList<>();
+   
+   
    private List<Integer> LD = new LinkedList<>();
    private List<Integer> LC = new LinkedList<>();
 

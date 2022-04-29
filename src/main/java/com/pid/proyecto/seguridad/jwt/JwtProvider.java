@@ -9,6 +9,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -39,19 +40,26 @@ public class JwtProvider {
 
         // getPrincipal() castea a la clase UserDetailsServiceImpl usando su metodo loadUserByUsername()
         // lo cual desencadena toda nuestra logica de permisos
-        
         //guardamos el usuario autenticado como uno de tipo UsuarioPrincipal
         UsuarioPrincipal usuarioPrincipal = (UsuarioPrincipal) authentication.getPrincipal();
 
         //convertimos las autoridades en cadenas String 
         List<String> roles = usuarioPrincipal.getAuthorities()
                 .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        List<String> permisos = new LinkedList<>();
+
+        for (int i = 0; i < roles.size(); i++) {
+            if (i != 0) {
+                permisos.add(roles.get(i));
+            }
+        }
 
         JsonUsuario usuario = new JsonUsuario();
         usuario.setNombre(usuarioPrincipal.getNombre());
         usuario.setCargo(usuarioPrincipal.getCargo());
         usuario.setUsuario(usuarioPrincipal.getUsername());
         usuario.setRol(roles.get(0));
+        usuario.setPermisos(permisos);
 
         //construir el token
         return Jwts.builder() // estamos construyendo el token con lo siguiente

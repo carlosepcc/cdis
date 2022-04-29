@@ -1,9 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -17,10 +15,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- *
- * @author Angel
- */
+
 @Entity
 @Table(name = "rol_permiso")
 @NamedQueries({
@@ -28,6 +23,7 @@ import javax.validation.constraints.Size;
 public class RolPermiso implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @JsonIgnore
     @EmbeddedId
     protected RolPermisoPK rolPermisoPK;
     @Basic(optional = false)
@@ -40,6 +36,7 @@ public class RolPermiso implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "permiso")
     private String permiso;
+    @JsonIgnoreProperties(value = {"rolPermisoList"})
     @JoinColumn(name = "idp", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Permiso permiso1;

@@ -1,5 +1,8 @@
 package com.pid.proyecto.Json;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class JsonUsuario {
 //  @NotBlank(message = "DEBES ESPECIFICAR EL NOMBRE")
 //  @Pattern(
@@ -8,12 +11,21 @@ public class JsonUsuario {
 //  )
 
     private String rol = "";
+    private List<String> permisos = new LinkedList<>();
     private String nombre = "";
     private String usuario = "";
     private String contrasena = "";
     private String cargo = "";
 
     public JsonUsuario() {
+    }
+
+    public List<String> getPermisos() {
+        return permisos;
+    }
+
+    public void setPermisos(List<String> permisos) {
+        this.permisos = permisos;
     }
 
     public String getCargo() {

@@ -15,8 +15,8 @@ public class RolService {
     @Autowired
     RolRepo repo;
 
-    public void save(Rol rol) {
-        repo.save(rol);
+    public Rol save(Rol rol) {
+       return repo.save(rol);
     }
 
     public Rol findByRol(String rol) {

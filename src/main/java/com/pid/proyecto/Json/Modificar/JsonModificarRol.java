@@ -1,28 +1,27 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.Modificar;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class JsonRol {
-//  @NotBlank(message = "DEBES ESPECIFICAR EL ROL")
-//  @Pattern(
-//    regexp = "ROLE_[A-Z|_]*",
-//    message = "FORMATO DE ROL INCORRECTO, EL ROL DEBE COMENZAR CON [ROL_] Y SOLO ADMITE [_] Y [A-Z]"
-//  )
+public class JsonModificarRol {
+
+    private int id = -1;
 
     private String rol = "";
-
-    private List<Integer> permisos = new LinkedList<>();
-
+    
+    private List<Integer> eliminarPermisos = new LinkedList<>();
+    
     private List<Integer> agregarPermisos = new LinkedList<>();
 
-    List<Integer> eliminarPermisos = new LinkedList<>();
-
-    public JsonRol() {
+    public JsonModificarRol() {
     }
 
-    public List<Integer> getPermisos() {
-        return permisos;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public List<Integer> getAgregarPermisos() {
@@ -39,14 +38,6 @@ public class JsonRol {
 
     public void setEliminarPermisos(List<Integer> eliminarPermisos) {
         this.eliminarPermisos = eliminarPermisos;
-    }
-
-    public void setPermisos(List<Integer> permisos) {
-        this.permisos = permisos;
-    }
-
-    public JsonRol(String rol) {
-        this.rol = rol;
     }
 
     public void setRol(String rol) {

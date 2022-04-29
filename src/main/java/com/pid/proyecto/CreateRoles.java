@@ -88,8 +88,7 @@ public class CreateRoles implements CommandLineRunner {
             // ENLAZAR PERMISOS DE ADMIN CON EL ROL DE ADMIN
             List<Permiso> permisosAdmin = TodosLosPermisos;
             Rol rolAdmin = rolSistemaService
-                    .findByRol(RolNombre.ROLE_ADMIN.name())
-                    ;
+                    .findByRol(RolNombre.ROLE_ADMIN.name());
             GuardarRelaciones(rolAdmin, permisosAdmin);
             rolSistemaService.save(rolAdmin);
 
@@ -99,8 +98,7 @@ public class CreateRoles implements CommandLineRunner {
                     permisosService.findByPermiso(PermisoNombre.ROLE_R_USUARIO.name())
             );
             Rol rolUser = rolSistemaService
-                    .findByRol(RolNombre.ROLE_USUARIO.name())
-                    ;
+                    .findByRol(RolNombre.ROLE_USUARIO.name());
             GuardarRelaciones(rolUser, permisosUser);
             rolSistemaService.save(rolUser);
 
@@ -118,59 +116,50 @@ public class CreateRoles implements CommandLineRunner {
             usuario.setContrasena(passwordEncoder.encode("admin"));
             usuario.setRol(rolAdmin);
             usuarioService.save(usuario);
-            
-            
+
         }
     }
 
-    public void GuardarRelaciones(Rol rol, List<Permiso> permisos) {
-        String nombreRol = rol.getRol();
-        RolPermiso rolPermiso;
-        RolPermisoPK rolPermisosPK;
+    public List<Integer> GuardarRelaciones(Rol rol, List<Permiso> permisos) {
+        String NR = rol.getRol();
+        RolPermiso RP;
+        RolPermisoPK PK;
         List<RolPermiso> LRP = new LinkedList<>();
-
-        boolean yaExiste = false;
-        List<RolPermiso> relacionesExistentes = rolPermisosService.findAll();
+        List<Integer> ListaExistentes = new LinkedList<>();
 
         for (Permiso p : permisos) {
-            rolPermisosPK = new RolPermisoPK(rol.getId(), p.getId());
-            rolPermiso = new RolPermiso(rolPermisosPK, nombreRol, p.getPermiso());
+            PK = new RolPermisoPK(rol.getId(), p.getId());
+            RP = new RolPermiso(PK, NR, p.getPermiso());
 
-            for (RolPermiso rp : relacionesExistentes) {
-                if (rp.getRolPermisoPK().getIdr() == rolPermisosPK.getIdr() && rp.getRolPermisoPK().getIdp() == rolPermisosPK.getIdp()) {
-                    yaExiste = true;
-                }
-            }
-
-            if (!yaExiste) {
-                LRP.add(rolPermiso);
+            if (!rolPermisosService.existByRolPermisoPK(PK)) {
+                LRP.add(RP);
+            } else {
+                ListaExistentes.add(p.getId());
             }
         }
         rolPermisosService.saveAll(LRP);
+        return ListaExistentes;
     }
 
-    public void EliminarRelaciones(Rol rol, List<Permiso> permisos) {
+    public int EliminarRelaciones(Rol rol, List<Permiso> permisos) {
         RolPermisoPK rolPermisosPK;
         List<RolPermiso> LRP = new LinkedList<>();
-        boolean respuesta = true;
-        List<RolPermiso> relacionesExistentes = rolPermisosService.findAll();
+        RolPermiso RP;
+        int respuesta = 0;
 
         // VERIFICAR QUE TODOS LOS PERMISOS EXISTAN DENTRO DE NUESTRO OBJETO ROL
         for (Permiso p : permisos) {
             rolPermisosPK = new RolPermisoPK(rol.getId(), p.getId());
-
-            for (RolPermiso rp : relacionesExistentes) {
-                if (!(rp.getRolPermisoPK().getIdr() == rolPermisosPK.getIdr() && rp.getRolPermisoPK().getIdp() == rolPermisosPK.getIdp())) {
-                    respuesta = false;
-                }
-                if (respuesta) {
-                    LRP.add(rp);
-                }
-            }
-            if (respuesta == true) {
-                rolPermisosService.deleteAll(LRP);
+            if (rolPermisosService.existByRolPermisoPK(rolPermisosPK)) {
+                RP = rolPermisosService.findByRolPermisoPK(rolPermisosPK);
+                LRP.add(RP);
+            } else {
+                respuesta = rolPermisosPK.getIdp();
+                return respuesta;
             }
         }
+        rolPermisosService.deleteAll(LRP);
+        return respuesta;
     }
 
     public List<Permiso> PermisosUsuario(List<Character> Lc) {
@@ -360,6 +349,7 @@ public class CreateRoles implements CommandLineRunner {
 
         return lista;
     }
+
     public List<Permiso> PermisosComision(List<Character> Lc) {
         List<Permiso> lista = new LinkedList<>();
         for (char c : Lc) {
