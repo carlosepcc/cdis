@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
 import java.io.Serializable;
@@ -13,6 +17,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ *
+ * @author Angel
+ */
 @Entity
 @Table(name = "denuncia_usuario")
 @NamedQueries({
@@ -25,8 +33,8 @@ public class DenunciaUsuario implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "User")
-    private String user;
+    @Column(name = "denunciante")
+    private String denunciante;
     @JoinColumn(name = "idd", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Denuncia denuncia;
@@ -41,9 +49,9 @@ public class DenunciaUsuario implements Serializable {
         this.denunciaUsuarioPK = denunciaUsuarioPK;
     }
 
-    public DenunciaUsuario(DenunciaUsuarioPK denunciaUsuarioPK, String user) {
+    public DenunciaUsuario(DenunciaUsuarioPK denunciaUsuarioPK, String denunciante) {
         this.denunciaUsuarioPK = denunciaUsuarioPK;
-        this.user = user;
+        this.denunciante = denunciante;
     }
 
     public DenunciaUsuario(int idd, int idu) {
@@ -58,12 +66,12 @@ public class DenunciaUsuario implements Serializable {
         this.denunciaUsuarioPK = denunciaUsuarioPK;
     }
 
-    public String getUser() {
-        return user;
+    public String getDenunciante() {
+        return denunciante;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setDenunciante(String denunciante) {
+        this.denunciante = denunciante;
     }
 
     public Denuncia getDenuncia() {

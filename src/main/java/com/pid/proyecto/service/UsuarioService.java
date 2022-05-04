@@ -39,5 +39,9 @@ public class UsuarioService {
         return repo.findByUsuario(n).get();
     }
 
+    public boolean exitsById(int idUsuario) {
+        return repo.existsById(idUsuario);
+    }
+
     
 }

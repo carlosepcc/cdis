@@ -19,8 +19,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -38,16 +36,6 @@ public class Comision implements Serializable {
     @Basic(optional = false)
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "pusuario")
-    private String pusuario;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "susuario")
-    private String susuario;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comision1")
     private List<Caso> casoList;
     @JoinColumn(name = "resolucion", referencedColumnName = "id")
@@ -63,34 +51,12 @@ public class Comision implements Serializable {
         this.id = id;
     }
 
-    public Comision(Integer id, String pusuario, String susuario) {
-        this.id = id;
-        this.pusuario = pusuario;
-        this.susuario = susuario;
-    }
-
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getPusuario() {
-        return pusuario;
-    }
-
-    public void setPusuario(String pusuario) {
-        this.pusuario = pusuario;
-    }
-
-    public String getSusuario() {
-        return susuario;
-    }
-
-    public void setSusuario(String susuario) {
-        this.susuario = susuario;
     }
 
     public List<Caso> getCasoList() {

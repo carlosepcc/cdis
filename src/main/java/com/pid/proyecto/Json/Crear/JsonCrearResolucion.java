@@ -1,10 +1,10 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.Crear;
 
-public class JsonResolucion {
+public class JsonCrearResolucion {
+    
+    private String Descripcion = "";
 
-    String Descripcion = "";
-
-    public JsonResolucion() {
+    public JsonCrearResolucion() {
     }
 
     public String getDescripcion() {
@@ -14,5 +14,4 @@ public class JsonResolucion {
     public void setDescripcion(String Descripcion) {
         this.Descripcion = Descripcion;
     }
-
 }

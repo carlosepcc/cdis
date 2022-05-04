@@ -5,6 +5,8 @@
 package com.pid.proyecto.entity;
 
 import java.io.Serializable;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -12,6 +14,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -26,6 +30,11 @@ public class ComisionUsuario implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected ComisionUsuarioPK comisionUsuarioPK;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "usuario")
+    private String usuario;
     @JoinColumn(name = "idc", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Comision comision;
@@ -34,13 +43,18 @@ public class ComisionUsuario implements Serializable {
     private Rol rol;
     @JoinColumn(name = "idu", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Usuario usuario;
+    private Usuario usuario1;
 
     public ComisionUsuario() {
     }
 
     public ComisionUsuario(ComisionUsuarioPK comisionUsuarioPK) {
         this.comisionUsuarioPK = comisionUsuarioPK;
+    }
+
+    public ComisionUsuario(ComisionUsuarioPK comisionUsuarioPK, String usuario) {
+        this.comisionUsuarioPK = comisionUsuarioPK;
+        this.usuario = usuario;
     }
 
     public ComisionUsuario(int idc, int idu) {
@@ -53,6 +67,14 @@ public class ComisionUsuario implements Serializable {
 
     public void setComisionUsuarioPK(ComisionUsuarioPK comisionUsuarioPK) {
         this.comisionUsuarioPK = comisionUsuarioPK;
+    }
+
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public Comision getComision() {
@@ -71,12 +93,12 @@ public class ComisionUsuario implements Serializable {
         this.rol = rol;
     }
 
-    public Usuario getUsuario() {
-        return usuario;
+    public Usuario getUsuario1() {
+        return usuario1;
     }
 
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+    public void setUsuario1(Usuario usuario1) {
+        this.usuario1 = usuario1;
     }
 
     @Override

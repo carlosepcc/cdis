@@ -4,10 +4,12 @@ import com.pid.proyecto.CreateRoles;
 import com.pid.proyecto.Json.Borrar.JsonBorrarRol;
 import com.pid.proyecto.Json.Crear.JsonCrearRol;
 import com.pid.proyecto.Json.Modificar.JsonModificarRol;
+import com.pid.proyecto.Validator.ValidatorRol;
 import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.entity.RolPermiso;
 import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.service.PermisoService;
 import com.pid.proyecto.service.RolPermisoService;
 import com.pid.proyecto.service.RolService;
@@ -23,7 +25,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,8 +49,13 @@ public class RolController {
     @Autowired
     RolPermisoService rolPermisoService;
 
+    @Autowired
+    SesionDetails sesionDetails;
+
+    @Autowired
+    ValidatorRol validator;
+
     // CCC
-    // CREAMOS UN NUEVO ROL
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_ROL')")
     public ResponseEntity<?> crearRol(
@@ -67,58 +73,40 @@ public class RolController {
                     HttpStatus.PRECONDITION_FAILED
             );
         }
+        
+        ResponseEntity<?> respuesta = validator.ValidarJsonCrearRol(JSONR);
+        if (respuesta != null) {
+            return respuesta;
+        }
 
         // DECLARAMOS 
         Rol rol;
         List<Permiso> LP;
-        List<Integer> LIP;
+        boolean rolParaComision;
 
         // INICIALIZAMOS 
         rol = new Rol();
         LP = new LinkedList<>();
-        LIP = JSONR.getPermisos();
+        rolParaComision = JSONR.isRolParaComision();
 
-        for (int id : LIP) {
-            if (permisoService.existsById(id)) {
-                LP.add(permisoService.findById(id));
-            } else {
-                return new ResponseEntity<>(
-                        new Mensaje("EL PERMISO CON ID " + id + " NO EXISTE"),
-                        HttpStatus.NOT_FOUND
-                );
-            }
+        for (int id : JSONR.getPermisos()) {
+            LP.add(permisoService.findById(id));
         }
-        if (!rolService.existsByRol(JSONR.getRol())) {
-            rol.setRol(JSONR.getRol());
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("YA EXISTE UN ROL CON EL NOMBRE " + JSONR.getRol()),
-                    HttpStatus.CONFLICT
-            );
-        }
+        rol.setRol(JSONR.getRol());
+        rol.setTipoComision(rolParaComision);
 
         // GUARDAMOS
         rol = rolService.save(rol);
 
-        // AGREGAMOS LOS PERMISOS A NUESTRO ROL EN EL CASO DE ESTARLO CREANDO JUNTO A ELLOS
-        if (!LP.isEmpty()) {
-            // GUARDAMOS LA RELACION ENTRE EL ROL Y SUS PERMISOS
-            createRoles.GuardarRelaciones(rol, LP);
-            return new ResponseEntity<>(
-                    new Mensaje("ROL CREADO CON: " + LP.size() + " PERMISOS"),
-                    HttpStatus.CREATED
-            );
-        } else // RETORNAMOS CONFIRMACION
-        {
-            return new ResponseEntity<>(
-                    new Mensaje("ROL CREADO SIN PERMISOS"),
-                    HttpStatus.CREATED
-            );
-        }
+        // GUARDAMOS LA RELACION ENTRE EL ROL Y SUS PERMISOS
+        createRoles.GuardarRelaciones(rol, LP);
+        return new ResponseEntity<>(
+                new Mensaje("ROL CREADO CON: " + LP.size() + " PERMISOS"),
+                HttpStatus.CREATED
+        );
     }
 
     // RRR
-    // MOSTRAMOS TODOS LOS ROLES
     @GetMapping
     @PreAuthorize("hasRole('ROLE_R_ROL')")
     public ResponseEntity<List<Rol>> listar() {
@@ -132,110 +120,60 @@ public class RolController {
     public ResponseEntity<?> actualizar(
             @RequestBody JsonModificarRol JSONR
     ) {
+        ResponseEntity<?> respuesta = validator.ValidarJsonModificarRol(JSONR);
+        if (respuesta != null) {
+            return respuesta;
+        }
+
         // DECLARAMOS VARIABLES
         Rol rol;
-        List<RolPermiso> LRP;
-        String NombreRol;
-        List<Integer> agregarPermisos;
-        List<Integer> eliminarPermisos;
-        List<Permiso> permisos = new LinkedList<>(); // ESTA VARIABLE NO SE LLENA AHORA MISMO
-        List<Integer> PermisosExistentes;
+        List<RolPermiso> ListaRolPermiso;
+        List<Permiso> permisos = new LinkedList<>();
 
         // LLENAMOS LAS VARIABLES
-        PermisosExistentes = new LinkedList<>();
-        if (rolService.existsById(JSONR.getId())) {
-            rol = rolService.findById(JSONR.getId());
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("EL ROL CON ID: " + JSONR.getId() + " NO EXISTE"),
-                    HttpStatus.NOT_FOUND
-            );
-        }
-
-        LRP = rolPermisoService.findAllByRol(rol.getRol());
-
+        rol = rolService.findById(JSONR.getId());
+        ListaRolPermiso = rolPermisoService.findAllByRol(rol.getRol());
+        // CAMBIAR NOMBRE
         if (!JSONR.getRol().isBlank()) {
-            if (JSONR.getRol().matches("ROLE_[A-Z][A-Z|_]+")) {
-                NombreRol = JSONR.getRol();
-            } else {
-                return new ResponseEntity<>(
-                        new Mensaje("FORMATO DE ROL INCORRECTO, EL ROL DEBE COMENZAR CON [ROL_] Y SOLO ADMITE [_] Y [A-Z]"),
-                        HttpStatus.PRECONDITION_FAILED
-                );
+            rol.setRol(JSONR.getRol());
+            // CAMBIAR NOMBRE EN RELACIONES
+            for (RolPermiso RP : ListaRolPermiso) {
+                RP.setRol(JSONR.getRol());
             }
-        } else {
-            NombreRol = rol.getRol();
+            rolPermisoService.saveAll(ListaRolPermiso);
         }
 
-        agregarPermisos = JSONR.getAgregarPermisos();
-        eliminarPermisos = JSONR.getEliminarPermisos();
-
-        // ACTUALIZAMOS CON LAS VARIABLES LLENAS
-        rol.setRol(NombreRol);
-        // SI SE ESTA MODIFICANDO EL NOMBRE DEL ROL
-        // CAMBIAMOS LOS NOMBRES DEL ROL TAMBIEN EN LA TABLA Q RELACIONA ROLES CON PERMISOS
-        for (RolPermiso RP : LRP) {
-            RP.setRol(NombreRol);
-        }
-        rolPermisoService.saveAll(LRP);
-
-        // SI SE ESTAN ELIMINANDO PERMISOS DE ESTE ROL
-        if (!eliminarPermisos.isEmpty()) {
-            int respuesta;
-            for (int idp : eliminarPermisos) {
-                if (permisoService.existsById(idp)) {
-                    permisos.add(permisoService.findById(idp));
-                } else {
-                    return new ResponseEntity<>(
-                            new Mensaje("NO EXISTE EL PERMISO CON ID: " + idp),
-                            HttpStatus.NOT_FOUND
-                    );
-                }
-
+        // ELIMINAR PERMISOS
+        if (!JSONR.getEliminarPermisos().isEmpty()) {
+            for (int idp : JSONR.getEliminarPermisos()) {
+                permisos.add(permisoService.findById(idp));
             }
-
-            respuesta = createRoles.EliminarRelaciones(rol, permisos);
-            if (respuesta != 0) {
-                return new ResponseEntity<>(
-                        new Mensaje("NO EXISTE RELACION ENTRE EL ROL CON ID: "
-                                + rol.getId() + ", Y EL PERMISO CON ID: " + respuesta),
-                        HttpStatus.NOT_FOUND
-                );
-            }
+            createRoles.EliminarRelaciones(rol, permisos);
         }
 
         permisos.clear();
 
-        // SI SE ESTAN AGREGANDO MAS PERMISOS AL ROL
-        if (!agregarPermisos.isEmpty()) {
-
-            for (int idp : agregarPermisos) {
-                if (permisoService.existsById(idp)) {
-                    permisos.add(permisoService.findById(idp));
-                } else {
-                    return new ResponseEntity<>(
-                            new Mensaje("NO EXISTE EL PERMISO CON ID: " + idp),
-                            HttpStatus.NOT_FOUND
-                    );
-                }
+        // AGREGAR PERMISOS
+        if (!JSONR.getAgregarPermisos().isEmpty()) {
+            for (int idp : JSONR.getAgregarPermisos()) {
+                permisos.add(permisoService.findById(idp));
             }
-            PermisosExistentes = createRoles.GuardarRelaciones(rol, permisos);
+            createRoles.GuardarRelaciones(rol, permisos);
         }
 
+        // ESPECIFICAR TIPO DE ROL
+        if (JSONR.isTipoComision() == true) {
+            rol.setTipoComision(true);
+        } else {
+            rol.setTipoComision(rol.isTipoComision());
+        }
+        // SALVAR ROL
         rolService.save(rol);
 
-         if (PermisosExistentes.isEmpty()) {
-            return new ResponseEntity<>(
-                    new Mensaje("ROL ACTUALIZADO"),
-                    HttpStatus.OK
-            );
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("SE ACTUALIZÓ EL ROL, LOS PERMISOS: " + PermisosExistentes.toString() + " YA SE ENCONTRABAN Y FUERON SOBREESCRITOS"),
-                    HttpStatus.OK
-            );
-        }
-
+        return new ResponseEntity<>(
+                new Mensaje("ROL ACTUALIZADO"),
+                HttpStatus.OK
+        );
     }
 
     // DDD
@@ -243,19 +181,17 @@ public class RolController {
     @PreAuthorize("hasRole('ROLE_D_ROL')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarRol JSONBR) {
-        List<Rol> LR = new LinkedList<>();
 
-        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
-        for (int id : JSONBR.getIDS()) {
-            if (!rolService.existsById(id)) {
-                return new ResponseEntity<>(
-                        new Mensaje("NO EXISTE EL ROL CON ID: " + id),
-                        HttpStatus.NOT_FOUND
-                );
-            }
-            LR.add(rolService.findById(id));
+        ResponseEntity<?> respuesta = validator.ValidarJsonBorrarRol(JSONBR);
+        if (respuesta != null) {
+            return respuesta;
         }
 
+        List<Rol> LR = new LinkedList<>();
+        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
+        for (int id : JSONBR.getIDS()) {
+            LR.add(rolService.findById(id));
+        }
         rolService.deleteAll(LR);
         return new ResponseEntity<>(
                 new Mensaje(" ROLES BORRADOS: [ " + JSONBR.getIDS() + " ]"),

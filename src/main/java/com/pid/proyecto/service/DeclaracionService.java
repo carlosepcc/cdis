@@ -31,4 +31,8 @@ public class DeclaracionService {
         repo.deleteAll(LD);
     }
 
+    public boolean existsByDeclaracionPK(DeclaracionPK DPK) {
+        return repo.existsByDeclaracionPK(DPK);
+    }
+
 }

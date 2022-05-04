@@ -1,5 +1,6 @@
 package com.pid.proyecto.controller;
 
+import com.pid.proyecto.Json.Borrar.JsonBorrarDenuncia;
 import com.pid.proyecto.Json.JsonDenuncia;
 import com.pid.proyecto.Json.JsonObjeto;
 import com.pid.proyecto.auxiliares.Convertidor;
@@ -65,10 +66,12 @@ public class DenunciaController {
         String acusado;
         LocalDate fecha;
         boolean procesada;
+
+        int idD;
         int idU;
-        DenunciaUsuario denunciaUsuario;
         DenunciaUsuarioPK PK;
         String usuario;
+        DenunciaUsuario DU;
 
         // INICIALIZAMOS VARIABLES
         denuncia = new Denuncia();
@@ -76,23 +79,24 @@ public class DenunciaController {
         acusado = JSOND.getAcusado();
         fecha = JSOND.getFecha();
         procesada = JSOND.isProcesada();
-        idU = usuarioService.findByUsuario(SesionDetails.getUsuario()).getId();
-        denunciaUsuario = new DenunciaUsuario();
-        usuario = SesionDetails.getUsuario();
 
-        denuncia.setDescripcion(descripcion);
         denuncia.setAcusado(acusado);
+        denuncia.setDescripcion(descripcion);
         denuncia.setFecha(convertidor.LocalDateToSqlDate(fecha));
         denuncia.setProcesada(procesada);
 
         // GUARDAMOS
         denuncia = denunciaService.save(denuncia);
-        PK = new DenunciaUsuarioPK(denuncia.getId(), idU);
 
         // RELACIONAMOS
-        denunciaUsuario.setDenunciaUsuarioPK(PK);
-        denunciaUsuario.setUser(usuario);
-        denunciaUsuarioService.save(denunciaUsuario);
+        idD = denuncia.getId();
+        usuario = SesionDetails.getUsuario();
+        idU = usuarioService.findByUsuario(usuario).getId();
+        PK = new DenunciaUsuarioPK(idD, idU);
+
+        DU = new DenunciaUsuario(PK, usuario);
+
+        denunciaUsuarioService.save(DU);
 
         return new ResponseEntity<>(
                 new Mensaje(" DENUNCIA CREADA"),
@@ -156,15 +160,22 @@ public class DenunciaController {
     }
 
     // DDD
-    @DeleteMapping("/borrar/{ids}")
+    @DeleteMapping("/borrar")
     @PreAuthorize("hasRole('ROLE_D_DENUNCIA')")
     @ResponseBody
-    public ResponseEntity<?> borrar(@PathVariable("ids") List<Integer> ids) {
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDenuncia JSOND) {
 
         List<Denuncia> LD = new LinkedList<>();
 
-        for (int id : ids) {
-            LD.add(denunciaService.findById(id));
+        for (int id : JSOND.getIdDenuncias()) {
+            if (denunciaService.existsById(id)) {
+                LD.add(denunciaService.findById(id));
+            } else {
+                return new ResponseEntity<>(
+                        new Mensaje(" NO EXISTE EL ID: [ " + id + " ]"),
+                        HttpStatus.OK
+                );
+            }
         }
 
         denunciaService.deleteAll(LD);
@@ -172,7 +183,7 @@ public class DenunciaController {
         // VERIFICAMOS QUE TODOS LOS ID EXISTAN
         // BORRAMOS LOS ID
         return new ResponseEntity<>(
-                new Mensaje(" DENUNCIAS BORRADAS: [ " + ids.size() + " ]"),
+                new Mensaje(" DENUNCIAS BORRADAS: [ " + LD.size() + " ]"),
                 HttpStatus.OK
         );
     }

@@ -55,7 +55,8 @@ public enum PermisoNombre {
     ROLE_C_DICTAMEN, // CREAR             
     ROLE_R_DICTAMEN, // VISUALIZAR    
     ROLE_U_DICTAMEN, // MODIFICAR
-    ROLE_D_DICTAMEN;  // BORRAR         
-//
+    ROLE_D_DICTAMEN;  // BORRAR    
+    
+
 
 }

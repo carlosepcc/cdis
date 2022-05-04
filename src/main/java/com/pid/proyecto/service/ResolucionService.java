@@ -32,4 +32,8 @@ public class ResolucionService {
        return repo.findAll();
     }
 
+    public boolean existsById(int id) {
+       return repo.existsById(id);
+    }
+
 }

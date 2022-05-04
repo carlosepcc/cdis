@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface DeclaracionRepo extends JpaRepository<Declaracion, Integer>{
 
     public Optional<Declaracion> findByDeclaracionPK(DeclaracionPK declaracionPK);
+
+    public boolean existsByDeclaracionPK(DeclaracionPK DPK);
     
 }

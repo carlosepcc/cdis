@@ -1,30 +1,26 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarExpedientes;
-import com.pid.proyecto.Json.JsonExpediente;
+import com.pid.proyecto.Json.Crear.JsonCrearExpediente;
+import com.pid.proyecto.Json.Modificar.JsonModificarExpediente;
 import com.pid.proyecto.auxiliares.Mensaje;
-import com.pid.proyecto.entity.Comision;
-import com.pid.proyecto.entity.Denuncia;
+import com.pid.proyecto.entity.DeclaracionPK;
 import com.pid.proyecto.entity.Expediente;
 import com.pid.proyecto.entity.ExpedientePK;
-import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.ComisionService;
+import com.pid.proyecto.service.DeclaracionService;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.ExpedienteService;
 import com.pid.proyecto.service.UsuarioService;
 import java.util.LinkedList;
 import java.util.List;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,31 +41,66 @@ public class ExpedienteController {
     ComisionService comisionService;
     @Autowired
     ExpedienteService expedienteService;
+    @Autowired
+    DeclaracionService declaracionService;
 
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_EXPEDIENTE')")
     public ResponseEntity<?> crear(
-            @Valid @RequestBody JsonExpediente JSONE,
-            BindingResult BR
+            @RequestBody JsonCrearExpediente JSONE
     ) {
 
         // DECLARAMOS VARIABLES
+        int idU;
+        int idD;
+        int idC;
+
+        DeclaracionPK DPK;
+        ExpedientePK EPK;
         Expediente expediente;
-        ExpedientePK PK;
-        Usuario usuario;
-        Denuncia denuncia;
-        Comision comision;
+
         String descripcion;
 
         // INICIALIZAMOS VARIABLES
-        expediente = new Expediente();
-        usuario = usuarioService.findById(JSONE.getIdUsuario());
-        denuncia = denunciaService.findById(JSONE.getIdDenuncia());
-        comision = comisionService.findById(JSONE.getIdComision());
-        descripcion = JSONE.getDescripcion();
-        PK = new ExpedientePK(usuario.getId(), denuncia.getId(), comision.getId());
+        if (usuarioService.exitsById(JSONE.getIdUsuario())) {
+            idU = JSONE.getIdUsuario();
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("INTRODUJO UN ID DE USUARIO INEXISTENTE: " + JSONE.getIdUsuario()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
 
-        expediente.setExpedientePK(PK);
+        if (denunciaService.existsById(JSONE.getIdDenuncia())) {
+            idD = JSONE.getIdDenuncia();
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("INTRODUJO UN ID DE DENUNCIA INEXISTENTE: " + JSONE.getIdUsuario()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        if (comisionService.existsById(JSONE.getIdComision())) {
+            idC = JSONE.getIdComision();
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("INTRODUJO UN ID DE COMISION INEXISTENTE: " + JSONE.getIdUsuario()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        DPK = new DeclaracionPK(idU, idD, idC);
+        if (declaracionService.existsByDeclaracionPK(DPK)) {
+            EPK = new ExpedientePK(idU, idD, idC);
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("LA DECLARACION A LA CUAL HACE REFERENCIA NO EXISTE: " + DPK.toString()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+        descripcion = JSONE.getDescripcion();
+        expediente = new Expediente();
+        expediente.setExpedientePK(EPK);
         expediente.setDescripcion(descripcion);
 
         // GUARDAMOS
@@ -93,26 +124,58 @@ public class ExpedienteController {
     }
 
     @PostMapping("/modificar")
-    @PreAuthorize("hasRole('ROLE_U_ENTIDAD')")
+    @PreAuthorize("hasRole('ROLE_U_EXPEDIENTE')")
     public ResponseEntity<?> modificar(
-            @Valid @RequestBody JsonExpediente JSONE,
-            BindingResult BR
+            @RequestBody JsonModificarExpediente JSONE
     ) {
         // DECLARAMOS VARIABLES
+        int idU;
+        int idD;
+        int idC;
+
+        ExpedientePK EPK;
         Expediente expediente;
-        ExpedientePK PK;
-        Usuario usuario;
-        Denuncia denuncia;
-        Comision comision;
+
         String descripcion;
 
         // INICIALIZAMOS VARIABLES
-        usuario = usuarioService.findById(JSONE.getIdUsuario());
-        denuncia = denunciaService.findById(JSONE.getIdDenuncia());
-        comision = comisionService.findById(JSONE.getIdComision());
-        PK = new ExpedientePK(usuario.getId(), denuncia.getId(), comision.getId());
-        expediente = expedienteService.findByExpedientePK(PK);
+        if (usuarioService.exitsById(JSONE.getIdUsuario())) {
+            idU = JSONE.getIdUsuario();
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("INTRODUJO UN ID DE USUARIO INEXISTENTE: " + JSONE.getIdUsuario()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
 
+        if (denunciaService.existsById(JSONE.getIdDenuncia())) {
+            idD = JSONE.getIdDenuncia();
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("INTRODUJO UN ID DE DENUNCIA INEXISTENTE: " + JSONE.getIdUsuario()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        if (comisionService.existsById(JSONE.getIdComision())) {
+            idC = JSONE.getIdComision();
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("INTRODUJO UN ID DE COMISION INEXISTENTE: " + JSONE.getIdUsuario()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
+        EPK = new ExpedientePK(idU, idD, idC);
+
+        if (expedienteService.existsByExpedientePK(EPK)) {
+            expediente = expedienteService.findByExpedientePK(EPK);
+        } else {
+            return new ResponseEntity<>(
+                    new Mensaje("EL EXPEDIENTE AL CUAL HACE REFERENCIA NO EXISTE: " + EPK.toString()),
+                    HttpStatus.NOT_FOUND
+            );
+        }
         if (!JSONE.getDescripcion().isBlank()) {
             descripcion = JSONE.getDescripcion();
         } else {
@@ -138,7 +201,7 @@ public class ExpedienteController {
 
         List<Expediente> LE = new LinkedList<>();
         List<ExpedientePK> LPK;
-        
+
         LPK = JSONBE.getLPK();
 
         for (int i = 0; i < LPK.size(); i++) {

@@ -1,7 +1,9 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -18,6 +20,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ *
+ * @author Angel
+ */
 @Entity
 @Table(name = "rol")
 @NamedQueries({
@@ -25,7 +31,6 @@ import javax.validation.constraints.Size;
 public class Rol implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -36,13 +41,14 @@ public class Rol implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "rol")
     private String rol;
-    @JsonIgnoreProperties(value = {"rol1", "rolPermisoPK", "rol", "permiso1"})
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "tipocomision")
+    private boolean tipoComision;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol1")
     private List<RolPermiso> rolPermisoList;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
     private List<Usuario> usuarioList;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
     private List<ComisionUsuario> comisionUsuarioList;
 
@@ -57,9 +63,23 @@ public class Rol implements Serializable {
         this.id = id;
         this.rol = rol;
     }
-    
+
     public Rol(String rol) {
         this.rol = rol;
+        this.tipoComision = false;
+    }
+
+    public boolean isTipoComision() {
+        return tipoComision;
+    }
+
+    public void setTipoComision(boolean tipoComision) {
+        this.tipoComision = tipoComision;
+    }
+
+    public Rol(String rol, boolean tipoComision) {
+        this.rol = rol;
+        this.tipoComision = tipoComision;
     }
 
     public Integer getId() {
@@ -126,5 +146,5 @@ public class Rol implements Serializable {
     public String toString() {
         return "com.pid.proyecto.entity.Rol[ id=" + id + " ]";
     }
-    
+
 }

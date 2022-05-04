@@ -78,7 +78,7 @@ public class UsuarioController {
 
         //LLENAMOS LAS VARIABLES A USAR
         usuario = new Usuario();
-        rol = rolService.findByRol(RolNombre.ROLE_USUARIO.name());
+        rol = rolService.findById(1);
         nombre = JSONU.getNombre();
         username = JSONU.getUsuario();
         password = passwordEncoder.encode(JSONU.getContrasena());
@@ -111,65 +111,65 @@ public class UsuarioController {
     }
 
     // UUU
-    @PostMapping("/actualizar/{id}")
-    @PreAuthorize("hasRole('ROLE_U_USUARIO')")
-    public ResponseEntity<?> actualizar(
-            @PathVariable("id") int id,
-            @RequestBody JsonUsuario JSONU
-    ) {
-        // DECLARAMOS VARIABLES
-        Usuario usuario;
-        Rol rol;
-        String nombre;
-        String username;
-        String password;
-        String cargo;
-
-        //LLENAMOS LAS VARIABLES A USAR
-        usuario = usuarioService.findById(id);
-        if (!JSONU.getRol().isBlank()) {
-            rol = rolService.findByRol(JSONU.getRol());
-        } else {
-            rol = usuario.getRol();
-        }
-        if (!JSONU.getNombre().isBlank()) {
-            nombre = JSONU.getNombre();
-        } else {
-            nombre = usuario.getNombre();
-        }
-        if (!JSONU.getUsuario().isBlank()) {
-            username = JSONU.getUsuario();
-        } else {
-            username = usuario.getUsuario();
-        }
-        if (!JSONU.getContrasena().isBlank()) {
-            password = passwordEncoder.encode(JSONU.getContrasena());
-        } else {
-            password = usuario.getContrasena();
-        }
-        if (!JSONU.getCargo().isBlank()) {
-            cargo = JSONU.getCargo();
-        } else {
-            cargo = usuario.getCargo();
-        }
-
-        // LLENAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
-        usuario.setRol(rol);
-        usuario.setNombre(nombre);
-        usuario.setUsuario(username);
-        usuario.setContrasena(passwordEncoder.encode(password));
-        usuario.setCargo(cargo);
-
-        // SALVAMOS ESE USUARIO
-        usuarioService.save(usuario);
-
-        // RETORNAMOS CONFIRMACION
-        return new ResponseEntity<>(
-                new Mensaje("USUARIO GUARDADO"),
-                HttpStatus.CREATED
-        );
-
-    }
+//    @PostMapping("/actualizar/{id}")
+//    @PreAuthorize("hasRole('ROLE_U_USUARIO')")
+//    public ResponseEntity<?> actualizar(
+//            @PathVariable("id") int id,
+//            @RequestBody JsonUsuario JSONU
+//    ) {
+//        // DECLARAMOS VARIABLES
+//        Usuario usuario;
+//        Rol rol;
+//        String nombre;
+//        String username;
+//        String password;
+//        String cargo;
+//
+//        //LLENAMOS LAS VARIABLES A USAR
+//        usuario = usuarioService.findById(id);
+//        if (!JSONU.getRol().isBlank()) {
+//            rol = rolService.findByRol(JSONU.getRol());
+//        } else {
+//            rol = usuario.getRol();
+//        }
+//        if (!JSONU.getNombre().isBlank()) {
+//            nombre = JSONU.getNombre();
+//        } else {
+//            nombre = usuario.getNombre();
+//        }
+//        if (!JSONU.getUsuario().isBlank()) {
+//            username = JSONU.getUsuario();
+//        } else {
+//            username = usuario.getUsuario();
+//        }
+//        if (!JSONU.getContrasena().isBlank()) {
+//            password = passwordEncoder.encode(JSONU.getContrasena());
+//        } else {
+//            password = usuario.getContrasena();
+//        }
+//        if (!JSONU.getCargo().isBlank()) {
+//            cargo = JSONU.getCargo();
+//        } else {
+//            cargo = usuario.getCargo();
+//        }
+//
+//        // LLENAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
+//        usuario.setRol(rol);
+//        usuario.setNombre(nombre);
+//        usuario.setUsuario(username);
+//        usuario.setContrasena(passwordEncoder.encode(password));
+//        usuario.setCargo(cargo);
+//
+//        // SALVAMOS ESE USUARIO
+//        usuarioService.save(usuario);
+//
+//        // RETORNAMOS CONFIRMACION
+//        return new ResponseEntity<>(
+//                new Mensaje("USUARIO GUARDADO"),
+//                HttpStatus.CREATED
+//        );
+//
+//    }
 
     // DDD
     @DeleteMapping("/borrar/{ids}")

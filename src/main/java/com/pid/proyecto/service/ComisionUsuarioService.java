@@ -27,13 +27,17 @@ public class ComisionUsuarioService {
         repo.saveAll(CU);
     }
 
-
     public void delete(ComisionUsuario comisionUsuario) {
         repo.delete(comisionUsuario);
     }
 
     public void deleteAll(List<ComisionUsuario> LCU) {
         repo.deleteAll(LCU);
+    }
+
+    public void deleteByComisionUsuarioPK(ComisionUsuarioPK comisionUsuarioPK) {
+        
+        repo.deleteByComisionUsuarioPK(comisionUsuarioPK);
     }
 
 

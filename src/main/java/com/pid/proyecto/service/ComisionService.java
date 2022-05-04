@@ -1,6 +1,8 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Comision;
+import com.pid.proyecto.entity.ComisionUsuario;
+import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.repository.ComisionRepo;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,5 +31,18 @@ public class ComisionService {
     public void deleteAll(List<Comision> LO) {
         repo.deleteAll(LO);
     }
+
+    public boolean existsById(int idComision) {
+        return repo.existsById(idComision);
+    }
+
+    public List<Comision> findAllByResolucion(Resolucion resolucion) {
+        return repo.findAllByResolucion(resolucion);
+    }
+
+    public void delete(Comision comision) {
+        repo.delete(comision);
+    }
+
 
 }

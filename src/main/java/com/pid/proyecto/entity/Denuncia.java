@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
 import java.io.Serializable;
@@ -74,14 +78,6 @@ public class Denuncia implements Serializable {
         this.procesada = procesada;
     }
 
-    public String getAcusado() {
-        return acusado;
-    }
-
-    public void setAcusado(String acusado) {
-        this.acusado = acusado;
-    }
-
     public Integer getId() {
         return id;
     }
@@ -96,6 +92,14 @@ public class Denuncia implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public String getAcusado() {
+        return acusado;
+    }
+
+    public void setAcusado(String acusado) {
+        this.acusado = acusado;
     }
 
     public Date getFecha() {
