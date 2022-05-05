@@ -35,4 +35,8 @@ public class ExpedienteService {
         return repo.existsByExpedientePK(EPK);
     }
 
+    public void deleteByExpedientePK(ExpedientePK PK) {
+        repo.deleteByExpedientePK(PK);
+    }
+
 }

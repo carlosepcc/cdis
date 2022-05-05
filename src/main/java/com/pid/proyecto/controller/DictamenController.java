@@ -1,17 +1,20 @@
 package com.pid.proyecto.controller;
 
-import com.pid.proyecto.Json.Borrar.JsonBorrarDictamenes;
+import com.pid.proyecto.Json.Borrar.JsonBorrarDictamen;
 import com.pid.proyecto.Json.Crear.JsonCrearDictamen;
 import com.pid.proyecto.Json.Modificar.JsonModificarDictamen;
+import com.pid.proyecto.Validator.ValidatorDictamen;
 import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.entity.Caso;
+import com.pid.proyecto.entity.CasoPK;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.entity.Dictamen;
 import com.pid.proyecto.entity.DictamenPK;
+import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.DictamenService;
-import java.util.LinkedList;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +43,10 @@ public class DictamenController {
     ComisionService comisionService;
     @Autowired
     DictamenService dictamenService;
+    @Autowired
+    CasoService casoService;
+    @Autowired
+    ValidatorDictamen validator;
 
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_DICTAMEN')")
@@ -48,25 +55,28 @@ public class DictamenController {
             BindingResult BR
     ) {
 
+        // VALIDAR JSON ANTES DE USARSE
+        ResponseEntity respuesta = validator.ValidarJsonCrearDictamen(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
+
         // DECLARAMOS VARIABLES
-        Dictamen dictamen;
-        Denuncia denuncia;
-        Comision comision;
-        DictamenPK PK;
-        String descripcion;
+        Dictamen dictamen = new Dictamen();
 
-        // INICIALIZAMOS VARIABLES
-        dictamen = new Dictamen();
-        denuncia = denunciaService.findById(JSOND.getIdDenuncia());
-        comision = comisionService.findById(JSOND.getIdComision());
-        PK = new DictamenPK(denuncia.getId(), comision.getId());
-        descripcion = JSOND.getDescripcion();
+        Denuncia denuncia = denunciaService.findById(JSOND.getIdDenuncia());
+        Comision comision = comisionService.findById(JSOND.getIdComision());
 
-        dictamen.setDictamenPK(PK);
-        dictamen.setDescripcion(descripcion);
+        dictamen.setDictamenPK(new DictamenPK(denuncia.getId(), comision.getId()));
+        dictamen.setDescripcion(JSOND.getDescripcion());
 
         // GUARDAMOS
         dictamenService.save(dictamen);
+
+        // CERRAMOS EL CASO
+        Caso caso = casoService.findByCasoPK(new CasoPK(denuncia.getId(), comision.getId()));
+        caso.setAbierto(false);
+        casoService.save(caso);
 
         return new ResponseEntity<>(
                 new Mensaje("DICTAMEN CREADO"),
@@ -74,8 +84,6 @@ public class DictamenController {
         );
     }
 
-    // RRR
-    // MOSTRAMOS TODOS LOS OBJETOS
     @GetMapping
     @PreAuthorize("hasRole('ROLE_R_DICTAMEN')")
     public ResponseEntity<List<Dictamen>> listar() {
@@ -88,15 +96,20 @@ public class DictamenController {
     @PostMapping("/modificar")
     @PreAuthorize("hasRole('ROLE_U_DICTAMEN')")
     public ResponseEntity<?> modificar(
-            @Valid @RequestBody JsonModificarDictamen JSOND,
-            BindingResult BR
+            @RequestBody JsonModificarDictamen JSOND
     ) {
+
+        // VALIDAR JSON ANTES DE USARSE
+        ResponseEntity respuesta = validator.ValidarJsonModificarDictamen(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
+
         // DECLARAMOS VARIABLES
         Dictamen dictamen;
         Denuncia denuncia;
         Comision comision;
         DictamenPK PK;
-        String descripcion;
 
         // INICIALIZAMOS VARIABLES
         denuncia = denunciaService.findById(JSOND.getIdDenuncia());
@@ -105,12 +118,8 @@ public class DictamenController {
         dictamen = dictamenService.findByDictamenPK(PK);
 
         if (!JSOND.getDescripcion().isBlank()) {
-            descripcion = JSOND.getDescripcion();
-        } else {
-            descripcion = dictamen.getDescripcion();
+            dictamen.setDescripcion(JSOND.getDescripcion());
         }
-
-        dictamen.setDescripcion(descripcion);
 
         // GUARDAMOS
         dictamenService.save(dictamen);
@@ -121,26 +130,23 @@ public class DictamenController {
         );
     }
 
-    // DDD
     @DeleteMapping("/borrar")
     @PreAuthorize("hasRole('ROLE_D_DICTAMEN')")
     @ResponseBody
-    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDictamenes JSONBD) {
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDictamen JSOND) {
 
-        List<Dictamen> LD = new LinkedList<>();
-        List<DictamenPK> LPK;
-        
-        LPK = JSONBD.getLPK();
-
-        for (int i = 0; i < LPK.size(); i++) {
-            LD.add(dictamenService.findByDictamenPK(LPK.get(i)));
+        // VALIDAR JSON ANTES DE USARSE
+        ResponseEntity respuesta = validator.ValidarJsonBorrarDictamen(JSOND);
+        if (respuesta != null) {
+            return respuesta;
         }
 
-        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
-        // BORRAMOS LOS ID
-        dictamenService.deleteAll(LD);
+        for (DictamenPK PK : JSOND.getLPK()) {
+            dictamenService.deleteByDictamenPK(PK);
+        }
+
         return new ResponseEntity<>(
-                new Mensaje("DICTAMENES BORRADOS: [ " + LPK.size() + " ]"),
+                new Mensaje("DICTAMENES BORRADOS: [ " + JSOND.getLPK().size() + " ]"),
                 HttpStatus.OK
         );
     }

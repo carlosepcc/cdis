@@ -13,4 +13,6 @@ public interface ExpedienteRepo extends JpaRepository<Expediente, Integer> {
 
     public boolean existsByExpedientePK(ExpedientePK EPK);
 
+    public void deleteByExpedientePK(ExpedientePK PK);
+
 }

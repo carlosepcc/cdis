@@ -3,6 +3,7 @@ package com.pid.proyecto.controller;
 import com.pid.proyecto.Json.Borrar.JsonBorrarExpedientes;
 import com.pid.proyecto.Json.Crear.JsonCrearExpediente;
 import com.pid.proyecto.Json.Modificar.JsonModificarExpediente;
+import com.pid.proyecto.Validator.ValidatorExpediente;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.entity.DeclaracionPK;
 import com.pid.proyecto.entity.Expediente;
@@ -43,6 +44,8 @@ public class ExpedienteController {
     ExpedienteService expedienteService;
     @Autowired
     DeclaracionService declaracionService;
+    @Autowired
+    ValidatorExpediente validator;
 
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_EXPEDIENTE')")
@@ -50,58 +53,16 @@ public class ExpedienteController {
             @RequestBody JsonCrearExpediente JSONE
     ) {
 
-        // DECLARAMOS VARIABLES
-        int idU;
-        int idD;
-        int idC;
-
-        DeclaracionPK DPK;
-        ExpedientePK EPK;
-        Expediente expediente;
-
-        String descripcion;
-
-        // INICIALIZAMOS VARIABLES
-        if (usuarioService.existsById(JSONE.getIdUsuario())) {
-            idU = JSONE.getIdUsuario();
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("INTRODUJO UN ID DE USUARIO INEXISTENTE: " + JSONE.getIdUsuario()),
-                    HttpStatus.NOT_FOUND
-            );
+        // VALIDAR JSON ANTES DE USARSE
+        ResponseEntity respuesta = validator.ValidarJsonCrearExpediente(JSONE);
+        if (respuesta != null) {
+            return respuesta;
         }
 
-        if (denunciaService.existsById(JSONE.getIdDenuncia())) {
-            idD = JSONE.getIdDenuncia();
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("INTRODUJO UN ID DE DENUNCIA INEXISTENTE: " + JSONE.getIdUsuario()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
+        Expediente expediente = new Expediente();
 
-        if (comisionService.existsById(JSONE.getIdComision())) {
-            idC = JSONE.getIdComision();
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("INTRODUJO UN ID DE COMISION INEXISTENTE: " + JSONE.getIdUsuario()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
-
-        DPK = new DeclaracionPK(idU, idD, idC);
-        if (declaracionService.existsByDeclaracionPK(DPK)) {
-            EPK = new ExpedientePK(idU, idD, idC);
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("LA DECLARACION A LA CUAL HACE REFERENCIA NO EXISTE: " + DPK.toString()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
-        descripcion = JSONE.getDescripcion();
-        expediente = new Expediente();
-        expediente.setExpedientePK(EPK);
-        expediente.setDescripcion(descripcion);
+        expediente.setExpedientePK(new ExpedientePK(JSONE.getIdUsuario(), JSONE.getIdDenuncia(), JSONE.getIdComision()));
+        expediente.setDescripcion(JSONE.getDescripcion());
 
         // GUARDAMOS
         expedienteService.save(expediente);
@@ -112,8 +73,6 @@ public class ExpedienteController {
         );
     }
 
-    // RRR
-    // MOSTRAMOS TODOS LOS OBJETOS
     @GetMapping
     @PreAuthorize("hasRole('ROLE_R_EXPEDIENTE')")
     public ResponseEntity<List<Expediente>> listar() {
@@ -128,61 +87,21 @@ public class ExpedienteController {
     public ResponseEntity<?> modificar(
             @RequestBody JsonModificarExpediente JSONE
     ) {
-        // DECLARAMOS VARIABLES
-        int idU;
-        int idD;
-        int idC;
 
-        ExpedientePK EPK;
-        Expediente expediente;
-
-        String descripcion;
-
-        // INICIALIZAMOS VARIABLES
-        if (usuarioService.existsById(JSONE.getIdUsuario())) {
-            idU = JSONE.getIdUsuario();
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("INTRODUJO UN ID DE USUARIO INEXISTENTE: " + JSONE.getIdUsuario()),
-                    HttpStatus.NOT_FOUND
-            );
+        // VALIDAR JSON ANTES DE USARSE
+        ResponseEntity respuesta = validator.ValidarJsonModificarExpediente(JSONE);
+        if (respuesta != null) {
+            return respuesta;
         }
 
-        if (denunciaService.existsById(JSONE.getIdDenuncia())) {
-            idD = JSONE.getIdDenuncia();
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("INTRODUJO UN ID DE DENUNCIA INEXISTENTE: " + JSONE.getIdUsuario()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
+        Expediente expediente = expedienteService.findByExpedientePK(
+                new ExpedientePK(JSONE.getIdUsuario(),
+                        JSONE.getIdDenuncia(),
+                        JSONE.getIdComision()));
 
-        if (comisionService.existsById(JSONE.getIdComision())) {
-            idC = JSONE.getIdComision();
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("INTRODUJO UN ID DE COMISION INEXISTENTE: " + JSONE.getIdUsuario()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
-
-        EPK = new ExpedientePK(idU, idD, idC);
-
-        if (expedienteService.existsByExpedientePK(EPK)) {
-            expediente = expedienteService.findByExpedientePK(EPK);
-        } else {
-            return new ResponseEntity<>(
-                    new Mensaje("EL EXPEDIENTE AL CUAL HACE REFERENCIA NO EXISTE: " + EPK.toString()),
-                    HttpStatus.NOT_FOUND
-            );
-        }
         if (!JSONE.getDescripcion().isBlank()) {
-            descripcion = JSONE.getDescripcion();
-        } else {
-            descripcion = expediente.getDescripcion();
-        }
-
-        expediente.setDescripcion(descripcion);
+            expediente.setDescripcion(JSONE.getDescripcion());
+        } 
 
         // GUARDAMOS
         expedienteService.save(expediente);
@@ -197,22 +116,20 @@ public class ExpedienteController {
     @DeleteMapping("/borrar")
     @PreAuthorize("hasRole('ROLE_D_EXPEDIENTE')")
     @ResponseBody
-    public ResponseEntity<?> borrar(@RequestBody JsonBorrarExpedientes JSONBE) {
-
-        List<Expediente> LE = new LinkedList<>();
-        List<ExpedientePK> LPK;
-
-        LPK = JSONBE.getLPK();
-
-        for (int i = 0; i < LPK.size(); i++) {
-            LE.add(expedienteService.findByExpedientePK(LPK.get(i)));
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarExpedientes JSONE) {
+        
+        // VALIDAR JSON ANTES DE USARSE
+        ResponseEntity respuesta = validator.ValidarJsonBorrarExpediente(JSONE);
+        if (respuesta != null) {
+            return respuesta;
         }
 
-        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
-        // BORRAMOS LOS ID
-        expedienteService.deleteAll(LE);
+        for (ExpedientePK PK: JSONE.getLPK()) {
+            expedienteService.deleteByExpedientePK(PK);
+        }
+
         return new ResponseEntity<>(
-                new Mensaje(" OBJETOS BORRADOS: [ " + LE.size() + " ]"),
+                new Mensaje(" OBJETOS BORRADOS: [ " + JSONE.getLPK().size() + " ]"),
                 HttpStatus.OK
         );
     }

@@ -5,7 +5,6 @@ import com.pid.proyecto.Json.Login.JsonJwtDto;
 import com.pid.proyecto.Json.Login.JsonLoginUsuario;
 import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.entity.Usuario;
-import com.pid.proyecto.enums.RolNombre;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.seguridad.jwt.JwtProvider;

@@ -12,6 +12,8 @@ public interface DictamenRepo extends JpaRepository<Dictamen, Integer>{
     public Optional<Dictamen> findByDictamenPK(DictamenPK PK);
 
     public boolean existsByDictamenPK(DictamenPK dictamenPK);
+
+    public void deleteByDictamenPK(DictamenPK PK);
     
     
     

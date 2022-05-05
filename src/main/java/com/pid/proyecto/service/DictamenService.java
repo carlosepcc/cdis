@@ -36,4 +36,8 @@ public class DictamenService {
         return repo.existsByDictamenPK(dictamenPK);
     }
 
+    public void deleteByDictamenPK(DictamenPK PK) {
+        repo.deleteByDictamenPK(PK);
+    }
+
 }
