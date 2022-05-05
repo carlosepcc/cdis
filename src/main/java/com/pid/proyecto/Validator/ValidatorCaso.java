@@ -4,11 +4,14 @@ import com.pid.proyecto.Json.Borrar.JsonBorrarCasos;
 import com.pid.proyecto.Json.Crear.JsonCrearCaso;
 import com.pid.proyecto.Json.Modificar.JsonModificarCaso;
 import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.CasoPK;
 import com.pid.proyecto.entity.Denuncia;
+import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.DenunciaService;
+import com.pid.proyecto.service.UsuarioService;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,10 @@ public class ValidatorCaso {
     ComisionService comisionService;
     @Autowired
     CasoService casoService;
+    @Autowired
+    SesionDetails sesionDetails;
+    @Autowired
+    UsuarioService usuarioService;
 
     public ResponseEntity<?> ValidarJsonCrearCaso(JsonCrearCaso JSONC) {
         List<String> respuesta = new LinkedList();
