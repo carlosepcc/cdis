@@ -34,4 +34,8 @@ public class DenunciaService {
         return repo.existsById(idDenuncia);
     }
 
+    public void deleteById(int id) {
+        repo.deleteById(id);
+    }
+
 }

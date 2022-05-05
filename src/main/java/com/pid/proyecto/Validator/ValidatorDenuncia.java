@@ -32,7 +32,7 @@ public class ValidatorDenuncia {
         List<String> respuesta = new LinkedList<>();
 
         if (!usuarioService.existsByUsuario(JSOND.getAcusado())) {
-            respuesta.add("NO EXISTE EL ACUSADO CON USUARIO: " + JSOND.getAcusado());
+            respuesta.add("NO EXISTE EL USUARIO: " + JSOND.getAcusado());
         }
 
         if (!respuesta.isEmpty()) {
@@ -59,8 +59,14 @@ public class ValidatorDenuncia {
             respuesta.add("USTED NO ES EL PROPIETARIO DE ESTA DENUNCIA, NO PUEDE MODIFICARLA");
         }
 
-        if (!usuarioService.existsByUsuario(JSOND.getAcusado())) {
-            respuesta.add(" NO EXISTE EL ACUSADO CON USUARIO: " + JSOND.getAcusado());
+        if (denunciaService.findById(JSOND.getIdDenuncia()).getProcesada()) {
+            respuesta.add("ESTA DENUNCIA YA SE ENCUENTRA EN PROCESO, NO PUEDE MODIFICARLA");
+        }
+
+        if (!JSOND.getAcusado().isBlank()) {
+            if (!usuarioService.existsByUsuario(JSOND.getAcusado())) {
+                respuesta.add(" NO EXISTE EL ACUSADO CON USUARIO: " + JSOND.getAcusado());
+            }
         }
 
         if (!respuesta.isEmpty()) {

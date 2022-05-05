@@ -5,6 +5,7 @@ import com.pid.proyecto.Json.Crear.JsonCrearCaso;
 import com.pid.proyecto.Json.Modificar.JsonModificarCaso;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.entity.CasoPK;
+import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.DenunciaService;
@@ -31,8 +32,19 @@ public class ValidatorCaso {
         if (!denunciaService.existsById(JSONC.getIdDenuncia())) {
             respuesta.add("NO EXISTE LA DENUNCIA CON ID: " + JSONC.getIdDenuncia());
         }
+
+        Denuncia denuncia = denunciaService.findById(JSONC.getIdDenuncia());
+        if (denuncia.getProcesada()) {
+            respuesta.add("LA DENUNCIA CON ID: " + JSONC.getIdDenuncia()
+                    + " YA ESTÁ EN PROCESO, NO PUEDE CREAR OTRO CASO PARA ELLA");
+        }
+
         if (!comisionService.existsById(JSONC.getIdComision())) {
             respuesta.add("NO EXISTE LA COMISION CON ID: " + JSONC.getIdComision());
+        }
+        
+        if (JSONC.getAnoExp() == -1 || JSONC.getMesExp() == -1 || JSONC.getDiaExp() == -1) {
+            respuesta.add("DEBE INTRODUCIR LA FECHA DE EXPIRACION");
         }
 
         if (!respuesta.isEmpty()) {
@@ -51,6 +63,9 @@ public class ValidatorCaso {
 
         if (!casoService.existsByCasoPK(new CasoPK(JSONC.getIdDenuncia(), JSONC.getIdComision()))) {
             respuesta.add("EL CASO QUE INTENTA MODIFICAR NO EXISTE");
+        }
+        if (!casoService.findByCasoPK(new CasoPK(JSONC.getIdDenuncia(), JSONC.getIdComision())).getAbierto()) {
+            respuesta.add("EL CASO QUE INTENTA MODIFICAR YA CERRÓ");
         }
 
         if (!respuesta.isEmpty()) {

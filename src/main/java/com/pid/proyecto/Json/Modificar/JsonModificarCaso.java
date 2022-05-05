@@ -6,8 +6,6 @@ public class JsonModificarCaso {
 
     private int idComision = -1;
 
-    private boolean abierto = true;
-
     private int diaExp = -1;
 
     private int mesExp = -1;
@@ -23,14 +21,6 @@ public class JsonModificarCaso {
 
     public void setIdComision(int idComision) {
         this.idComision = idComision;
-    }
-
-    public boolean isAbierto() {
-        return abierto;
-    }
-
-    public void setAbierto(boolean abierto) {
-        this.abierto = abierto;
     }
 
     public int getIdDenuncia() {

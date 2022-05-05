@@ -16,10 +16,13 @@ import com.pid.proyecto.service.UsuarioService;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,20 +59,27 @@ public class DenunciaController {
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_DENUNCIA')")
     public ResponseEntity<?> crear(
-            @RequestBody JsonCrearDenuncia JSOND
+            @Valid @RequestBody JsonCrearDenuncia JSOND,
+            BindingResult BR
     ) {
+
+        if (BR.hasErrors()) {
+            List<String> errores = new LinkedList<>();
+            for (FieldError FE : BR.getFieldErrors()) {
+                errores.add(FE.getDefaultMessage());
+            }
+            return new ResponseEntity<>(
+                    new Mensaje(errores.toString()),
+                    HttpStatus.PRECONDITION_FAILED
+            );
+        }
+
         ResponseEntity respuesta = validator.ValidarJsonCrearDenuncia(JSOND);
         if (respuesta != null) {
             return respuesta;
         }
 
-        // DECLARAMOS VARIABLES
-        Denuncia denuncia;
-
-        DenunciaUsuario DU;
-
-        // INICIALIZAMOS VARIABLES
-        denuncia = new Denuncia();
+        Denuncia denuncia = new Denuncia();
 
         denuncia.setAcusado(JSOND.getAcusado());
         denuncia.setDescripcion(JSOND.getDescripcion());
@@ -80,13 +90,12 @@ public class DenunciaController {
         denuncia = denunciaService.save(denuncia);
 
         // RELACIONAMOS
-        DU = new DenunciaUsuario(
-                new DenunciaUsuarioPK(denuncia.getId(),
+        denunciaUsuarioService.save(new DenunciaUsuario(
+                new DenunciaUsuarioPK(
+                        denuncia.getId(),
                         usuarioService.findByUsuario(SesionDetails.getUsuario()).getId()),
                 SesionDetails.getUsuario()
-        );
-
-        denunciaUsuarioService.save(DU);
+        ));
 
         return new ResponseEntity<>(
                 new Mensaje(" DENUNCIA CREADA"),
@@ -94,8 +103,6 @@ public class DenunciaController {
         );
     }
 
-    // RRR
-    // MOSTRAMOS TODOS LOS OBJETOS
     @GetMapping
     @PreAuthorize("hasRole('ROLE_R_DENUNCIA')")
     public ResponseEntity<List<Denuncia>> listar() {
@@ -139,7 +146,6 @@ public class DenunciaController {
         );
     }
 
-    // DDD
     @DeleteMapping("/borrar")
     @PreAuthorize("hasRole('ROLE_D_DENUNCIA')")
     @ResponseBody
@@ -150,18 +156,12 @@ public class DenunciaController {
             return respuesta;
         }
 
-        List<Denuncia> LD = new LinkedList<>();
-
         for (int id : JSOND.getIdDenuncias()) {
-            LD.add(denunciaService.findById(id));
+            denunciaService.deleteById(id);
         }
 
-        denunciaService.deleteAll(LD);
-
-        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
-        // BORRAMOS LOS ID
         return new ResponseEntity<>(
-                new Mensaje(" DENUNCIAS BORRADAS: [ " + LD.size() + " ]"),
+                new Mensaje(" DENUNCIAS BORRADAS: [ " + JSOND.getIdDenuncias().size() + " ]"),
                 HttpStatus.OK
         );
     }

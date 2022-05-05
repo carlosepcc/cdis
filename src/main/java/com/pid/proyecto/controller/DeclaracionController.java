@@ -68,6 +68,7 @@ public class DeclaracionController {
             for (FieldError FE : BR.getFieldErrors()) {
                 errores.add(FE.getDefaultMessage());
             }
+
             return new ResponseEntity<>(
                     new Mensaje(errores.toString()),
                     HttpStatus.PRECONDITION_FAILED
@@ -102,8 +103,6 @@ public class DeclaracionController {
         );
     }
 
-    // RRR
-    // MOSTRAMOS TODOS LOS OBJETOS
     @GetMapping
     @PreAuthorize("hasRole('ROLE_R_DECLARACION')")
     public ResponseEntity<List<Declaracion>> listar() {
@@ -116,7 +115,7 @@ public class DeclaracionController {
     @PostMapping("/modificar")
     @PreAuthorize("hasRole('ROLE_U_DECLARACION')")
     public ResponseEntity<?> modificar(
-            @Valid @RequestBody JsonModificarDeclaracion JSOND
+            @RequestBody JsonModificarDeclaracion JSOND
     ) {
         ResponseEntity respuesta = validator.ValidarJsonModificarDeclaracion(JSOND);
         if (respuesta != null) {
@@ -129,8 +128,16 @@ public class DeclaracionController {
         // INICIALIZAMOS VARIABLES
         declaracion = declaracionService.findByDeclaracionPK(new DeclaracionPK(JSOND.getIdUsuario(), JSOND.getIdDenuncia(), JSOND.getIdComision()));
 
+        // SI EL USUARIO QUE ESTA EN SESION ES EL MISMO
+        // QUE DEBE HACER LA DECLARACION ENTONCES ESTA SE CIERRA EN CUANTO LA TERMINE
+        if (sesionDetails.getUsuario().equals(usuarioService.findById(
+                declaracion.getDeclaracionPK().getUsuario()
+        ).getUsuario())) {
+            declaracion.setAbierta(false);
+        }
+
         if (JSOND.isAbierta()) {
-            declaracion.setAbierta(JSOND.isAbierta());
+            declaracion.setAbierta(true);
         }
 
         if (!JSOND.getDescripcion().isBlank()) {
@@ -153,24 +160,18 @@ public class DeclaracionController {
     @PreAuthorize("hasRole('ROLE_D_DECLARACION')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSOND) {
-        
+
         ResponseEntity respuesta = validator.ValidarJsonBorrarDeclaracion(JSOND);
         if (respuesta != null) {
             return respuesta;
         }
-        
-        List<Declaracion> LD = new LinkedList<>();
-        List<DeclaracionPK> LDPK = JSOND.getLDPK();
 
-        for (int i = 0; i < LDPK.size(); i++) {
-            LD.add(declaracionService.findByDeclaracionPK(LDPK.get(i)));
+        for (DeclaracionPK PK : JSOND.getLDPK()) {
+            declaracionService.deleteByDeclaracionPK(PK);
         }
 
-        declaracionService.deleteAll(LD);
-        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
-        // BORRAMOS LOS ID
         return new ResponseEntity<>(
-                new Mensaje(" OBJETOS BORRADOS: [ " + LD.size() + " ]"),
+                new Mensaje(" DCLARACIONES BORRADAS: [ " + JSOND.getLDPK().size() + " ]"),
                 HttpStatus.OK
         );
     }
