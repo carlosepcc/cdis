@@ -10,5 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface CasoRepo extends JpaRepository<Caso, Integer>{
 
     public Optional<Caso> findByCasoPK(CasoPK id);
+
+    public boolean existsByCasoPK(CasoPK casoPK);
+
+    public void deleteByCasoPK(CasoPK PK);
     
 }

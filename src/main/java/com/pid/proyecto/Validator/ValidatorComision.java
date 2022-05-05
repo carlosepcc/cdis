@@ -7,7 +7,6 @@ import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.UsuarioRol;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.ComisionUsuario;
-import com.pid.proyecto.entity.ComisionUsuarioPK;
 import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.service.ComisionService;
@@ -48,7 +47,7 @@ public class ValidatorComision {
         for (UsuarioRol us : JSONC.getIntegrantesComision()) {
 
             // VERIFICAMOS QUE EXISTA EL ID DEL USUARIO QUE VAMOS A USAR
-            if (!usuarioService.exitsById(us.getIdIntegrante())) {
+            if (!usuarioService.existsById(us.getIdIntegrante())) {
                 respuesta.add("NO EXISTE EL USUARIO CON ID: " + us.getIdIntegrante());
             }
 
@@ -140,7 +139,7 @@ public class ValidatorComision {
             int id;
             for (UsuarioRol idI : JSONC.getAgregarIntegrantes()) {
 
-                if (!usuarioService.exitsById(idI.getIdIntegrante())) {
+                if (!usuarioService.existsById(idI.getIdIntegrante())) {
                     respuesta.add("NO EXISTE UN USUARIO DE ID: " + idI.getIdIntegrante());
                 }
                 if (!rolService.existsById(idI.getIdRol())) {

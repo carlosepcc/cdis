@@ -26,14 +26,12 @@ public class ValidatorRol {
     RolPermisoService rolPermisosService;
 
     public ResponseEntity<?> ValidarJsonCrearRol(JsonCrearRol JSONR) {
-
         List<String> respuesta = new LinkedList<>();
 
         // VALIDAR QUE EXISTAN TODOS LOS ID DE PERMISOS 
         for (int id : JSONR.getPermisos()) {
             if (!permisoService.existsById(id)) {
                 respuesta.add(" EL PERMISO CON ID: " + id + ", NO EXISTE");
-
             }
         }
 
@@ -44,7 +42,6 @@ public class ValidatorRol {
 
         // VERIFICAMOS QUE SE ESTEN AGREGANDO PERMISOS A NUESTRO ROL
         if (JSONR.getPermisos().isEmpty()) {
-
             respuesta.add(" DEBE ASIGNAR PERMISOS A ESTE ROL");
         }
 
@@ -72,17 +69,8 @@ public class ValidatorRol {
             respuesta.add(" FORMATO DE ROL INCORRECTO, EL ROL DEBE COMENZAR CON [ROL_] Y SOLO ADMITE [_] Y [A-Z]");
         }
 
-        // VERIFICAR QUE LOS PERMISOS QUE VAMOS A ELIMINAR EXISTAN
-        for (int idp : JSONR.getEliminarPermisos()) {
-
-            if (!permisoService.existsById(idp)) {
-                respuesta.add(" NO EXISTE EL PERMISO CON ID: " + idp + "");
-            }
-        }
-
         // VERIFICAR QUE LOS PERMISOS QUE VAMOS A AGREGAR EXISTAN
         for (int idp : JSONR.getAgregarPermisos()) {
-
             if (!permisoService.existsById(idp)) {
                 respuesta.add(" NO EXISTE EL PERMISO CON ID: " + idp + "");
             }
@@ -98,6 +86,7 @@ public class ValidatorRol {
                 }
             }
         }
+
         if (!respuesta.isEmpty()) {
             return new ResponseEntity<>(
                     new Mensaje(respuesta.toString()),

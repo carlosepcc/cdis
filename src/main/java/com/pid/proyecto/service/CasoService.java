@@ -31,4 +31,13 @@ public class CasoService {
         repo.deleteAll(LC);
     }
 
+    public boolean existsByCasoPK(CasoPK casoPK) {
+
+        return repo.existsByCasoPK(casoPK);
+    }
+
+    public void deleteByCasoPK(CasoPK PK) {
+        repo.deleteByCasoPK(PK);
+    }
+
 }

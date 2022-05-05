@@ -1,6 +1,7 @@
 package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.DenunciaUsuario;
+import com.pid.proyecto.entity.DenunciaUsuarioPK;
 import com.pid.proyecto.repository.DenunciaUsuarioRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,10 @@ public class DenunciaUsuarioService {
     public void save(DenunciaUsuario denunciaUsuario) {
         repo.save(denunciaUsuario);
 
+    }
+
+    public boolean existsByDenunciaUsuarioPK(DenunciaUsuarioPK PK) {
+        return repo.existsByDenunciaUsuarioPK(PK);
     }
 
 }

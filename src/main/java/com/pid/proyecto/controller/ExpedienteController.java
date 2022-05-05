@@ -62,7 +62,7 @@ public class ExpedienteController {
         String descripcion;
 
         // INICIALIZAMOS VARIABLES
-        if (usuarioService.exitsById(JSONE.getIdUsuario())) {
+        if (usuarioService.existsById(JSONE.getIdUsuario())) {
             idU = JSONE.getIdUsuario();
         } else {
             return new ResponseEntity<>(
@@ -139,7 +139,7 @@ public class ExpedienteController {
         String descripcion;
 
         // INICIALIZAMOS VARIABLES
-        if (usuarioService.exitsById(JSONE.getIdUsuario())) {
+        if (usuarioService.existsById(JSONE.getIdUsuario())) {
             idU = JSONE.getIdUsuario();
         } else {
             return new ResponseEntity<>(

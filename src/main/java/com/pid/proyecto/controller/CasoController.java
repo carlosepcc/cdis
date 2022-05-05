@@ -1,18 +1,17 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarCasos;
-import com.pid.proyecto.Json.JsonCaso;
+import com.pid.proyecto.Json.Crear.JsonCrearCaso;
+import com.pid.proyecto.Json.Modificar.JsonModificarCaso;
+import com.pid.proyecto.Validator.ValidatorCaso;
 import com.pid.proyecto.auxiliares.Convertidor;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.Caso;
 import com.pid.proyecto.entity.CasoPK;
-import com.pid.proyecto.entity.Comision;
-import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.DenunciaService;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -50,38 +48,46 @@ public class CasoController {
 
     @Autowired
     Convertidor convertidor;
-    
+
     @Autowired
-    SesionDetails s;
+    SesionDetails sesionDetails;
+
+    @Autowired
+    ValidatorCaso validator;
 
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_CASO')")
     public ResponseEntity<?> crear(
-            @Valid @RequestBody JsonCaso JSONC,
+            @Valid @RequestBody JsonCrearCaso JSONC,
             BindingResult BR
     ) {
+        // VALIDAR ERRORES DE JSON
+        if (BR.hasErrors()) {
+            List<String> errores = new LinkedList<>();
+            for (FieldError FE : BR.getFieldErrors()) {
+                errores.add(FE.getDefaultMessage());
+            }
+            return new ResponseEntity<>(
+                    new Mensaje(errores.toString()),
+                    HttpStatus.PRECONDITION_FAILED
+            );
+        }
+
+        ResponseEntity respuesta = validator.ValidarJsonCrearCaso(JSONC);
+        if (respuesta != null) {
+            return respuesta;
+        }
 
         // DECLARAMOS VARIABLES
         Caso caso;
-        Denuncia denuncia;
-        Comision comision;
-        CasoPK casoPK;
-        boolean abierto;
-        LocalDate fechaApertura;
         LocalDate fechaExpiracion;
 
         // INICIALIZAMOS VARIABLES
         caso = new Caso();
-        denuncia = denunciaService.findById(JSONC.getIdDenuncia());
-        comision = comisionService.findById(JSONC.getIdComision());
-        casoPK = new CasoPK(denuncia.getId(), comision.getId());
-        abierto = JSONC.isAbierto();
-        fechaApertura = JSONC.getFechaApertura();
         fechaExpiracion = LocalDate.of(JSONC.getAnoExp(), JSONC.getMesExp(), JSONC.getDiaExp());
-
-        caso.setCasoPK(casoPK);
-        caso.setAbierto(abierto);
-        caso.setFechaapertura(convertidor.LocalDateToSqlDate(fechaApertura));
+        caso.setCasoPK(new CasoPK(denunciaService.findById(JSONC.getIdDenuncia()).getId(), comisionService.findById(JSONC.getIdComision()).getId()));
+        caso.setAbierto(true);
+        caso.setFechaapertura(convertidor.LocalDateToSqlDate(LocalDate.now()));
         caso.setFechaexpiracion(convertidor.LocalDateToSqlDate(fechaExpiracion));
 
         // GUARDAMOS
@@ -107,33 +113,29 @@ public class CasoController {
     @PostMapping("/modificar/{id}")
     @PreAuthorize("hasRole('ROLE_U_CASO')")
     public ResponseEntity<?> modificar(
-            @PathVariable("id") List<Integer> idDCPK,
-            @Valid @RequestBody JsonCaso JSONC,
-            BindingResult BR
+            @RequestBody JsonModificarCaso JSONC
     ) {
+        
+        ResponseEntity respuesta = validator.ValidarJsonModificarCaso(JSONC);
+        if (respuesta != null) {
+            return respuesta;
+        }
+        
+
         // DECLARAMOS VARIABLES
         Caso caso;
-        CasoPK casoPK;
-        boolean abierto;
-        LocalDate fechaExpiracion;
+
 
         // INICIALIZAMOS VARIABLES
-        casoPK = new CasoPK(idDCPK.get(0), idDCPK.get(1));
-        caso = casoService.findByCasoPK(casoPK);
+        caso = casoService.findByCasoPK(new CasoPK(JSONC.getIdDenuncia(), JSONC.getIdComision()));
 
         if (!JSONC.isAbierto()) {
-            abierto = JSONC.isAbierto();
-        } else {
-            abierto = caso.getAbierto();
+            caso.setAbierto(JSONC.isAbierto());
         }
 
-        if (JSONC.getAnoExp() != -1) {
-            fechaExpiracion = LocalDate.of(JSONC.getAnoExp(), JSONC.getMesExp(), JSONC.getDiaExp());
-        } else {
-            fechaExpiracion = convertidor.SqlDateToLocalDate((Date) caso.getFechaexpiracion());
-        }
-        caso.setAbierto(abierto);
-        caso.setFechaexpiracion(convertidor.LocalDateToSqlDate(fechaExpiracion));
+        if (JSONC.getAnoExp() != -1 && JSONC.getMesExp()!= -1 && JSONC.getDiaExp() != -1) {
+            caso.setFechaexpiracion(convertidor.LocalDateToSqlDate(LocalDate.of(JSONC.getAnoExp(), JSONC.getMesExp(), JSONC.getDiaExp())));
+        } 
 
         // GUARDAMOS
         casoService.save(caso);
@@ -148,20 +150,19 @@ public class CasoController {
     @DeleteMapping("/borrar")
     @PreAuthorize("hasRole('ROLE_D_CASO')")
     @ResponseBody
-    public ResponseEntity<?> borrar(@RequestBody JsonBorrarCasos JSONB) {
-
-                
-        List<Caso> LC = new LinkedList<>();
-        List<CasoPK> LCPK = JSONB.getLCPK();
-
-        for (int i = 0; i < LCPK.size(); i++) {
-            LC.add(casoService.findByCasoPK(LCPK.get(i)));
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarCasos JSONC) {
+        
+        ResponseEntity respuesta = validator.ValidarJsonBorrarCaso(JSONC);
+        if (respuesta != null) {
+            return respuesta;
         }
 
-        casoService.deleteAll(LC);
+        List<CasoPK> LCPK = JSONC.getLCPK();
 
-        // VERIFICAMOS QUE TODOS LOS ID EXISTAN
-        // BORRAMOS LOS ID
+        for (CasoPK PK: LCPK) {
+            casoService.deleteByCasoPK(PK);
+        }
+
         return new ResponseEntity<>(
                 new Mensaje(" CASOS BORRADOS: [ " + LCPK.size() + " ]"),
                 HttpStatus.OK

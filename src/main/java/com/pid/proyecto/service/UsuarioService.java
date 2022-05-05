@@ -20,7 +20,7 @@ public class UsuarioService {
     }
 
     public List<Usuario> findAll() {
-       return repo.findAll();
+        return repo.findAll();
     }
 
     public Usuario findById(int id) {
@@ -39,9 +39,8 @@ public class UsuarioService {
         return repo.findByUsuario(n).get();
     }
 
-    public boolean exitsById(int idUsuario) {
+    public boolean existsById(int idUsuario) {
         return repo.existsById(idUsuario);
     }
 
-    
 }

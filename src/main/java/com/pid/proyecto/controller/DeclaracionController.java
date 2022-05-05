@@ -1,17 +1,14 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarDeclaraciones;
-import com.pid.proyecto.Json.Login.JsonDeclaracion;
+import com.pid.proyecto.Json.Crear.JsonCrearDeclaracion;
+import com.pid.proyecto.Json.Modificar.JsonModificarDeclaracion;
+import com.pid.proyecto.Validator.ValidatorDeclaracion;
 import com.pid.proyecto.auxiliares.Convertidor;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
-import com.pid.proyecto.entity.Caso;
-import com.pid.proyecto.entity.CasoPK;
-import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.Declaracion;
 import com.pid.proyecto.entity.DeclaracionPK;
-import com.pid.proyecto.entity.Denuncia;
-import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.DeclaracionService;
 import com.pid.proyecto.service.UsuarioService;
@@ -28,7 +25,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,46 +52,46 @@ public class DeclaracionController {
     @Autowired
     Convertidor convertidor;
 
+    @Autowired
+    ValidatorDeclaracion validator;
+
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_DECLARACION')")
     public ResponseEntity<?> crear(
-            @Valid @RequestBody JsonDeclaracion JSOND,
+            @Valid @RequestBody JsonCrearDeclaracion JSOND,
             BindingResult BR
     ) {
+
+        // VALIDAR ERRORES DE JSON
+        if (BR.hasErrors()) {
+            List<String> errores = new LinkedList<>();
+            for (FieldError FE : BR.getFieldErrors()) {
+                errores.add(FE.getDefaultMessage());
+            }
+            return new ResponseEntity<>(
+                    new Mensaje(errores.toString()),
+                    HttpStatus.PRECONDITION_FAILED
+            );
+        }
+
+        ResponseEntity respuesta = validator.ValidarJsonCrearDeclaracion(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
 
         // DECLARAMOS VARIABLES
         Declaracion declaracion;
 
-        Usuario usuario;
-        Caso caso;
-
-        DeclaracionPK declaracionPK;
-        CasoPK casoPK;
-
-        boolean abierta;
-        LocalDate fecha;
-        String descripcion;
-
         // INICIALIZAMOS VARIABLES
         declaracion = new Declaracion();
 
-        usuario = usuarioService.findByUsuario(sesionDetails.getUsuario());
+        declaracion.setDeclaracionPK(new DeclaracionPK(usuarioService.findByUsuario(sesionDetails.getUsuario()).getId(),
+                JSOND.getIdDenuncia(),
+                JSOND.getIdComision()));
 
-        casoPK = new CasoPK(JSOND.getIdDenuncia(), JSOND.getIdComision());
-        caso = casoService.findByCasoPK(casoPK);
-
-        declaracionPK = new DeclaracionPK(usuario.getId(),
-                caso.getCasoPK().getDenuncia(),
-                caso.getCasoPK().getComision());
-
-        abierta = JSOND.isAbierta();
-        fecha = JSOND.getFecha();
-        descripcion = JSOND.getDescripcion();
-
-        declaracion.setDeclaracionPK(declaracionPK);
-        declaracion.setAbierta(abierta);
-        declaracion.setFecha(convertidor.LocalDateToSqlDate(fecha));
-        declaracion.setDescripcion(descripcion);
+        declaracion.setAbierta(true);
+        declaracion.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));
+        declaracion.setDescripcion(JSOND.getDescripcion());
 
         // GUARDAMOS
         declaracionService.save(declaracion);
@@ -117,38 +113,31 @@ public class DeclaracionController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar/{id}")
+    @PostMapping("/modificar")
     @PreAuthorize("hasRole('ROLE_U_DECLARACION')")
     public ResponseEntity<?> modificar(
-            @Valid @RequestBody JsonDeclaracion JSOND,
-            BindingResult BR
+            @Valid @RequestBody JsonModificarDeclaracion JSOND
     ) {
+        ResponseEntity respuesta = validator.ValidarJsonModificarDeclaracion(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
+
         // DECLARAMOS VARIABLES
         Declaracion declaracion;
-        DeclaracionPK declaracionPK;
-        boolean abierta;
-        LocalDate fecha;
-        String descripcion;
 
         // INICIALIZAMOS VARIABLES
-        declaracionPK = new DeclaracionPK(JSOND.getIdUsuario(), JSOND.getIdDenuncia(), JSOND.getIdComision());
-        declaracion = declaracionService.findByDeclaracionPK(declaracionPK);
+        declaracion = declaracionService.findByDeclaracionPK(new DeclaracionPK(JSOND.getIdUsuario(), JSOND.getIdDenuncia(), JSOND.getIdComision()));
 
         if (JSOND.isAbierta()) {
-            abierta = JSOND.isAbierta();
-        } else {
-            abierta = declaracion.getAbierta();
-        }
-        fecha = JSOND.getFecha();
-        if (!JSOND.getDescripcion().isBlank()) {
-            descripcion = JSOND.getDescripcion();
-        } else {
-            descripcion = declaracion.getDescripcion();
+            declaracion.setAbierta(JSOND.isAbierta());
         }
 
-        declaracion.setAbierta(abierta);
-        declaracion.setFecha(convertidor.LocalDateToSqlDate(fecha));
-        declaracion.setDescripcion(descripcion);
+        if (!JSOND.getDescripcion().isBlank()) {
+            declaracion.setDescripcion(JSOND.getDescripcion());
+        }
+
+        declaracion.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));
 
         // GUARDAMOS
         declaracionService.save(declaracion);
@@ -163,10 +152,15 @@ public class DeclaracionController {
     @DeleteMapping("/borrar")
     @PreAuthorize("hasRole('ROLE_D_DECLARACION')")
     @ResponseBody
-    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSONBD) {
-
+    public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSOND) {
+        
+        ResponseEntity respuesta = validator.ValidarJsonBorrarDeclaracion(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
+        
         List<Declaracion> LD = new LinkedList<>();
-        List<DeclaracionPK> LDPK = JSONBD.getLDPK();
+        List<DeclaracionPK> LDPK = JSOND.getLDPK();
 
         for (int i = 0; i < LDPK.size(); i++) {
             LD.add(declaracionService.findByDeclaracionPK(LDPK.get(i)));

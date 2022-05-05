@@ -1,8 +1,9 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarDenuncia;
-import com.pid.proyecto.Json.JsonDenuncia;
-import com.pid.proyecto.Json.JsonObjeto;
+import com.pid.proyecto.Json.Crear.JsonCrearDenuncia;
+import com.pid.proyecto.Json.Modificar.JsonModificarDenuncia;
+import com.pid.proyecto.Validator.ValidatorDenuncia;
 import com.pid.proyecto.auxiliares.Convertidor;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
@@ -12,20 +13,16 @@ import com.pid.proyecto.entity.DenunciaUsuarioPK;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.DenunciaUsuarioService;
 import com.pid.proyecto.service.UsuarioService;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
-import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,48 +50,41 @@ public class DenunciaController {
     @Autowired
     SesionDetails SesionDetails;
 
+    @Autowired
+    ValidatorDenuncia validator;
+
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_DENUNCIA')")
     public ResponseEntity<?> crear(
-            @Valid @RequestBody JsonDenuncia JSOND,
-            BindingResult BR
+            @RequestBody JsonCrearDenuncia JSOND
     ) {
+        ResponseEntity respuesta = validator.ValidarJsonCrearDenuncia(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
 
         // DECLARAMOS VARIABLES
         Denuncia denuncia;
-        String descripcion;
-        String acusado;
-        LocalDate fecha;
-        boolean procesada;
 
-        int idD;
-        int idU;
-        DenunciaUsuarioPK PK;
-        String usuario;
         DenunciaUsuario DU;
 
         // INICIALIZAMOS VARIABLES
         denuncia = new Denuncia();
-        descripcion = JSOND.getDescripcion();
-        acusado = JSOND.getAcusado();
-        fecha = JSOND.getFecha();
-        procesada = JSOND.isProcesada();
 
-        denuncia.setAcusado(acusado);
-        denuncia.setDescripcion(descripcion);
-        denuncia.setFecha(convertidor.LocalDateToSqlDate(fecha));
-        denuncia.setProcesada(procesada);
+        denuncia.setAcusado(JSOND.getAcusado());
+        denuncia.setDescripcion(JSOND.getDescripcion());
+        denuncia.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));
+        denuncia.setProcesada(false);
 
         // GUARDAMOS
         denuncia = denunciaService.save(denuncia);
 
         // RELACIONAMOS
-        idD = denuncia.getId();
-        usuario = SesionDetails.getUsuario();
-        idU = usuarioService.findByUsuario(usuario).getId();
-        PK = new DenunciaUsuarioPK(idD, idU);
-
-        DU = new DenunciaUsuario(PK, usuario);
+        DU = new DenunciaUsuario(
+                new DenunciaUsuarioPK(denuncia.getId(),
+                        usuarioService.findByUsuario(SesionDetails.getUsuario()).getId()),
+                SesionDetails.getUsuario()
+        );
 
         denunciaUsuarioService.save(DU);
 
@@ -115,40 +105,30 @@ public class DenunciaController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar/{id}")
+    @PostMapping("/modificar")
     @PreAuthorize("hasRole('ROLE_U_DENUNCIA')")
     public ResponseEntity<?> modificar(
-            @PathVariable("id") int id,
-            @Valid @RequestBody JsonDenuncia JSOND,
-            BindingResult BR
+            @RequestBody JsonModificarDenuncia JSOND
     ) {
+        ResponseEntity respuesta = validator.ValidarJsonModificarDenuncia(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
+
         // DECLARAMOS VARIABLES
         Denuncia denuncia;
-        String descripcion;
-        String acusado;
-        boolean procesada;
 
         // INICIALIZAMOS VARIABLES
-        denuncia = denunciaService.findById(id);
+        denuncia = denunciaService.findById(JSOND.getIdDenuncia());
+
         if (!JSOND.getDescripcion().isBlank()) {
-            descripcion = JSOND.getDescripcion();
-        } else {
-            descripcion = denuncia.getDescripcion();
+            denuncia.setDescripcion(JSOND.getDescripcion());
         }
         if (!JSOND.getAcusado().isBlank()) {
-            acusado = JSOND.getAcusado();
-        } else {
-            acusado = denuncia.getAcusado();
+            denuncia.setAcusado(JSOND.getAcusado());
         }
-        if (JSOND.isProcesada()) {
-            procesada = JSOND.isProcesada();
-        } else {
-            procesada = denuncia.getProcesada();
-        }
-
-        denuncia.setDescripcion(descripcion);
-        denuncia.setProcesada(procesada);
-        denuncia.setAcusado(acusado);
+        // ACTUALIZAMOS LA FECHA DE NUESTRA DENUNCIA
+        denuncia.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));
 
         // GUARDAMOS
         denunciaService.save(denuncia);
@@ -165,17 +145,15 @@ public class DenunciaController {
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarDenuncia JSOND) {
 
+        ResponseEntity respuesta = validator.ValidarJsonBorrarDenuncia(JSOND);
+        if (respuesta != null) {
+            return respuesta;
+        }
+
         List<Denuncia> LD = new LinkedList<>();
 
         for (int id : JSOND.getIdDenuncias()) {
-            if (denunciaService.existsById(id)) {
-                LD.add(denunciaService.findById(id));
-            } else {
-                return new ResponseEntity<>(
-                        new Mensaje(" NO EXISTE EL ID: [ " + id + " ]"),
-                        HttpStatus.OK
-                );
-            }
+            LD.add(denunciaService.findById(id));
         }
 
         denunciaService.deleteAll(LD);

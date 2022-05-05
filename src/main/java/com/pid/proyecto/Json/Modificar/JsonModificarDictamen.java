@@ -1,14 +1,13 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.Modificar;
 
-public class JsonDictamen {
-
+public class JsonModificarDictamen {
     private int idDenuncia = -1;
 
     private int idComision = -1;
 
     private String Descripcion = "";
 
-    public JsonDictamen() {
+    public JsonModificarDictamen() {
     }
 
     public int getIdDenuncia() {
@@ -34,5 +33,4 @@ public class JsonDictamen {
     public void setDescripcion(String Descripcion) {
         this.Descripcion = Descripcion;
     }
-
 }

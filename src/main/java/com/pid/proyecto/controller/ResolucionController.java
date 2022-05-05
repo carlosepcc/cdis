@@ -3,6 +3,7 @@ package com.pid.proyecto.controller;
 import com.pid.proyecto.Json.Borrar.JsonBorrarResoluciones;
 import com.pid.proyecto.Json.Crear.JsonCrearResolucion;
 import com.pid.proyecto.Json.Modificar.JsonModificarResolucion;
+import com.pid.proyecto.Validator.ValidatorResolucion;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.service.ResolucionService;
@@ -12,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,12 +32,33 @@ public class ResolucionController {
 
     @Autowired
     ResolucionService resolucionService;
+    
+    @Autowired
+    ValidatorResolucion validator;
 
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_RESOLUCION')")
     public ResponseEntity<?> crear(
-            @RequestBody JsonCrearResolucion JSONR
+            @RequestBody JsonCrearResolucion JSONR,
+            BindingResult BR
     ) {
+        // VALIDAR ERRORES
+        if (BR.hasErrors()) {
+            List<String> errores = new LinkedList<>();
+            for (FieldError FE : BR.getFieldErrors()) {
+                errores.add(FE.getDefaultMessage());
+            }
+            return new ResponseEntity<>(
+                    new Mensaje(errores.toString()),
+                    HttpStatus.PRECONDITION_FAILED
+            );
+        }
+        
+        ResponseEntity<?> respuesta = validator.ValidarJsonCrearResolucion(JSONR);
+        if (respuesta != null) {
+            return respuesta;
+        }
+        
         // DECLARAMOS VARIABLES
         Resolucion resolucion;
         String descripcion;

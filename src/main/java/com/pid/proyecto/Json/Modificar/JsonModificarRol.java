@@ -8,12 +8,12 @@ public class JsonModificarRol {
     private int id = -1;
 
     private String rol = "";
-    
+
     private List<Integer> eliminarPermisos = new LinkedList<>();
-    
+
     private List<Integer> agregarPermisos = new LinkedList<>();
-    
-    private boolean tipoComision;
+
+    private boolean tipoComision = false;
 
     public JsonModificarRol() {
     }
@@ -26,7 +26,6 @@ public class JsonModificarRol {
         this.tipoComision = tipoComision;
     }
 
-    
     public int getId() {
         return id;
     }

@@ -1,8 +1,6 @@
-package com.pid.proyecto.Json.Login;
+package com.pid.proyecto.Json.Crear;
 
-import java.time.LocalDate;
-
-public class JsonDeclaracion {
+public class JsonCrearDeclaracion {
     
     private int idDenuncia = -1;
     
@@ -10,13 +8,9 @@ public class JsonDeclaracion {
     
     private int idUsuario = -1;
     
-    private boolean abierta = false;
-    
-    private LocalDate fecha = LocalDate.now();
-    
     private String descripcion = "";
 
-    public JsonDeclaracion() {
+    public JsonCrearDeclaracion() {
     }
 
     public int getIdComision() {
@@ -43,22 +37,6 @@ public class JsonDeclaracion {
 
     public void setIdUsuario(int idUsuario) {
         this.idUsuario = idUsuario;
-    }
-
-    public boolean isAbierta() {
-        return abierta;
-    }
-
-    public void setAbierta(boolean abierta) {
-        this.abierta = abierta;
-    }
-
-    public LocalDate getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDate fecha) {
-        this.fecha = fecha;
     }
 
     public String getDescripcion() {

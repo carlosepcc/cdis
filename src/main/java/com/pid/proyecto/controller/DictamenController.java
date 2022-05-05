@@ -1,8 +1,8 @@
 package com.pid.proyecto.controller;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarDictamenes;
-import com.pid.proyecto.Json.JsonDictamen;
-import com.pid.proyecto.Json.JsonObjeto;
+import com.pid.proyecto.Json.Crear.JsonCrearDictamen;
+import com.pid.proyecto.Json.Modificar.JsonModificarDictamen;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.Denuncia;
@@ -19,11 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +44,7 @@ public class DictamenController {
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_DICTAMEN')")
     public ResponseEntity<?> crear(
-            @Valid @RequestBody JsonDictamen JSOND,
+            @Valid @RequestBody JsonCrearDictamen JSOND,
             BindingResult BR
     ) {
 
@@ -90,7 +88,7 @@ public class DictamenController {
     @PostMapping("/modificar")
     @PreAuthorize("hasRole('ROLE_U_DICTAMEN')")
     public ResponseEntity<?> modificar(
-            @Valid @RequestBody JsonDictamen JSOND,
+            @Valid @RequestBody JsonModificarDictamen JSOND,
             BindingResult BR
     ) {
         // DECLARAMOS VARIABLES

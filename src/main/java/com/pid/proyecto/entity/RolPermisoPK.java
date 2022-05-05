@@ -1,25 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
-/**
- *
- * @author Angel
- */
 @Embeddable
 public class RolPermisoPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "idr")
+    @JsonIgnore
     private int idr;
     @Basic(optional = false)
     @NotNull

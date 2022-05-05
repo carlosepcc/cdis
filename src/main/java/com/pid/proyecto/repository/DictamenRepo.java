@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 public interface DictamenRepo extends JpaRepository<Dictamen, Integer>{
 
     public Optional<Dictamen> findByDictamenPK(DictamenPK PK);
+
+    public boolean existsByDictamenPK(DictamenPK dictamenPK);
     
     
     

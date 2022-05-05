@@ -21,7 +21,7 @@ public class DictamenService {
     }
 
     public List<Dictamen> findAll() {
-       return repo.findAll();
+        return repo.findAll();
     }
 
     public Dictamen findByDictamenPK(DictamenPK PK) {
@@ -30,6 +30,10 @@ public class DictamenService {
 
     public void deleteAll(List<Dictamen> LD) {
         repo.deleteAll(LD);
+    }
+
+    public boolean existsByDictamenPK(DictamenPK dictamenPK) {
+        return repo.existsByDictamenPK(dictamenPK);
     }
 
 }

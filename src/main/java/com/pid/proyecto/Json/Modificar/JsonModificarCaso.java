@@ -1,9 +1,6 @@
-package com.pid.proyecto.Json;
+package com.pid.proyecto.Json.Modificar;
 
-import java.time.LocalDate;
-import java.util.Date;
-
-public class JsonCaso {
+public class JsonModificarCaso {
 
     private int idDenuncia = -1;
 
@@ -11,23 +8,13 @@ public class JsonCaso {
 
     private boolean abierto = true;
 
-    private LocalDate fechaApertura = LocalDate.now();
-
     private int diaExp = -1;
 
     private int mesExp = -1;
 
     private int anoExp = -1;
 
-    public JsonCaso() {
-    }
-
-    public int getIdDenuncia() {
-        return idDenuncia;
-    }
-
-    public void setIdDenuncia(int idDenuncia) {
-        this.idDenuncia = idDenuncia;
+    public JsonModificarCaso() {
     }
 
     public int getIdComision() {
@@ -46,12 +33,12 @@ public class JsonCaso {
         this.abierto = abierto;
     }
 
-    public LocalDate getFechaApertura() {
-        return fechaApertura;
+    public int getIdDenuncia() {
+        return idDenuncia;
     }
 
-    public void setFechaApertura(LocalDate fechaApertura) {
-        this.fechaApertura = fechaApertura;
+    public void setIdDenuncia(int idDenuncia) {
+        this.idDenuncia = idDenuncia;
     }
 
     public int getDiaExp() {

@@ -16,6 +16,7 @@ public class JsonCrearRol {
 
     private List<Integer> permisos = new LinkedList<>();
 
+    @NotBlank(message = "DEBE ESPECIFICAR EL TIPO DE ROL")
     private boolean rolParaComision = false;
 
     public JsonCrearRol() {
