@@ -1,6 +1,6 @@
 package com.pid.proyecto.Validator;
 
-import com.pid.proyecto.Json.Borrar.JsonBorrarResoluciones;
+import com.pid.proyecto.Json.Borrar.JsonBorrarResolucion;
 import com.pid.proyecto.Json.Crear.JsonCrearResolucion;
 import com.pid.proyecto.Json.Modificar.JsonModificarResolucion;
 import com.pid.proyecto.auxiliares.Mensaje;
@@ -37,7 +37,6 @@ public class ValidatorResolucion {
 
         if (!resolucionService.existsById(JSONR.getID())) {
             respuesta.add(" NO EXISTE LA RESOLUCION CON ID: " + JSONR.getID());
-
         }
 
         if (!respuesta.isEmpty()) {
@@ -50,14 +49,13 @@ public class ValidatorResolucion {
         return null;
     }
 
-    public ResponseEntity<?> ValidarJsonBorrarResolucion(JsonBorrarResoluciones JSONR) {
+    public ResponseEntity<?> ValidarJsonBorrarResolucion(JsonBorrarResolucion JSONR) {
 
         List<String> respuesta = new LinkedList<>();
 
         for (int PK : JSONR.getIdR()) {
             if (!resolucionService.existsById(PK)) {
                 respuesta.add(" NO EXISTE LA RESOLUCION CON ID: " + PK);
-
             }
         }
 

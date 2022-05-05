@@ -168,12 +168,10 @@ public class RolController {
             return respuesta;
         }
 
-        List<Rol> LR = new LinkedList<>();
-        
         for (int id : JSONR.getIDS()) {
-            LR.add(rolService.findById(id));
+            rolService.deleteById(id);
         }
-        rolService.deleteAll(LR);
+        
         return new ResponseEntity<>(
                 new Mensaje(" ROLES BORRADOS: [ " + JSONR.getIDS() + " ]"),
                 HttpStatus.OK

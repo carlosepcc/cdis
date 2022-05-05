@@ -9,16 +9,11 @@ import com.pid.proyecto.auxiliares.UsuarioRol;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.ComisionUsuario;
 import com.pid.proyecto.entity.ComisionUsuarioPK;
-import com.pid.proyecto.entity.Resolucion;
-import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.entity.RolPermiso;
-import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.ComisionUsuarioService;
 import com.pid.proyecto.service.ResolucionService;
 import com.pid.proyecto.service.RolService;
 import com.pid.proyecto.service.UsuarioService;
-import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,8 +52,6 @@ public class ComisionController {
     @Autowired
     ValidatorComision validator;
 
-    // CCC
-    // CREAMOS LA COMISION
     @PutMapping("/crear")
     @PreAuthorize("hasRole('ROLE_C_COMISION')")
     public ResponseEntity<?> crear(
@@ -70,14 +63,8 @@ public class ComisionController {
             return respuesta;
         }
 
-        // DECLARAMOS
-        Comision comision;
-
-        ComisionUsuario comisionUsuario;
-
-        // INICIALIZAMOS
-        comision = new Comision();
-        comisionUsuario = new ComisionUsuario();
+        Comision comision = new Comision();
+        ComisionUsuario comisionUsuario = new ComisionUsuario();
 
         // obtenemos la resolucion en donde vamos a crear la comision
         comision.setResolucion(resolucionService.findById(JSONC.getIdResolucion()));
@@ -163,9 +150,9 @@ public class ComisionController {
         }
 
         for (int id : JSONC.getIdComisiones()) {
-            comisionService.delete(comisionService.findById(id));
+            comisionService.deleteById(id);
         }
-        
+
         return new ResponseEntity<>(
                 new Mensaje("COMISIONES BORRADAS: [ " + JSONC.getIdComisiones().size() + " ]"),
                 HttpStatus.OK

@@ -3,11 +3,11 @@ package com.pid.proyecto.Json.Borrar;
 import java.util.LinkedList;
 import java.util.List;
 
-public class JsonBorrarResoluciones {
+public class JsonBorrarResolucion {
     
    private List<Integer> idR = new LinkedList();
 
-    public JsonBorrarResoluciones() {
+    public JsonBorrarResolucion() {
     }
 
     public List<Integer> getIdR() {

@@ -6,8 +6,8 @@ import java.util.List;
 
 public class JsonCrearComision {
 
-    private int idResolucion = -1;
-
+    private int idResolucion;
+    
     private List<UsuarioRol> IntegrantesComision = new LinkedList<>();
 
     public JsonCrearComision() {

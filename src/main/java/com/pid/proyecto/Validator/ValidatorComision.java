@@ -8,7 +8,6 @@ import com.pid.proyecto.auxiliares.UsuarioRol;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.ComisionUsuario;
 import com.pid.proyecto.entity.Resolucion;
-import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.ResolucionService;
 import com.pid.proyecto.service.RolService;
@@ -43,46 +42,50 @@ public class ValidatorComision {
             respuesta.add(" NO EXISTE LA RESOLUCION CON ID: " + JSONC.getIdResolucion());
         }
 
+        Resolucion resolucion = resolucionService.findById(JSONC.getIdResolucion());
+        // obtenemos todas las comisiones que coincidan con esta resolucion
+        List<Comision> LC = comisionService.findAllByResolucion(resolucion);
+
         // RECORREMOS LA LISTA DE USUARIOS CON ROL
-        for (UsuarioRol us : JSONC.getIntegrantesComision()) {
+        if (!JSONC.getIntegrantesComision().isEmpty()) {
+            int id;
+            for (UsuarioRol UR : JSONC.getIntegrantesComision()) {
 
-            // VERIFICAMOS QUE EXISTA EL ID DEL USUARIO QUE VAMOS A USAR
-            if (!usuarioService.existsById(us.getIdIntegrante())) {
-                respuesta.add("NO EXISTE EL USUARIO CON ID: " + us.getIdIntegrante());
-            }
+                if (JSONC.getIntegrantesComision().size() < 2) {
+                    respuesta.add("DEBE AGREGAR AL MENOS 2 INTEGRANTES");
+                }
+                if (!usuarioService.existsById(UR.getIdIntegrante())) {
+                    respuesta.add("NO EXISTE UN USUARIO DE ID: " + UR.getIdIntegrante());
+                }
+                if (!rolService.existsById(UR.getIdRol())) {
+                    respuesta.add("NO EXISTE UN ROL DE ID: " + UR.getIdRol());
+                }
+                if (!rolService.findById(UR.getIdRol()).isTipoComision()) {
+                    respuesta.add("EL ROL DE ID: " + UR.getIdRol() + " QUE INTENTA ASIGNAR EXCEDE"
+                            + " LOS PRIVILEGIOS DE UN INTEGRANTE DE COMISION NORMAL ");
+                }
 
-            // VERIFICAMOS QUE EXISTA EL ID DEL ROL QUE VAMOS A USAR
-            if (!rolService.existsById(us.getIdRol())) {
-                respuesta.add("NO EXISTE EL ROL CON ID: " + us.getIdRol());
-            }
+                id = UR.getIdIntegrante();
+                // recorremos todas las relaciones de nuestra comision
 
-            Rol rol;
-            Resolucion resolucion = resolucionService.findById(JSONC.getIdResolucion());
-            // obtenemos todas las comisiones que coincidan con esta resolucion
-            List<Comision> LC = comisionService.findAllByResolucion(resolucion);
-            List<ComisionUsuario> CU;
-
-            // VERIFICAMOS QUE EL INTEGRANTE NO SE ENCUENTRE YA PARTICIPANDO
-            // EN OTRA COMISION DE ESTA RESOLUCION
-            for (Comision c : LC) {
-                CU = c.getComisionUsuarioList();
-                for (ComisionUsuario cu : CU) {
-                    if (cu.getComisionUsuarioPK().getIdu() == us.getIdIntegrante()) {
-                        respuesta.add("YA EL USUARIO DE ID: "
-                                + us.getIdIntegrante()
-                                + " SE ENCUENTRA EN LA COMISION DE ID: "
-                                + cu.getComisionUsuarioPK().getIdc()
-                                + " DENTRO DE ESTA RESOLUCION DE ID: "
-                                + resolucion.getId());
+                for (Comision C : LC) {
+                    for (ComisionUsuario cu : C.getComisionUsuarioList()) {
+                        // si en alguna de esas relaciones se encuentra el id en el que estamos parados
+                        // decimos que si existe y paramos de buscar
+                        if (cu.getComisionUsuarioPK().getIdu() == id) {
+                            respuesta.add("YA EL USUARIO DE ID: "
+                                    + UR.getIdIntegrante()
+                                    + " SE ENCUENTRA EN LA COMISION DE ID: "
+                                    + cu.getComisionUsuarioPK().getIdc()
+                                    + " DENTRO DE ESTA RESOLUCION DE ID: "
+                                    + resolucion.getId());
+                        }
                     }
                 }
-            }
 
-            rol = rolService.findById(us.getIdRol());
-            if (!rol.isTipoComision()) {
-                respuesta.add("EL ROL QUE INTENTA ASIGNAR EXCEDE"
-                        + " LOS PRIVILEGIOS DE UN INTEGRANTE DE COMISION NORMAL ");
             }
+        } else {
+            respuesta.add("DEBE AGREGAR AL MENOS 2 INTEGRANTES");
         }
 
         if (!respuesta.isEmpty()) {
@@ -105,60 +108,74 @@ public class ValidatorComision {
         }
 
         Comision comision = comisionService.findById(JSONC.getIdComision());
+        Resolucion resolucion = comision.getResolucion();
+        List<Comision> LC = resolucion.getComisionList();
 
         // VALIDAMOS QUE TODOS LOS ID QUE QUEREMOS ELIMINAR DE VERDAD SE ENCUENTREN EN NUESTRA COMISION
         if (!JSONC.getQuitarIntegrantes().isEmpty()) {
-            boolean existeA = false;
-            int id = -1;
+            boolean existeA;
+            List<Integer> id = new LinkedList<>();
 
             // recorremos todos los id que queremos eliminar
             for (int idI : JSONC.getQuitarIntegrantes()) {
                 existeA = false;
-                id = idI;
+
                 // recorremos todas las relaciones de nuestra comision
-                for (ComisionUsuario cu : comision.getComisionUsuarioList()) {
+                for (ComisionUsuario CU : comision.getComisionUsuarioList()) {
                     // si en alguna de esas relaciones se encuentra el id en el que estamos parados
                     // decimos que si existe y paramos de buscar
-                    if (cu.getComisionUsuarioPK().getIdu() == idI) {
+                    if (CU.getComisionUsuarioPK().getIdu() == idI) {
                         existeA = true;
                         break;
                     }
                 }
                 // si al terminar de buscar no se confirmó existencia del id entonces rompemos
                 if (!existeA) {
-                    break;
+                    id.add(idI);
                 }
             }
-            if (!existeA) {
-                respuesta.add("NO EXISTE RELACION CON EL INTEGRANTE DE ID: " + id);
+            if (!id.isEmpty()) {
+                respuesta.add(" NO EXISTE RELACION CON LOS INTEGRANTES DE ID:");
+                for (int i : id) {
+                    respuesta.add(" " + i);
+                }
             }
         }
 
         // recorremos todos los id que queremos agregar para verificar que ninguno exista previamente
         if (!JSONC.getAgregarIntegrantes().isEmpty()) {
             int id;
-            for (UsuarioRol idI : JSONC.getAgregarIntegrantes()) {
+            for (UsuarioRol UR : JSONC.getAgregarIntegrantes()) {
 
-                if (!usuarioService.existsById(idI.getIdIntegrante())) {
-                    respuesta.add("NO EXISTE UN USUARIO DE ID: " + idI.getIdIntegrante());
+                if (!usuarioService.existsById(UR.getIdIntegrante())) {
+                    respuesta.add("NO EXISTE UN USUARIO DE ID: " + UR.getIdIntegrante());
                 }
-                if (!rolService.existsById(idI.getIdRol())) {
-                    respuesta.add("NO EXISTE UN ROL DE ID: " + idI.getIdRol());
+                if (!rolService.existsById(UR.getIdRol())) {
+                    respuesta.add("NO EXISTE UN ROL DE ID: " + UR.getIdRol());
                 }
-                if (!rolService.findById(idI.getIdRol()).isTipoComision()) {
-                    respuesta.add("EL ROL DE ID: " + idI.getIdRol() + " QUE INTENTA ASIGNAR EXCEDE"
+                if (!rolService.findById(UR.getIdRol()).isTipoComision()) {
+                    respuesta.add("EL ROL DE ID: " + UR.getIdRol() + " QUE INTENTA ASIGNAR EXCEDE"
                             + " LOS PRIVILEGIOS DE UN INTEGRANTE DE COMISION NORMAL ");
                 }
 
-                id = idI.getIdIntegrante();
+                id = UR.getIdIntegrante();
                 // recorremos todas las relaciones de nuestra comision
-                for (ComisionUsuario cu : comision.getComisionUsuarioList()) {
-                    // si en alguna de esas relaciones se encuentra el id en el que estamos parados
-                    // decimos que si existe y paramos de buscar
-                    if (cu.getComisionUsuarioPK().getIdu() == id) {
-                        respuesta.add("YA EXISTE UNA RELACION ENTRE ESTA COMISION Y EL USUARIO DE ID: " + id);
+
+                for (Comision C : LC) {
+                    for (ComisionUsuario cu : C.getComisionUsuarioList()) {
+                        // si en alguna de esas relaciones se encuentra el id en el que estamos parados
+                        // decimos que si existe y paramos de buscar
+                        if (cu.getComisionUsuarioPK().getIdu() == id) {
+                            respuesta.add("YA EL USUARIO DE ID: "
+                                    + UR.getIdIntegrante()
+                                    + " SE ENCUENTRA EN LA COMISION DE ID: "
+                                    + cu.getComisionUsuarioPK().getIdc()
+                                    + " DENTRO DE ESTA RESOLUCION DE ID: "
+                                    + resolucion.getId());
+                        }
                     }
                 }
+
             }
         }
 
@@ -172,7 +189,7 @@ public class ValidatorComision {
     }
 
     public ResponseEntity ValidarJsonBorrarComision(JsonBorrarComision JSONC) {
-        
+
         for (int id : JSONC.getIdComisiones()) {
             if (!comisionService.existsById(id)) {
                 return new ResponseEntity<>(

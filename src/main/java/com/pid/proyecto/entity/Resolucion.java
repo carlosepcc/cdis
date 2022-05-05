@@ -1,9 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -20,10 +17,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-/**
- *
- * @author Angel
- */
 @Entity
 @Table(name = "resolucion")
 @NamedQueries({
@@ -41,6 +34,7 @@ public class Resolucion implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "descripcion")
     private String descripcion;
+    @JsonIgnoreProperties(value = {"casoList", "resolucion", "comisionUsuarioList"})
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolucion")
     private List<Comision> comisionList;
 
@@ -104,5 +98,5 @@ public class Resolucion implements Serializable {
     public String toString() {
         return "com.pid.proyecto.entity.Resolucion[ id=" + id + " ]";
     }
-    
+
 }

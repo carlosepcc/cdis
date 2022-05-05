@@ -47,4 +47,8 @@ public class RolService {
         repo.saveAll(TodosLosRoles);
     }
 
+    public void deleteById(int id) {
+        repo.deleteById(id);
+    }
+
 }

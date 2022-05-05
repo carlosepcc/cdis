@@ -22,10 +22,8 @@ public class ResolucionService {
         return repo.findById(id).get();
     }
 
-    public void deleteByIdAll(List<Integer> LID) {
-        for (int id : LID) {
-            repo.deleteById(id);
-        }
+    public void deleteAll(List<Resolucion> LR) {
+        repo.deleteAll();
     }
 
     public List<Resolucion> findAll() {
@@ -34,6 +32,10 @@ public class ResolucionService {
 
     public boolean existsById(int id) {
        return repo.existsById(id);
+    }
+
+    public void deleteById(int id) {
+        repo.deleteById(id);
     }
 
 }

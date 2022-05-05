@@ -44,5 +44,9 @@ public class ComisionService {
         repo.delete(comision);
     }
 
+    public void deleteById(int id) {
+        repo.deleteById(id);
+    }
+
 
 }
