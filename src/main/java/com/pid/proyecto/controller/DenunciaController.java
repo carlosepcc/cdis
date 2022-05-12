@@ -10,6 +10,7 @@ import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.entity.DenunciaUsuario;
 import com.pid.proyecto.entity.DenunciaUsuarioPK;
+import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.DenunciaUsuarioService;
 import com.pid.proyecto.service.UsuarioService;
@@ -78,10 +79,12 @@ public class DenunciaController {
         if (respuesta != null) {
             return respuesta;
         }
+        
+        Usuario acusado = usuarioService.findByUsuario(JSOND.getAcusado());
 
         Denuncia denuncia = new Denuncia();
 
-        denuncia.setAcusado(JSOND.getAcusado());
+        denuncia.setAcusado(acusado.getUsuario());
         denuncia.setDescripcion(JSOND.getDescripcion());
         denuncia.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));
         denuncia.setProcesada(false);
@@ -93,7 +96,7 @@ public class DenunciaController {
         denunciaUsuarioService.save(new DenunciaUsuario(
                 new DenunciaUsuarioPK(
                         denuncia.getId(),
-                        usuarioService.findByUsuario(SesionDetails.getUsuario()).getId()),
+                        SesionDetails.getUsuario()),
                 SesionDetails.getUsuario()
         ));
 
@@ -122,17 +125,15 @@ public class DenunciaController {
             return respuesta;
         }
 
-        // DECLARAMOS VARIABLES
-        Denuncia denuncia;
-
-        // INICIALIZAMOS VARIABLES
-        denuncia = denunciaService.findById(JSOND.getIdDenuncia());
+        Denuncia denuncia = denunciaService.findById(JSOND.getIdDenuncia());
 
         if (!JSOND.getDescripcion().isBlank()) {
             denuncia.setDescripcion(JSOND.getDescripcion());
         }
+        
         if (!JSOND.getAcusado().isBlank()) {
-            denuncia.setAcusado(JSOND.getAcusado());
+            Usuario acusado = usuarioService.findByUsuario(JSOND.getAcusado());
+            denuncia.setAcusado(acusado.getUsuario());
         }
         // ACTUALIZAMOS LA FECHA DE NUESTRA DENUNCIA
         denuncia.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));

@@ -15,6 +15,13 @@ public class ErrorMessage {
         this.path = path;
     }
 
+    public ErrorMessage(Exception exception, String message, String path) {
+
+        this.exception = exception.getClass().getSimpleName();
+        this.message = message;
+        this.path = path;
+    }
+
     public String getException() {
         return exception;
     }

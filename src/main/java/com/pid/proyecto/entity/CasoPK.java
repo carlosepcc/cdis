@@ -10,31 +10,27 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
+/**
+ *
+ * @author Angel
+ */
 @Embeddable
 public class CasoPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
-    @Column(name = "denuncia")
-    private int denuncia;
-    @Basic(optional = false)
-    @NotNull
     @Column(name = "comision")
     private int comision;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "denuncia")
+    private int denuncia;
 
     public CasoPK() {
     }
 
-    public CasoPK(int denuncia, int comision) {
-        this.denuncia = denuncia;
+    public CasoPK(int comision, int denuncia) {
         this.comision = comision;
-    }
-
-    public int getDenuncia() {
-        return denuncia;
-    }
-
-    public void setDenuncia(int denuncia) {
         this.denuncia = denuncia;
     }
 
@@ -46,11 +42,19 @@ public class CasoPK implements Serializable {
         this.comision = comision;
     }
 
+    public int getDenuncia() {
+        return denuncia;
+    }
+
+    public void setDenuncia(int denuncia) {
+        this.denuncia = denuncia;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) denuncia;
         hash += (int) comision;
+        hash += (int) denuncia;
         return hash;
     }
 
@@ -61,10 +65,10 @@ public class CasoPK implements Serializable {
             return false;
         }
         CasoPK other = (CasoPK) object;
-        if (this.denuncia != other.denuncia) {
+        if (this.comision != other.comision) {
             return false;
         }
-        if (this.comision != other.comision) {
+        if (this.denuncia != other.denuncia) {
             return false;
         }
         return true;
@@ -72,7 +76,7 @@ public class CasoPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.CasoPK[ denuncia=" + denuncia + ", comision=" + comision + " ]";
+        return "com.pid.proyecto.entity.CasoPK[ comision=" + comision + ", denuncia=" + denuncia + " ]";
     }
     
 }

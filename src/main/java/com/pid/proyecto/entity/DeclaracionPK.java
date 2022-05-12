@@ -9,6 +9,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -19,40 +20,33 @@ public class DeclaracionPK implements Serializable {
 
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "usuario")
-    private int usuario;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "casodenuncia")
-    private int casodenuncia;
+    private String usuario;
     @Basic(optional = false)
     @NotNull
     @Column(name = "casocomision")
     private int casocomision;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "casodenuncia")
+    private int casodenuncia;
 
     public DeclaracionPK() {
     }
 
-    public DeclaracionPK(int usuario, int casodenuncia, int casocomision) {
+    public DeclaracionPK(String usuario, int casocomision, int casodenuncia) {
         this.usuario = usuario;
-        this.casodenuncia = casodenuncia;
         this.casocomision = casocomision;
+        this.casodenuncia = casodenuncia;
     }
 
-    public int getUsuario() {
+    public String getUsuario() {
         return usuario;
     }
 
-    public void setUsuario(int usuario) {
+    public void setUsuario(String usuario) {
         this.usuario = usuario;
-    }
-
-    public int getCasodenuncia() {
-        return casodenuncia;
-    }
-
-    public void setCasodenuncia(int casodenuncia) {
-        this.casodenuncia = casodenuncia;
     }
 
     public int getCasocomision() {
@@ -63,12 +57,20 @@ public class DeclaracionPK implements Serializable {
         this.casocomision = casocomision;
     }
 
+    public int getCasodenuncia() {
+        return casodenuncia;
+    }
+
+    public void setCasodenuncia(int casodenuncia) {
+        this.casodenuncia = casodenuncia;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (int) usuario;
-        hash += (int) casodenuncia;
+        hash += (usuario != null ? usuario.hashCode() : 0);
         hash += (int) casocomision;
+        hash += (int) casodenuncia;
         return hash;
     }
 
@@ -79,13 +81,13 @@ public class DeclaracionPK implements Serializable {
             return false;
         }
         DeclaracionPK other = (DeclaracionPK) object;
-        if (this.usuario != other.usuario) {
-            return false;
-        }
-        if (this.casodenuncia != other.casodenuncia) {
+        if ((this.usuario == null && other.usuario != null) || (this.usuario != null && !this.usuario.equals(other.usuario))) {
             return false;
         }
         if (this.casocomision != other.casocomision) {
+            return false;
+        }
+        if (this.casodenuncia != other.casodenuncia) {
             return false;
         }
         return true;
@@ -93,7 +95,7 @@ public class DeclaracionPK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.pid.proyecto.entity.DeclaracionPK[ usuario=" + usuario + ", casodenuncia=" + casodenuncia + ", casocomision=" + casocomision + " ]";
+        return "com.pid.proyecto.entity.DeclaracionPK[ usuario=" + usuario + ", casocomision=" + casocomision + ", casodenuncia=" + casodenuncia + " ]";
     }
     
 }

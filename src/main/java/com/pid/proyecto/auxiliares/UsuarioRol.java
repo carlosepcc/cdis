@@ -2,19 +2,19 @@ package com.pid.proyecto.auxiliares;
 
 public class UsuarioRol {
     
-    private int idIntegrante = -1;
+    private String usuario = "";
     
     private int idRol = -1;
 
     public UsuarioRol() {
     }
 
-    public int getIdIntegrante() {
-        return idIntegrante;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setIdIntegrante(int idIntegrante) {
-        this.idIntegrante = idIntegrante;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public int getIdRol() {

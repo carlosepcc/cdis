@@ -2,7 +2,7 @@ package com.pid.proyecto.Json.Modificar;
 
 public class JsonModificarExpediente {
     
-    private int idUsuario = -1;
+    private String usuario = "";
     private int idDenuncia = -1;
     private int idComision = -1;
     private String descripcion = "";
@@ -18,12 +18,12 @@ public class JsonModificarExpediente {
         this.descripcion = descripcion;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public int getIdDenuncia() {

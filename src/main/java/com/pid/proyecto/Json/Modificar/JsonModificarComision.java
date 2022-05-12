@@ -8,18 +8,18 @@ public class JsonModificarComision {
 
     private int idComision = -1;
 
-    private List<Integer> quitarIntegrantes = new LinkedList<>();
+    private List<String> quitarIntegrantes = new LinkedList<>();
 
     private List<UsuarioRol> agregarIntegrantes = new LinkedList<>();
 
     public JsonModificarComision() {
     }
 
-    public List<Integer> getQuitarIntegrantes() {
+    public List<String> getQuitarIntegrantes() {
         return quitarIntegrantes;
     }
 
-    public void setQuitarIntegrantes(List<Integer> quitarIntegrantes) {
+    public void setQuitarIntegrantes(List<String> quitarIntegrantes) {
         this.quitarIntegrantes = quitarIntegrantes;
     }
 

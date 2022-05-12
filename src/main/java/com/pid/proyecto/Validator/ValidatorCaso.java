@@ -2,6 +2,7 @@ package com.pid.proyecto.Validator;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarCasos;
 import com.pid.proyecto.Json.Crear.JsonCrearCaso;
+import com.pid.proyecto.Json.Crear.JsonCrearDictamen;
 import com.pid.proyecto.Json.Modificar.JsonModificarCaso;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.MultipartFilter;
 
 @Component
 public class ValidatorCaso {
@@ -49,7 +52,7 @@ public class ValidatorCaso {
         if (!comisionService.existsById(JSONC.getIdComision())) {
             respuesta.add("NO EXISTE LA COMISION CON ID: " + JSONC.getIdComision());
         }
-        
+
         if (JSONC.getAnoExp() == -1 || JSONC.getMesExp() == -1 || JSONC.getDiaExp() == -1) {
             respuesta.add("DEBE INTRODUCIR LA FECHA DE EXPIRACION");
         }
@@ -105,6 +108,31 @@ public class ValidatorCaso {
         }
         return null;
 
+    }
+
+    public ResponseEntity<?> ValidarJsonCrearDictamen(JsonCrearDictamen JSOND, List<MultipartFile> files) {
+        List<String> respuesta = new LinkedList<>();
+
+        // SI NO EXISTE EL CASO ENTONCES NO PUEDE EXISTIR EL DICTAMEN
+        if (!casoService.existsByCasoPK(JSOND.getCasoPK())) {
+
+            respuesta.add(" NO EXISTE EL CASO CON ID: " + new CasoPK(
+                    JSOND.getCasoPK().getDenuncia(), JSOND.getCasoPK().getComision()).toString() + " PARA PODER CREAR ESTE DICTAMEN");
+        }
+        
+        if(files.isEmpty())
+        {
+        respuesta.add("DEBE INTRODUCIR EL DICTAMEN QUE VA A GUARDAR");
+        }
+
+        if (!respuesta.isEmpty()) {
+            return new ResponseEntity<>(
+                    new Mensaje(respuesta.toString()),
+                    HttpStatus.PRECONDITION_FAILED
+            );
+        }
+
+        return null;
     }
 
 }

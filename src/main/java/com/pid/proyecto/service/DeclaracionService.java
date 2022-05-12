@@ -15,8 +15,8 @@ public class DeclaracionService {
     @Autowired
     DeclaracionRepo repo;
 
-    public void save(Declaracion declaracion) {
-        repo.save(declaracion);
+    public Declaracion save(Declaracion declaracion) {
+        return repo.save(declaracion);
     }
 
     public List<Declaracion> findAll() {
@@ -24,7 +24,7 @@ public class DeclaracionService {
     }
 
     public Declaracion findByDeclaracionPK(DeclaracionPK declaracionPK) {
-       return repo.findByDeclaracionPK(declaracionPK).get();
+        return repo.findByDeclaracionPK(declaracionPK).get();
     }
 
     public void deleteAll(List<Declaracion> LD) {
@@ -37,6 +37,10 @@ public class DeclaracionService {
 
     public void deleteByDeclaracionPK(DeclaracionPK PK) {
         repo.deleteByDeclaracionPK(PK);
+    }
+
+    List<Declaracion> findAllByAbierta(boolean b) {
+        return repo.findAllByAbierta(b);
     }
 
 }

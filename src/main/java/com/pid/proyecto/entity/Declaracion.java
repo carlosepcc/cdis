@@ -7,7 +7,6 @@ package com.pid.proyecto.entity;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -16,7 +15,6 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -48,18 +46,21 @@ public class Declaracion implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "descripcion")
-    private String descripcion;
+    @Column(name = "declaracion")
+    private String declaracion;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "expediente")
+    private String expediente;
     @JoinColumns({
-        @JoinColumn(name = "casodenuncia", referencedColumnName = "denuncia", insertable = false, updatable = false),
-        @JoinColumn(name = "casocomision", referencedColumnName = "comision", insertable = false, updatable = false)})
+        @JoinColumn(name = "casocomision", referencedColumnName = "comision", insertable = false, updatable = false),
+        @JoinColumn(name = "casodenuncia", referencedColumnName = "denuncia", insertable = false, updatable = false)})
     @ManyToOne(optional = false)
     private Caso caso;
-    @JoinColumn(name = "usuario", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "usuario", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Usuario usuario1;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "declaracion")
-    private Expediente expediente;
 
     public Declaracion() {
     }
@@ -68,15 +69,16 @@ public class Declaracion implements Serializable {
         this.declaracionPK = declaracionPK;
     }
 
-    public Declaracion(DeclaracionPK declaracionPK, boolean abierta, Date fecha, String descripcion) {
+    public Declaracion(DeclaracionPK declaracionPK, boolean abierta, Date fecha, String declaracion, String expediente) {
         this.declaracionPK = declaracionPK;
         this.abierta = abierta;
         this.fecha = fecha;
-        this.descripcion = descripcion;
+        this.declaracion = declaracion;
+        this.expediente = expediente;
     }
 
-    public Declaracion(int usuario, int casodenuncia, int casocomision) {
-        this.declaracionPK = new DeclaracionPK(usuario, casodenuncia, casocomision);
+    public Declaracion(String usuario, int casocomision, int casodenuncia) {
+        this.declaracionPK = new DeclaracionPK(usuario, casocomision, casodenuncia);
     }
 
     public DeclaracionPK getDeclaracionPK() {
@@ -103,12 +105,20 @@ public class Declaracion implements Serializable {
         this.fecha = fecha;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getDeclaracion() {
+        return declaracion;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDeclaracion(String declaracion) {
+        this.declaracion = declaracion;
+    }
+
+    public String getExpediente() {
+        return expediente;
+    }
+
+    public void setExpediente(String expediente) {
+        this.expediente = expediente;
     }
 
     public Caso getCaso() {
@@ -125,14 +135,6 @@ public class Declaracion implements Serializable {
 
     public void setUsuario1(Usuario usuario1) {
         this.usuario1 = usuario1;
-    }
-
-    public Expediente getExpediente() {
-        return expediente;
-    }
-
-    public void setExpediente(Expediente expediente) {
-        this.expediente = expediente;
     }
 
     @Override

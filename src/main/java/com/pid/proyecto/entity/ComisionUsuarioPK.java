@@ -9,6 +9,7 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -23,13 +24,14 @@ public class ComisionUsuarioPK implements Serializable {
     private int idc;
     @Basic(optional = false)
     @NotNull
+    @Size(min = 1, max = 255)
     @Column(name = "idu")
-    private int idu;
+    private String idu;
 
     public ComisionUsuarioPK() {
     }
 
-    public ComisionUsuarioPK(int idc, int idu) {
+    public ComisionUsuarioPK(int idc, String idu) {
         this.idc = idc;
         this.idu = idu;
     }
@@ -42,11 +44,11 @@ public class ComisionUsuarioPK implements Serializable {
         this.idc = idc;
     }
 
-    public int getIdu() {
+    public String getIdu() {
         return idu;
     }
 
-    public void setIdu(int idu) {
+    public void setIdu(String idu) {
         this.idu = idu;
     }
 
@@ -54,7 +56,7 @@ public class ComisionUsuarioPK implements Serializable {
     public int hashCode() {
         int hash = 0;
         hash += (int) idc;
-        hash += (int) idu;
+        hash += (idu != null ? idu.hashCode() : 0);
         return hash;
     }
 
@@ -68,7 +70,7 @@ public class ComisionUsuarioPK implements Serializable {
         if (this.idc != other.idc) {
             return false;
         }
-        if (this.idu != other.idu) {
+        if ((this.idu == null && other.idu != null) || (this.idu != null && !this.idu.equals(other.idu))) {
             return false;
         }
         return true;

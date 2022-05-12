@@ -2,9 +2,13 @@ package com.pid.proyecto.controller;
 
 import com.pid.proyecto.Json.JsonObjeto;
 import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.entity.Declaracion;
+import com.pid.proyecto.entity.DeclaracionPK;
+import com.pid.proyecto.service.DeclaracionService;
 import java.util.LinkedList;
 import java.util.List;
 import javax.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,9 +29,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/Entidad")
 @CrossOrigin("*")
 public class basicController {
+    
+    @Autowired
+    DeclaracionService declaracionService;
 
     @PutMapping("/crear")
-    @PreAuthorize("hasRole('ROLE_C_ENTIDAD')")
+//    @PreAuthorize("hasRole('ROLE_C_ENTIDAD')")
     public ResponseEntity<?> crear(
             @Valid @RequestBody JsonObjeto JSONO,
             BindingResult BR
@@ -38,12 +45,18 @@ public class basicController {
             for (FieldError FE : BR.getFieldErrors()) {
                 errores.add(FE.getDefaultMessage());
             }
+            
+            
             return new ResponseEntity<>(
                     new Mensaje(errores.toString()),
                     HttpStatus.PRECONDITION_FAILED
             );
         }
 
+         Declaracion d = new Declaracion();
+         
+         d = declaracionService.findByDeclaracionPK(new DeclaracionPK("u5", 1, 1));
+        
         // DECLARAMOS VARIABLES
         Object entidad;
         String propiedad;
@@ -54,7 +67,7 @@ public class basicController {
 
         // GUARDAMOS
         return new ResponseEntity<>(
-                new Mensaje(" OBJETO CREADO"),
+                new Mensaje(d.getDeclaracionPK().getUsuario()),
                 HttpStatus.CREATED
         );
     }

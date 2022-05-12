@@ -2,9 +2,11 @@ package com.pid.proyecto.controller;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarCasos;
 import com.pid.proyecto.Json.Crear.JsonCrearCaso;
+import com.pid.proyecto.Json.Crear.JsonCrearDictamen;
 import com.pid.proyecto.Json.Modificar.JsonModificarCaso;
 import com.pid.proyecto.Validator.ValidatorCaso;
 import com.pid.proyecto.auxiliares.Convertidor;
+import com.pid.proyecto.auxiliares.GestionarFicheros;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.Caso;
@@ -13,6 +15,11 @@ import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.DenunciaService;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +33,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/Caso")
 @CrossOrigin("*")
 public class CasoController {
+
+    @Autowired
+    GestionarFicheros gestionarFicheros;
 
     @Autowired
     DenunciaService denunciaService;
@@ -52,9 +64,9 @@ public class CasoController {
     @Autowired
     ValidatorCaso validator;
 
-    @PutMapping("/crear")
+    @PutMapping("/crearCaso")
     @PreAuthorize("hasRole('ROLE_C_CASO')")
-    public ResponseEntity<?> crear(
+    public ResponseEntity<?> crearCaso(
             @RequestBody JsonCrearCaso JSONC
     ) {
 
@@ -75,16 +87,46 @@ public class CasoController {
         caso.setAbierto(true);
         caso.setFechaapertura(convertidor.LocalDateToSqlDate(LocalDate.now()));
         caso.setFechaexpiracion(convertidor.LocalDateToSqlDate(fechaExpiracion));
+        caso.setDictamen(null);
 
         // GUARDAMOS
-        casoService.save(caso);
+        caso = casoService.save(caso);
 
         // PROCESAMOS LA DENUNCIA
         denuncia.setProcesada(true);
         denunciaService.save(denuncia);
 
+        // CREAMOS LA CARPETA ASOCIADA A ESTE CASO
+        String carpetaCaso = gestionarFicheros.CrearCarpetaCaso(caso);
+
         return new ResponseEntity<>(
-                new Mensaje("CASO CREADO"),
+                new Mensaje("CASO CREADO, SE HA CREADO UN DIRECTORIO DESIGNADO PARA EL USO DEL MISMO: " + carpetaCaso),
+                HttpStatus.CREATED
+        );
+    }
+
+    @PutMapping("/crearDictamen")
+    @PreAuthorize("hasRole('ROLE_C_DICTAMEN')")
+    public ResponseEntity<?> crearDictamen(
+            @RequestPart JsonCrearDictamen JSOND,
+            @RequestPart List<MultipartFile> files
+    ) {
+
+        // VALIDAR JSON ANTES DE USARSE
+        ResponseEntity respuesta = validator.ValidarJsonCrearDictamen(JSOND, files);
+        if (respuesta != null) {
+            return respuesta;
+        }
+
+        Caso caso = casoService.findByCasoPK(JSOND.getCasoPK());
+
+        // CREAMOS LA CARPETA ASOCIADA A ESTE DICTAMEN Y LO GUARDAMOS EN ELLA
+        caso = gestionarFicheros.GestionarCrearDictamen(caso, files);
+        caso.setAbierto(false);
+        casoService.save(caso);
+
+        return new ResponseEntity<>(
+                new Mensaje("DICTAMEN CREADO"),
                 HttpStatus.CREATED
         );
     }
@@ -98,7 +140,7 @@ public class CasoController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar")
+    @PostMapping("/modificarCaso")
     @PreAuthorize("hasRole('ROLE_U_CASO')")
     public ResponseEntity<?> modificar(
             @RequestBody JsonModificarCaso JSONC

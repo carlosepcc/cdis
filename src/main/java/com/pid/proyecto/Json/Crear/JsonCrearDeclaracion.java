@@ -1,14 +1,12 @@
 package com.pid.proyecto.Json.Crear;
 
 public class JsonCrearDeclaracion {
-    
+
     private int idDenuncia = -1;
-    
+
     private int idComision = -1;
-    
-    private int idUsuario = -1;
-    
-    private String descripcion = "";
+
+    private String usuario = "";
 
     public JsonCrearDeclaracion() {
     }
@@ -21,8 +19,6 @@ public class JsonCrearDeclaracion {
         this.idComision = idComision;
     }
 
-    
-    
     public int getIdDenuncia() {
         return idDenuncia;
     }
@@ -31,22 +27,12 @@ public class JsonCrearDeclaracion {
         this.idDenuncia = idDenuncia;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setUsuario(String Usuario) {
+        this.usuario = Usuario;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-    
-    
-    
 }

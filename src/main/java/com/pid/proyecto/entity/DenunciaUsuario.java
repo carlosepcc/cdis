@@ -38,7 +38,7 @@ public class DenunciaUsuario implements Serializable {
     @JoinColumn(name = "idd", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Denuncia denuncia;
-    @JoinColumn(name = "idu", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "idu", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Usuario usuario;
 
@@ -54,7 +54,7 @@ public class DenunciaUsuario implements Serializable {
         this.denunciante = denunciante;
     }
 
-    public DenunciaUsuario(int idd, int idu) {
+    public DenunciaUsuario(int idd, String idu) {
         this.denunciaUsuarioPK = new DenunciaUsuarioPK(idd, idu);
     }
 

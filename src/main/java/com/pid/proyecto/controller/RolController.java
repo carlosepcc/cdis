@@ -80,7 +80,7 @@ public class RolController {
         // ASIGNAR NOMBRE AL ROL
         rol.setRol(JSONR.getRol());
         // DEFINIR EL TIPO DE ROL
-        rol.setTipoComision(JSONR.isRolParaComision());
+        rol.setTipocomision(JSONR.isRolParaComision());
         // GUARDAMOS EL ROL 
         rol = rolService.save(rol);
         // CREAMOS UNA LISTA DE PERMISOS Y LA LLENAMOS
@@ -146,7 +146,7 @@ public class RolController {
 
         // ESPECIFICAR TIPO DE ROL
         if (JSONR.isTipoComision()) {
-            rol.setTipoComision(true);
+            rol.setTipocomision(true);
         }
         
         // SALVAR ROL

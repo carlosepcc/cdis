@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.webjars.NotFoundException;
 
 @ControllerAdvice
@@ -67,5 +68,12 @@ public class ApiExceptionHandler {
     @ResponseBody
     public ErrorMessage fatalErrorUnexpectedException(HttpServletRequest request, Exception exception) {
         return new ErrorMessage(exception, request.getRequestURI());
+    }
+    
+    @ResponseStatus(HttpStatus.INSUFFICIENT_STORAGE)
+    @ExceptionHandler({MaxUploadSizeExceededException.class})
+    @ResponseBody
+    public ErrorMessage maxSizeException(HttpServletRequest request, Exception exception) {
+        return new ErrorMessage(exception,"EL TAMAÑO DE LOS ARCHIVOS NO PUEDE EXCEDER LOS 500 Kb", request.getRequestURI());
     }
 }

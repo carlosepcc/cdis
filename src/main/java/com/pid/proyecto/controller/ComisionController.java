@@ -9,6 +9,7 @@ import com.pid.proyecto.auxiliares.UsuarioRol;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.ComisionUsuario;
 import com.pid.proyecto.entity.ComisionUsuarioPK;
+import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.ComisionUsuarioService;
 import com.pid.proyecto.service.ResolucionService;
@@ -74,10 +75,13 @@ public class ComisionController {
 
         // recorremos la lista de todos los usuarios con sus roles para relacionarlos a esta comision
         for (UsuarioRol us : JSONC.getIntegrantesComision()) {
+
+            Usuario usuario = usuarioService.findByUsuario(us.getUsuario());
+            
             comisionUsuario.setComisionUsuarioPK(new ComisionUsuarioPK(comision.getId(),
-                    us.getIdIntegrante()));
+                    usuario.getUsuario()));
             comisionUsuario.setRol(rolService.findById(us.getIdRol()));
-            comisionUsuario.setUsuario(usuarioService.findById(us.getIdIntegrante()).getUsuario());
+            comisionUsuario.setUsuario(usuario.getUsuario());
 
             comisionUsuarioService.save(comisionUsuario);
             comisionUsuario = new ComisionUsuario();
@@ -118,15 +122,16 @@ public class ComisionController {
         comision = comisionService.findById(JSONC.getIdComision());
 
         if (!JSONC.getQuitarIntegrantes().isEmpty()) {
-            for (int idI : JSONC.getQuitarIntegrantes()) {
-                comisionUsuarioService.deleteByComisionUsuarioPK(new ComisionUsuarioPK(comision.getId(), idI));
+            for (String usuario : JSONC.getQuitarIntegrantes()) {
+                comisionUsuarioService.deleteByComisionUsuarioPK(new ComisionUsuarioPK(comision.getId(), usuario));
             }
         }
 
         if (!JSONC.getAgregarIntegrantes().isEmpty()) {
+            
             for (UsuarioRol ur : JSONC.getAgregarIntegrantes()) {
-                ComisionUsuario cu = new ComisionUsuario(new ComisionUsuarioPK(comision.getId(), ur.getIdIntegrante()),
-                        usuarioService.findById(ur.getIdIntegrante()).getUsuario());
+                ComisionUsuario cu = new ComisionUsuario(new ComisionUsuarioPK(comision.getId(), ur.getUsuario()),
+                        usuarioService.findByUsuario(ur.getUsuario()).getUsuario());
                 cu.setRol(rolService.findById(ur.getIdRol()));
                 comisionUsuarioService.save(cu);
             }

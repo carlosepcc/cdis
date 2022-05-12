@@ -1,5 +1,6 @@
 package com.pid.proyecto.Json;
 
+import com.pid.proyecto.entity.Permiso;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,13 +12,22 @@ public class JsonUsuario {
 //  )
 
     private String rol = "";
-    private List<String> permisos = new LinkedList<>();
+    private List<String> permisos= new LinkedList<>();
+    private int Idrol = -1;
     private String nombre = "";
     private String usuario = "";
     private String contrasena = "";
     private String cargo = "";
 
     public JsonUsuario() {
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 
     public List<String> getPermisos() {
@@ -28,21 +38,20 @@ public class JsonUsuario {
         this.permisos = permisos;
     }
 
+    public int getIdrol() {
+        return Idrol;
+    }
+
+    public void setIdrol(int Idrol) {
+        this.Idrol = Idrol;
+    }
+
     public String getCargo() {
         return cargo;
     }
 
     public void setCargo(String cargo) {
         this.cargo = cargo;
-    }
-
-    
-    public String getRol() {
-        return rol;
-    }
-
-    public void setRol(String rol) {
-        this.rol = rol;
     }
 
     public String getNombre() {

@@ -1,20 +1,17 @@
 package com.pid.proyecto.Json.Modificar;
 
-import java.time.LocalDate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JsonModificarDeclaracion {
-    
+
     private int idDenuncia = -1;
-    
+
     private int idComision = -1;
-    
-    private int idUsuario = -1;
-    
+
+    private String usuario = "";
+
     private boolean abierta = false;
-    
-    private String descripcion = "";
 
     public JsonModificarDeclaracion() {
     }
@@ -27,8 +24,6 @@ public class JsonModificarDeclaracion {
         this.idComision = idComision;
     }
 
-    
-    
     public int getIdDenuncia() {
         return idDenuncia;
     }
@@ -37,12 +32,12 @@ public class JsonModificarDeclaracion {
         this.idDenuncia = idDenuncia;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public String getUsuario() {
+        return usuario;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
     }
 
     public boolean isAbierta() {
@@ -53,12 +48,4 @@ public class JsonModificarDeclaracion {
         this.abierta = abierta;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-    
 }

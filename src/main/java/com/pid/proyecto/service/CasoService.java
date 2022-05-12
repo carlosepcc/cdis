@@ -15,8 +15,8 @@ public class CasoService {
     @Autowired
     CasoRepo repo;
 
-    public void save(Caso caso) {
-        repo.save(caso);
+    public Caso save(Caso caso) {
+       return repo.save(caso);
     }
 
     public List<Caso> findAll() {
@@ -38,6 +38,10 @@ public class CasoService {
 
     public void deleteByCasoPK(CasoPK PK) {
         repo.deleteByCasoPK(PK);
+    }
+
+    List<Caso> findAllByAbierto(boolean abierto) {
+       return repo.findAllByAbierto(abierto);
     }
 
 }

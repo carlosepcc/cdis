@@ -17,11 +17,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -50,16 +50,19 @@ public class Caso implements Serializable {
     @Column(name = "fechaexpiracion")
     @Temporal(TemporalType.DATE)
     private Date fechaexpiracion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
-    private List<Declaracion> declaracionList;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "caso")
-    private Dictamen dictamen;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "dictamen")
+    private String dictamen;
     @JoinColumn(name = "comision", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Comision comision1;
     @JoinColumn(name = "denuncia", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Denuncia denuncia1;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
+    private List<Declaracion> declaracionList;
 
     public Caso() {
     }
@@ -68,15 +71,16 @@ public class Caso implements Serializable {
         this.casoPK = casoPK;
     }
 
-    public Caso(CasoPK casoPK, boolean abierto, Date fechaapertura, Date fechaexpiracion) {
+    public Caso(CasoPK casoPK, boolean abierto, Date fechaapertura, Date fechaexpiracion, String dictamen) {
         this.casoPK = casoPK;
         this.abierto = abierto;
         this.fechaapertura = fechaapertura;
         this.fechaexpiracion = fechaexpiracion;
+        this.dictamen = dictamen;
     }
 
-    public Caso(int denuncia, int comision) {
-        this.casoPK = new CasoPK(denuncia, comision);
+    public Caso(int comision, int denuncia) {
+        this.casoPK = new CasoPK(comision, denuncia);
     }
 
     public CasoPK getCasoPK() {
@@ -111,19 +115,11 @@ public class Caso implements Serializable {
         this.fechaexpiracion = fechaexpiracion;
     }
 
-    public List<Declaracion> getDeclaracionList() {
-        return declaracionList;
-    }
-
-    public void setDeclaracionList(List<Declaracion> declaracionList) {
-        this.declaracionList = declaracionList;
-    }
-
-    public Dictamen getDictamen() {
+    public String getDictamen() {
         return dictamen;
     }
 
-    public void setDictamen(Dictamen dictamen) {
+    public void setDictamen(String dictamen) {
         this.dictamen = dictamen;
     }
 
@@ -141,6 +137,14 @@ public class Caso implements Serializable {
 
     public void setDenuncia1(Denuncia denuncia1) {
         this.denuncia1 = denuncia1;
+    }
+
+    public List<Declaracion> getDeclaracionList() {
+        return declaracionList;
+    }
+
+    public void setDeclaracionList(List<Declaracion> declaracionList) {
+        this.declaracionList = declaracionList;
     }
 
     @Override

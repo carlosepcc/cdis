@@ -41,7 +41,7 @@ public class ComisionUsuario implements Serializable {
     @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Rol rol;
-    @JoinColumn(name = "idu", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "idu", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Usuario usuario1;
 
@@ -57,7 +57,7 @@ public class ComisionUsuario implements Serializable {
         this.usuario = usuario;
     }
 
-    public ComisionUsuario(int idc, int idu) {
+    public ComisionUsuario(int idc, String idu) {
         this.comisionUsuarioPK = new ComisionUsuarioPK(idc, idu);
     }
 

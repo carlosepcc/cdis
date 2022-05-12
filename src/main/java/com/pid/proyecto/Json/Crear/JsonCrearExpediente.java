@@ -1,10 +1,10 @@
 package com.pid.proyecto.Json.Crear;
 
+import com.pid.proyecto.entity.DeclaracionPK;
+
 public class JsonCrearExpediente {
 
-    private int idUsuario = -1;
-    private int idDenuncia = -1;
-    private int idComision = -1;
+    private DeclaracionPK declaracionPK = new DeclaracionPK();
     private String descripcion = "";
 
     public JsonCrearExpediente() {
@@ -18,27 +18,12 @@ public class JsonCrearExpediente {
         this.descripcion = descripcion;
     }
 
-    public int getIdUsuario() {
-        return idUsuario;
+    public DeclaracionPK getDeclaracionPK() {
+        return declaracionPK;
     }
 
-    public void setIdUsuario(int idUsuario) {
-        this.idUsuario = idUsuario;
+    public void setDeclaracionPK(DeclaracionPK declaracionPK) {
+        this.declaracionPK = declaracionPK;
     }
 
-    public int getIdDenuncia() {
-        return idDenuncia;
-    }
-
-    public void setIdDenuncia(int idDenuncia) {
-        this.idDenuncia = idDenuncia;
-    }
-
-    public int getIdComision() {
-        return idComision;
-    }
-
-    public void setIdComision(int idComision) {
-        this.idComision = idComision;
-    }
 }

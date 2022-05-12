@@ -6,7 +6,6 @@ import com.pid.proyecto.Json.Modificar.JsonModificarDenuncia;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.DenunciaUsuarioPK;
-import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.service.DenunciaService;
 import com.pid.proyecto.service.DenunciaUsuarioService;
 import com.pid.proyecto.service.UsuarioService;
@@ -31,7 +30,7 @@ public class ValidatorDenuncia {
 
     public ResponseEntity<?> ValidarJsonCrearDenuncia(JsonCrearDenuncia JSOND) {
         List<String> respuesta = new LinkedList<>();
-        
+
         if (!usuarioService.existsByUsuario(JSOND.getAcusado())) {
             respuesta.add("NO EXISTE EL USUARIO: " + JSOND.getAcusado());
         }
@@ -48,10 +47,9 @@ public class ValidatorDenuncia {
     public ResponseEntity ValidarJsonModificarDenuncia(JsonModificarDenuncia JSOND) {
         List<String> respuesta = new LinkedList<>();
 
-        
         // ESTA ES UNA LLAVE QUE RELACIONA LA DENUNCIA QUE SE INTENTA MODIFICAR CON EL USUARIO EN SESION
         DenunciaUsuarioPK PK = new DenunciaUsuarioPK(JSOND.getIdDenuncia(),
-                usuarioService.findByUsuario(sesionDetails.getUsuario()).getId());
+                sesionDetails.getUsuario());
 
         if (!denunciaService.existsById(JSOND.getIdDenuncia())) {
             respuesta.add(" NO EXISTE LA DENUNCIA DE ID: " + JSOND.getIdDenuncia());

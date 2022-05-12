@@ -15,6 +15,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -80,7 +82,7 @@ public class UsuarioController {
         rol = rolService.findById(1);
         nombre = JSONU.getNombre();
         username = JSONU.getUsuario();
-        password = passwordEncoder.encode(JSONU.getContrasena());
+        password = JSONU.getContrasena();
         cargo = JSONU.getCargo();
 
         // LLENAMOS EL USUARIO UNA VEZ YA TENEMOS TODAS LAS VARIABLES LISTAS
@@ -178,9 +180,9 @@ public class UsuarioController {
         List<Usuario> LU = new LinkedList<>();
 
         // VERIFICAMOS QUE TODOS LOS ID EXISTAN
-        for (int id : ids) {
-            LU.add(usuarioService.findById(id));
-        }
+//        for (int id : ids) {
+//            LU.add(usuarioService.findById(id));
+//        }
 
         usuarioService.deleteAll(LU);
         return new ResponseEntity<>(
@@ -190,9 +192,9 @@ public class UsuarioController {
     }
 
     // LOGIN
-    @PostMapping("/login")
+    @PostMapping(value= "/login")
     public ResponseEntity<JsonJwtDto> login(
-            @Valid @RequestBody JsonLoginUsuario loginUsuario
+             @RequestBody JsonLoginUsuario loginUsuario
     ) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

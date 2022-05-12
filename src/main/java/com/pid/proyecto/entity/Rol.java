@@ -1,7 +1,9 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.pid.proyecto.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -18,6 +20,10 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+/**
+ *
+ * @author Angel
+ */
 @Entity
 @Table(name = "rol")
 @NamedQueries({
@@ -38,16 +44,13 @@ public class Rol implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "tipocomision")
-    private boolean tipoComision;
-    @JsonIgnoreProperties(value = {"rol", "permiso1", "rol1"})
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol1")
-    private List<RolPermiso> rolPermisoList;
-    @JsonIgnore
+    private boolean tipocomision;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
     private List<Usuario> usuarioList;
-    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
     private List<ComisionUsuario> comisionUsuarioList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol1")
+    private List<RolPermiso> rolPermisoList;
 
     public Rol() {
     }
@@ -56,27 +59,20 @@ public class Rol implements Serializable {
         this.id = id;
     }
 
-    public Rol(Integer id, String rol) {
+    public Rol(Integer id, String rol, boolean tipocomision) {
         this.id = id;
         this.rol = rol;
+        this.tipocomision = tipocomision;
+    }
+
+    public Rol(String rol, boolean tipocomision) {
+        this.rol = rol;
+        this.tipocomision = tipocomision;
     }
 
     public Rol(String rol) {
         this.rol = rol;
-        this.tipoComision = false;
-    }
-
-    public boolean isTipoComision() {
-        return tipoComision;
-    }
-
-    public void setTipoComision(boolean tipoComision) {
-        this.tipoComision = tipoComision;
-    }
-
-    public Rol(String rol, boolean tipoComision) {
-        this.rol = rol;
-        this.tipoComision = tipoComision;
+        this.tipocomision = false;
     }
 
     public Integer getId() {
@@ -95,12 +91,12 @@ public class Rol implements Serializable {
         this.rol = rol;
     }
 
-    public List<RolPermiso> getRolPermisoList() {
-        return rolPermisoList;
+    public boolean getTipocomision() {
+        return tipocomision;
     }
 
-    public void setRolPermisoList(List<RolPermiso> rolPermisoList) {
-        this.rolPermisoList = rolPermisoList;
+    public void setTipocomision(boolean tipocomision) {
+        this.tipocomision = tipocomision;
     }
 
     public List<Usuario> getUsuarioList() {
@@ -117,6 +113,14 @@ public class Rol implements Serializable {
 
     public void setComisionUsuarioList(List<ComisionUsuario> comisionUsuarioList) {
         this.comisionUsuarioList = comisionUsuarioList;
+    }
+
+    public List<RolPermiso> getRolPermisoList() {
+        return rolPermisoList;
+    }
+
+    public void setRolPermisoList(List<RolPermiso> rolPermisoList) {
+        this.rolPermisoList = rolPermisoList;
     }
 
     @Override
