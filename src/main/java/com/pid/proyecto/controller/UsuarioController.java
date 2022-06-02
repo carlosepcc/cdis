@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Usuario")
+@RequestMapping("/usuario")
 // PODEMOS ACCEDER DESDE CUALQUIER URL
 @CrossOrigin("*")
 public class UsuarioController {
@@ -63,7 +63,7 @@ public class UsuarioController {
     @Autowired
     UsuarioService usuarioService;
 
-    @PutMapping("/crear")
+    @PutMapping
     @PreAuthorize("hasRole('ROLE_C_USUARIO')")
     public ResponseEntity<?> crear(
             @RequestBody JsonUsuario JSONU
@@ -173,7 +173,7 @@ public class UsuarioController {
 //    }
 
     // DDD
-    @DeleteMapping("/borrar/{ids}")
+    @DeleteMapping("/{ids}")
     @PreAuthorize("hasRole('ROLE_D_USUARIO')")
     @ResponseBody
     public ResponseEntity<?> borrar(@PathVariable("ids") List<Integer> ids) {

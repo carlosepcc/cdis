@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/Caso")
+@RequestMapping("/caso")
 @CrossOrigin("*")
 public class CasoController {
 
@@ -64,7 +64,7 @@ public class CasoController {
     @Autowired
     ValidatorCaso validator;
 
-    @PutMapping("/crearCaso")
+    @PutMapping
     @PreAuthorize("hasRole('ROLE_C_CASO')")
     public ResponseEntity<?> crearCaso(
             @RequestBody JsonCrearCaso JSONC
@@ -105,7 +105,7 @@ public class CasoController {
         );
     }
 
-    @PutMapping("/crearDictamen")
+    @PutMapping("/dictamen")
     @PreAuthorize("hasRole('ROLE_C_DICTAMEN')")
     public ResponseEntity<?> crearDictamen(
             @RequestPart JsonCrearDictamen JSOND,
@@ -140,7 +140,7 @@ public class CasoController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificarCaso")
+    @PostMapping
     @PreAuthorize("hasRole('ROLE_U_CASO')")
     public ResponseEntity<?> modificar(
             @RequestBody JsonModificarCaso JSONC
@@ -171,7 +171,7 @@ public class CasoController {
     }
 
     // DDD
-    @DeleteMapping("/borrar")
+    @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_CASO')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarCasos JSONC) {

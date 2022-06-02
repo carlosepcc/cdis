@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Rol")
+@RequestMapping("/rol")
 @CrossOrigin("*")
 public class RolController {
 
@@ -51,7 +51,7 @@ public class RolController {
     @Autowired
     ValidatorRol validator;
 
-    @PutMapping("/crear")
+    @PutMapping
     @PreAuthorize("hasRole('ROLE_C_ROL')")
     public ResponseEntity<?> crearRol(
             @Valid @RequestBody JsonCrearRol JSONR,
@@ -103,7 +103,7 @@ public class RolController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar")
+    @PostMapping
     @PreAuthorize("hasRole('ROLE_U_ROL')")
     public ResponseEntity<?> actualizar(
             @RequestBody JsonModificarRol JSONR
@@ -158,7 +158,7 @@ public class RolController {
         );
     }
 
-    @DeleteMapping("/borrar")
+    @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_ROL')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarRol JSONR) {

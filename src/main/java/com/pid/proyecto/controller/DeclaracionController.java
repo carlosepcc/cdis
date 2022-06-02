@@ -40,7 +40,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/Declaracion")
+@RequestMapping("/declaracion")
 @CrossOrigin("*")
 public class DeclaracionController {
 
@@ -71,7 +71,7 @@ public class DeclaracionController {
     @Autowired
     RolService rolService;
 
-    @PutMapping("/crearDeclaracion")
+    @PutMapping
     @PreAuthorize("hasRole('ROLE_C_DECLARACION')")
     public ResponseEntity<?> crear(
             @Valid @RequestBody JsonCrearDeclaracion JSOND,
@@ -120,7 +120,7 @@ public class DeclaracionController {
         );
     }
 
-    @PutMapping("/crearExpediente")
+    @PutMapping("/expediente")
     @PreAuthorize("hasRole('ROLE_C_EXPEDIENTE')")
     public ResponseEntity<?> crear(
             @RequestPart JsonCrearExpediente JSONE,
@@ -156,7 +156,7 @@ public class DeclaracionController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar")
+    @PostMapping
     @PreAuthorize("hasRole('ROLE_U_DECLARACION')")
     public ResponseEntity<?> modificar(
             @RequestPart JsonModificarDeclaracion JSOND,
@@ -206,7 +206,7 @@ public class DeclaracionController {
     }
 
     // DDD
-    @DeleteMapping("/borrar")
+    @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_DECLARACION')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarDeclaraciones JSOND) {

@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Comision")
+@RequestMapping("/comision")
 @CrossOrigin("*")
 public class ComisionController {
 
@@ -53,7 +53,7 @@ public class ComisionController {
     @Autowired
     ValidatorComision validator;
 
-    @PutMapping("/crear")
+    @PutMapping
     @PreAuthorize("hasRole('ROLE_C_COMISION')")
     public ResponseEntity<?> crear(
             @RequestBody JsonCrearComision JSONC
@@ -104,7 +104,7 @@ public class ComisionController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar")
+    @PostMapping
     @PreAuthorize("hasRole('ROLE_U_COMISION')")
     public ResponseEntity<?> modificar(
             @RequestBody JsonModificarComision JSONC
@@ -144,7 +144,7 @@ public class ComisionController {
     }
 
     // DDD
-    @DeleteMapping("/borrar")
+    @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_COMISION')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarComision JSONC) {

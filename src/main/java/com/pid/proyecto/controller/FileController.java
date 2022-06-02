@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/Declaracion/modificar")
+@RequestMapping("/declaracion/modificar")
 @CrossOrigin("*")
 public class FileController {
     //Inyectamos el servicio

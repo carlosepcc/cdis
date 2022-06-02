@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Denuncia")
+@RequestMapping("/denuncia")
 @CrossOrigin("*")
 public class DenunciaController {
 
@@ -57,7 +57,7 @@ public class DenunciaController {
     @Autowired
     ValidatorDenuncia validator;
 
-    @PutMapping("/crear")
+    @PutMapping
     @PreAuthorize("hasRole('ROLE_C_DENUNCIA')")
     public ResponseEntity<?> crear(
             @Valid @RequestBody JsonCrearDenuncia JSOND,
@@ -115,7 +115,7 @@ public class DenunciaController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar")
+    @PostMapping
     @PreAuthorize("hasRole('ROLE_U_DENUNCIA')")
     public ResponseEntity<?> modificar(
             @RequestBody JsonModificarDenuncia JSOND
@@ -147,7 +147,7 @@ public class DenunciaController {
         );
     }
 
-    @DeleteMapping("/borrar")
+    @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_DENUNCIA')")
     @ResponseBody
     public ResponseEntity<?> borrar(@RequestBody JsonBorrarDenuncia JSOND) {

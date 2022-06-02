@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Resolucion")
+@RequestMapping("/resolucion")
 @CrossOrigin("*")
 public class ResolucionController {
 
@@ -37,7 +37,7 @@ public class ResolucionController {
     @Autowired
     ValidatorResolucion validator;
 
-    @PutMapping("/crear")
+    @PutMapping
     @PreAuthorize("hasRole('ROLE_C_RESOLUCION')")
     public ResponseEntity crear(
             @Valid @RequestBody JsonCrearResolucion JSONR,
@@ -79,7 +79,7 @@ public class ResolucionController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping("/modificar")
+    @PostMapping
     @PreAuthorize("hasRole('ROLE_U_RESOLUCION')")
     public ResponseEntity modificar(
             @RequestBody JsonModificarResolucion JSONR
@@ -103,7 +103,7 @@ public class ResolucionController {
         );
     }
 
-    @DeleteMapping("/borrar")
+    @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_RESOLUCION')")
     @ResponseBody
     public ResponseEntity borrar(
