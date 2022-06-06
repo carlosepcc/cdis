@@ -8,35 +8,25 @@ public class JsonModificarComision {
 
     private int idComision = -1;
 
-    private List<String> quitarIntegrantes = new LinkedList<>();
+    private List<UsuarioRol> integrantes = new LinkedList<>();
 
-    private List<UsuarioRol> agregarIntegrantes = new LinkedList<>();
 
     public JsonModificarComision() {
-    }
-
-    public List<String> getQuitarIntegrantes() {
-        return quitarIntegrantes;
-    }
-
-    public void setQuitarIntegrantes(List<String> quitarIntegrantes) {
-        this.quitarIntegrantes = quitarIntegrantes;
     }
 
     public int getIdComision() {
         return idComision;
     }
 
+    public List<UsuarioRol> getIntegrantes() {
+        return integrantes;
+    }
+
+    public void setIntegrantes(List<UsuarioRol> integrantes) {
+        this.integrantes = integrantes;
+    }
+
     public void setIdComision(int idComision) {
         this.idComision = idComision;
     }
-
-    public List<UsuarioRol> getAgregarIntegrantes() {
-        return agregarIntegrantes;
-    }
-
-    public void setAgregarIntegrantes(List<UsuarioRol> agregarIntegrantes) {
-        this.agregarIntegrantes = agregarIntegrantes;
-    }
-
 }

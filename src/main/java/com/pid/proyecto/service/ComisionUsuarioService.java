@@ -1,5 +1,6 @@
 package com.pid.proyecto.service;
 
+import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.ComisionUsuario;
 import com.pid.proyecto.entity.ComisionUsuarioPK;
 import com.pid.proyecto.repository.ComisionUsuarioRepo;
@@ -38,6 +39,10 @@ public class ComisionUsuarioService {
     public void deleteByComisionUsuarioPK(ComisionUsuarioPK comisionUsuarioPK) {
         
         repo.deleteByComisionUsuarioPK(comisionUsuarioPK);
+    }
+
+    public List<ComisionUsuario> findAllByComision(Comision comision) {
+        return repo.findAllByComision(comision);
     }
 
 

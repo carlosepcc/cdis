@@ -112,41 +112,11 @@ public class ValidatorComision {
         Resolucion resolucion = comision.getResolucion();
         List<Comision> LC = resolucion.getComisionList();
 
-        // VALIDAMOS QUE TODOS LOS ID QUE QUEREMOS ELIMINAR DE VERDAD SE ENCUENTREN EN NUESTRA COMISION
-        if (!JSONC.getQuitarIntegrantes().isEmpty()) {
-            boolean existeA;
-            List<String> usuarios = new LinkedList<>();
-
-            // recorremos todos los id que queremos eliminar
-            for (String usuario : JSONC.getQuitarIntegrantes()) {
-                existeA = false;
-
-                // recorremos todas las relaciones de nuestra comision
-                for (ComisionUsuario CU : comision.getComisionUsuarioList()) {
-                    // si en alguna de esas relaciones se encuentra el id en el que estamos parados
-                    // decimos que si existe y paramos de buscar
-                    if (CU.getComisionUsuarioPK().getIdu().equals(usuario)) {
-                        existeA = true;
-                        break;
-                    }
-                }
-                // si al terminar de buscar no se confirmó existencia del id entonces rompemos
-                if (!existeA) {
-                    usuarios.add(usuario);
-                }
-            }
-            if (!usuarios.isEmpty()) {
-                respuesta.add(" NO EXISTE RELACION CON LOS INTEGRANTES DE ID:");
-                for (String u : usuarios) {
-                    respuesta.add(" " + u);
-                }
-            }
-        }
 
         // recorremos todos los id que queremos agregar para verificar que ninguno exista previamente
-        if (!JSONC.getAgregarIntegrantes().isEmpty()) {
+        if (!JSONC.getIntegrantes().isEmpty()) {
             Usuario usuario;
-            for (UsuarioRol UR : JSONC.getAgregarIntegrantes()) {
+            for (UsuarioRol UR : JSONC.getIntegrantes()) {
 
                 if (!usuarioService.existsByUsuario(UR.getUsuario())) {
                     respuesta.add("NO EXISTE UN USUARIO DE ID: " + UR.getUsuario());
@@ -160,9 +130,8 @@ public class ValidatorComision {
                 }
 
                 usuario = usuarioService.findByUsuario(UR.getUsuario());
-                // recorremos todas las relaciones de nuestra comision
-
                 
+                // recorremos todas las relaciones de nuestra resolucion
                 for (Comision C : LC) {
                     for (ComisionUsuario cu : C.getComisionUsuarioList()) {
                         // si en alguna de esas relaciones se encuentra el id en el que estamos parados

@@ -9,13 +9,19 @@ public class JsonModificarRol {
 
     private String rol = "";
 
-    private List<Integer> eliminarPermisos = new LinkedList<>();
-
-    private List<Integer> agregarPermisos = new LinkedList<>();
+    private List<Integer> permisos = new LinkedList<>();
 
     private boolean tipoComision = false;
 
     public JsonModificarRol() {
+    }
+
+    public List<Integer> getPermisos() {
+        return permisos;
+    }
+
+    public void setPermisos(List<Integer> permisos) {
+        this.permisos = permisos;
     }
 
     public boolean isTipoComision() {
@@ -32,22 +38,6 @@ public class JsonModificarRol {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public List<Integer> getAgregarPermisos() {
-        return agregarPermisos;
-    }
-
-    public void setAgregarPermisos(List<Integer> agregarPermisos) {
-        this.agregarPermisos = agregarPermisos;
-    }
-
-    public List<Integer> getEliminarPermisos() {
-        return eliminarPermisos;
-    }
-
-    public void setEliminarPermisos(List<Integer> eliminarPermisos) {
-        this.eliminarPermisos = eliminarPermisos;
     }
 
     public void setRol(String rol) {

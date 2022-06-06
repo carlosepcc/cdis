@@ -5,8 +5,6 @@
 package com.pid.proyecto.entity;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -14,8 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 /**
  *
@@ -30,11 +26,6 @@ public class ComisionUsuario implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected ComisionUsuarioPK comisionUsuarioPK;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
-    @Column(name = "usuario")
-    private String usuario;
     @JoinColumn(name = "idc", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Comision comision;
@@ -52,11 +43,6 @@ public class ComisionUsuario implements Serializable {
         this.comisionUsuarioPK = comisionUsuarioPK;
     }
 
-    public ComisionUsuario(ComisionUsuarioPK comisionUsuarioPK, String usuario) {
-        this.comisionUsuarioPK = comisionUsuarioPK;
-        this.usuario = usuario;
-    }
-
     public ComisionUsuario(int idc, String idu) {
         this.comisionUsuarioPK = new ComisionUsuarioPK(idc, idu);
     }
@@ -67,14 +53,6 @@ public class ComisionUsuario implements Serializable {
 
     public void setComisionUsuarioPK(ComisionUsuarioPK comisionUsuarioPK) {
         this.comisionUsuarioPK = comisionUsuarioPK;
-    }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
     }
 
     public Comision getComision() {
@@ -115,10 +93,7 @@ public class ComisionUsuario implements Serializable {
             return false;
         }
         ComisionUsuario other = (ComisionUsuario) object;
-        if ((this.comisionUsuarioPK == null && other.comisionUsuarioPK != null) || (this.comisionUsuarioPK != null && !this.comisionUsuarioPK.equals(other.comisionUsuarioPK))) {
-            return false;
-        }
-        return true;
+        return !((this.comisionUsuarioPK == null && other.comisionUsuarioPK != null) || (this.comisionUsuarioPK != null && !this.comisionUsuarioPK.equals(other.comisionUsuarioPK)));
     }
 
     @Override

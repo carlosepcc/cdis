@@ -15,6 +15,7 @@ import com.pid.proyecto.service.ComisionUsuarioService;
 import com.pid.proyecto.service.ResolucionService;
 import com.pid.proyecto.service.RolService;
 import com.pid.proyecto.service.UsuarioService;
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -77,11 +78,10 @@ public class ComisionController {
         for (UsuarioRol us : JSONC.getIntegrantesComision()) {
 
             Usuario usuario = usuarioService.findByUsuario(us.getUsuario());
-            
+
             comisionUsuario.setComisionUsuarioPK(new ComisionUsuarioPK(comision.getId(),
                     usuario.getUsuario()));
             comisionUsuario.setRol(rolService.findById(us.getIdRol()));
-            comisionUsuario.setUsuario(usuario.getUsuario());
 
             comisionUsuarioService.save(comisionUsuario);
             comisionUsuario = new ComisionUsuario();
@@ -121,20 +121,19 @@ public class ComisionController {
         // INICIALIZAMOS
         comision = comisionService.findById(JSONC.getIdComision());
 
-        if (!JSONC.getQuitarIntegrantes().isEmpty()) {
-            for (String usuario : JSONC.getQuitarIntegrantes()) {
-                comisionUsuarioService.deleteByComisionUsuarioPK(new ComisionUsuarioPK(comision.getId(), usuario));
-            }
-        }
+        if (!JSONC.getIntegrantes().isEmpty()) {
 
-        if (!JSONC.getAgregarIntegrantes().isEmpty()) {
-            
-            for (UsuarioRol ur : JSONC.getAgregarIntegrantes()) {
-                ComisionUsuario cu = new ComisionUsuario(new ComisionUsuarioPK(comision.getId(), ur.getUsuario()),
-                        usuarioService.findByUsuario(ur.getUsuario()).getUsuario());
+            // DEBEMOS BORRAR LOS EMPAREJAMIENTOS CON ESTA COMISION ANTES
+            List<ComisionUsuario> LCU_actual = comisionUsuarioService.findAllByComision(comision);
+            List<ComisionUsuario> LCU_modificada = new LinkedList<>();
+
+            for (UsuarioRol ur : JSONC.getIntegrantes()) {
+                ComisionUsuario cu = new ComisionUsuario(new ComisionUsuarioPK(comision.getId(), ur.getUsuario()));
                 cu.setRol(rolService.findById(ur.getIdRol()));
-                comisionUsuarioService.save(cu);
+                LCU_modificada.add(cu);
             }
+            comisionUsuarioService.deleteAll(LCU_actual);
+            comisionUsuarioService.saveAll(LCU_modificada);
         }
 
         return new ResponseEntity<>(

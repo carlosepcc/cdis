@@ -4,7 +4,6 @@ import com.pid.proyecto.Json.Borrar.JsonBorrarRol;
 import com.pid.proyecto.Json.Crear.JsonCrearRol;
 import com.pid.proyecto.Json.Modificar.JsonModificarRol;
 import com.pid.proyecto.auxiliares.Mensaje;
-import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.service.PermisoService;
 import com.pid.proyecto.service.RolService;
@@ -69,27 +68,9 @@ public class ValidatorRol {
         }
 
         // VERIFICAR QUE LOS PERMISOS QUE VAMOS A AGREGAR EXISTAN
-        for (int idp : JSONR.getAgregarPermisos()) {
+        for (int idp : JSONR.getPermisos()) {
             if (!permisoService.existsById(idp)) {
                 respuesta.add(" NO EXISTE EL PERMISO CON ID: " + idp + "");
-            }
-        }
-
-        // VERIFICAR QUE TODOS LOS PERMISOS EXISTAN DENTRO DE NUESTRO OBJETO ROL PARA PODER ELIMINARLOS
-        if (!JSONR.getEliminarPermisos().isEmpty()) {
-            // BUSCAMOS LOS PERMISOS EN LAS RELACIONES
-            for (int Idp : JSONR.getEliminarPermisos()) {
-                boolean SeEncuentra = false;
-                for (Permiso p : rol.getPermisoList()) {
-                    if (p.getId() == Idp) {
-                        SeEncuentra = true;
-                        break;
-                    }
-                }
-                if (!SeEncuentra) {
-                    respuesta.add(" NO EXISTE RELACION ENTRE EL ROL CON ID: "
-                            + JSONR.getId() + ", Y EL PERMISO CON ID: " + Idp + "");
-                }
             }
         }
 

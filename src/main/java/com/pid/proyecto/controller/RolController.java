@@ -74,8 +74,6 @@ public class RolController {
 
         // ASIGNAR NOMBRE AL ROL
         rol.setRol(JSONR.getRol());
-        // DEFINIR EL TIPO DE ROL
-        rol.setTipocomision(JSONR.isRolParaComision());
         // GUARDAMOS EL ROL 
         rol = rolService.save(rol);
         // CREAMOS UNA LISTA DE PERMISOS Y LA LLENAMOS
@@ -108,7 +106,7 @@ public class RolController {
         }
 
         Rol rol = rolService.findById(JSONR.getId());
-        List<Permiso> permisos = rol.getPermisoList();
+
         List<Permiso> permisosM = new LinkedList<>();
 
         // CAMBIAR NOMBRE
@@ -116,45 +114,9 @@ public class RolController {
             rol.setRol(JSONR.getRol());
         }
 
-        // ELIMINAR PERMISOS
-        if (!JSONR.getEliminarPermisos().isEmpty()) {
-
-            for (Permiso p : permisos) {
-                boolean ignorar = false;
-                for (int idp : JSONR.getEliminarPermisos()) {
-                    if (idp == p.getId()) {
-                        ignorar = true;
-                    }
-                }
-                if (!ignorar) {
-                    permisosM.add(p);
-                }
-            }
-
-        }
-
-        // AGREGAR PERMISOS
-        if (!JSONR.getAgregarPermisos().isEmpty()) {
-            
-            for (Permiso p : permisosM) {
-                boolean ignorar = false;
-                for (int idp : JSONR.getAgregarPermisos()) {
-                    if (idp == p.getId()) {
-                        ignorar = true;
-                    }
-                }
-                if (!ignorar) {
-                    permisosM.add(p);
-                }
-            }
-        }
-        
-        if(!permisosM.isEmpty())
+        // CAMBIAR PERMISOS
+        if (!JSONR.getPermisos().isEmpty()) {
             rol.setPermisoList(permisosM);
-
-        // ESPECIFICAR TIPO DE ROL
-        if (JSONR.isTipoComision()) {
-            rol.setTipocomision(true);
         }
 
         // SALVAR ROL
