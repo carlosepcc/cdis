@@ -60,7 +60,7 @@ public class Usuario implements Serializable {
     @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Rol rol;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
     private List<ComisionUsuario> comisionUsuarioList;
 
     public Usuario() {

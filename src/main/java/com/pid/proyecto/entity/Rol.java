@@ -44,10 +44,6 @@ public class Rol implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "rol")
     private String rol;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "tipocomision")
-    private boolean tipocomision;
     @JoinTable(name = "rol_permiso", joinColumns = {
         @JoinColumn(name = "idr", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "idp", referencedColumnName = "id")})
@@ -65,20 +61,8 @@ public class Rol implements Serializable {
         this.id = id;
     }
 
-    public Rol(Integer id, String rol, boolean tipocomision) {
-        this.id = id;
-        this.rol = rol;
-        this.tipocomision = tipocomision;
-    }
-
-    public Rol(String rol, boolean tipocomision) {
-        this.rol = rol;
-        this.tipocomision = tipocomision;
-    }
-
     public Rol(String rol) {
         this.rol = rol;
-        this.tipocomision = false;
     }
 
     public Integer getId() {
@@ -95,14 +79,6 @@ public class Rol implements Serializable {
 
     public void setRol(String rol) {
         this.rol = rol;
-    }
-
-    public boolean getTipocomision() {
-        return tipocomision;
-    }
-
-    public void setTipocomision(boolean tipocomision) {
-        this.tipocomision = tipocomision;
     }
 
     public List<Permiso> getPermisoList() {

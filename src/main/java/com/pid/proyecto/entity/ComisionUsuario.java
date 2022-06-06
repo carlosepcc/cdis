@@ -34,7 +34,7 @@ public class ComisionUsuario implements Serializable {
     private Rol rol;
     @JoinColumn(name = "idu", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    private Usuario usuario1;
+    private Usuario usuario;
 
     public ComisionUsuario() {
     }
@@ -71,12 +71,12 @@ public class ComisionUsuario implements Serializable {
         this.rol = rol;
     }
 
-    public Usuario getUsuario1() {
-        return usuario1;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setUsuario1(Usuario usuario1) {
-        this.usuario1 = usuario1;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @Override
@@ -93,7 +93,10 @@ public class ComisionUsuario implements Serializable {
             return false;
         }
         ComisionUsuario other = (ComisionUsuario) object;
-        return !((this.comisionUsuarioPK == null && other.comisionUsuarioPK != null) || (this.comisionUsuarioPK != null && !this.comisionUsuarioPK.equals(other.comisionUsuarioPK)));
+        if ((this.comisionUsuarioPK == null && other.comisionUsuarioPK != null) || (this.comisionUsuarioPK != null && !this.comisionUsuarioPK.equals(other.comisionUsuarioPK))) {
+            return false;
+        }
+        return true;
     }
 
     @Override

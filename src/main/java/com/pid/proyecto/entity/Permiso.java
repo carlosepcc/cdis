@@ -50,11 +50,6 @@ public class Permiso implements Serializable {
         this.id = id;
     }
 
-    public Permiso(Integer id, String permiso) {
-        this.id = id;
-        this.permiso = permiso;
-    }
-
     public Permiso(String permiso) {
         this.permiso = permiso;
     }
@@ -107,5 +102,5 @@ public class Permiso implements Serializable {
     public String toString() {
         return "com.pid.proyecto.entity.Permiso[ id=" + id + " ]";
     }
-
+    
 }

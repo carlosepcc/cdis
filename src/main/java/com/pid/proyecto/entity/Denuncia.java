@@ -45,11 +45,6 @@ public class Denuncia implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "descripcion")
-    private String descripcion;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 255)
     @Column(name = "denunciante")
     private String denunciante;
     @Basic(optional = false)
@@ -61,6 +56,11 @@ public class Denuncia implements Serializable {
     @NotNull
     @Column(name = "procesada")
     private boolean procesada;
+    @Basic(optional = false)
+    @NotNull
+    @Size(min = 1, max = 255)
+    @Column(name = "descripcion")
+    private String descripcion;
     @JoinTable(name = "denuncia_usuario", joinColumns = {
         @JoinColumn(name = "idd", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "idu", referencedColumnName = "usuario")})
@@ -76,12 +76,12 @@ public class Denuncia implements Serializable {
         this.id = id;
     }
 
-    public Denuncia(Integer id, String descripcion, String denunciante, Date fecha, boolean procesada) {
+    public Denuncia(Integer id, String denunciante, Date fecha, boolean procesada, String descripcion) {
         this.id = id;
-        this.descripcion = descripcion;
         this.denunciante = denunciante;
         this.fecha = fecha;
         this.procesada = procesada;
+        this.descripcion = descripcion;
     }
 
     public Integer getId() {
@@ -90,14 +90,6 @@ public class Denuncia implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
     }
 
     public String getDenunciante() {
@@ -122,6 +114,14 @@ public class Denuncia implements Serializable {
 
     public void setProcesada(boolean procesada) {
         this.procesada = procesada;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public List<Usuario> getUsuarioList() {

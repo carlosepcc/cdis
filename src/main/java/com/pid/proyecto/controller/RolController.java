@@ -94,6 +94,14 @@ public class RolController {
         List<Rol> list = rolService.findAll();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
+    
+    @GetMapping("/mostrarPermisos")
+    @PreAuthorize("hasRole('ROLE_R_PERMISO')")
+    public ResponseEntity<List<Permiso>> listarPermisos() {
+        // DEVOLVEMOS TODOS LOS PERMISOS
+        List<Permiso> list = permisoService.findAll();
+        return new ResponseEntity<>(list, HttpStatus.OK);
+    }
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_U_ROL')")
