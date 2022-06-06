@@ -69,7 +69,7 @@ public class MainSecurity extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
                 //para crear nuevo usuario y logearse no hay q estar autenticado
-                .antMatchers("/Usuario/login").permitAll()
+                .antMatchers("/usuario/login").permitAll()
                 //para todo lo demas hay q estar autenticado
                 .antMatchers("/").permitAll()
                 .antMatchers("/swagger-ui/index.html").permitAll()
