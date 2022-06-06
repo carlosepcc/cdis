@@ -13,6 +13,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -45,12 +48,15 @@ public class Rol implements Serializable {
     @NotNull
     @Column(name = "tipocomision")
     private boolean tipocomision;
+    @JoinTable(name = "rol_permiso", joinColumns = {
+        @JoinColumn(name = "idr", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "idp", referencedColumnName = "id")})
+    @ManyToMany
+    private List<Permiso> permisoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
     private List<Usuario> usuarioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
     private List<ComisionUsuario> comisionUsuarioList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol1")
-    private List<RolPermiso> rolPermisoList;
 
     public Rol() {
     }
@@ -99,6 +105,14 @@ public class Rol implements Serializable {
         this.tipocomision = tipocomision;
     }
 
+    public List<Permiso> getPermisoList() {
+        return permisoList;
+    }
+
+    public void setPermisoList(List<Permiso> permisoList) {
+        this.permisoList = permisoList;
+    }
+
     public List<Usuario> getUsuarioList() {
         return usuarioList;
     }
@@ -113,14 +127,6 @@ public class Rol implements Serializable {
 
     public void setComisionUsuarioList(List<ComisionUsuario> comisionUsuarioList) {
         this.comisionUsuarioList = comisionUsuarioList;
-    }
-
-    public List<RolPermiso> getRolPermisoList() {
-        return rolPermisoList;
-    }
-
-    public void setRolPermisoList(List<RolPermiso> rolPermisoList) {
-        this.rolPermisoList = rolPermisoList;
     }
 
     @Override

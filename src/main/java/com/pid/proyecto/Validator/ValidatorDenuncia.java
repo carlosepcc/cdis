@@ -5,9 +5,7 @@ import com.pid.proyecto.Json.Crear.JsonCrearDenuncia;
 import com.pid.proyecto.Json.Modificar.JsonModificarDenuncia;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
-import com.pid.proyecto.entity.DenunciaUsuarioPK;
 import com.pid.proyecto.service.DenunciaService;
-import com.pid.proyecto.service.DenunciaUsuarioService;
 import com.pid.proyecto.service.UsuarioService;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,15 +22,15 @@ public class ValidatorDenuncia {
     @Autowired
     DenunciaService denunciaService;
     @Autowired
-    DenunciaUsuarioService denunciaUsuarioService;
-    @Autowired
     SesionDetails sesionDetails;
 
     public ResponseEntity<?> ValidarJsonCrearDenuncia(JsonCrearDenuncia JSOND) {
         List<String> respuesta = new LinkedList<>();
 
-        if (!usuarioService.existsByUsuario(JSOND.getAcusado())) {
-            respuesta.add("NO EXISTE EL USUARIO: " + JSOND.getAcusado());
+        for (String u : JSOND.getAcusados()) {
+            if (!usuarioService.existsByUsuario(u)) {
+                respuesta.add("NO EXISTE EL USUARIO: " + u);
+            }
         }
 
         if (!respuesta.isEmpty()) {
@@ -47,15 +45,12 @@ public class ValidatorDenuncia {
     public ResponseEntity ValidarJsonModificarDenuncia(JsonModificarDenuncia JSOND) {
         List<String> respuesta = new LinkedList<>();
 
-        // ESTA ES UNA LLAVE QUE RELACIONA LA DENUNCIA QUE SE INTENTA MODIFICAR CON EL USUARIO EN SESION
-        DenunciaUsuarioPK PK = new DenunciaUsuarioPK(JSOND.getIdDenuncia(),
-                sesionDetails.getUsuario());
-
         if (!denunciaService.existsById(JSOND.getIdDenuncia())) {
             respuesta.add(" NO EXISTE LA DENUNCIA DE ID: " + JSOND.getIdDenuncia());
         }
 
-        if (!denunciaUsuarioService.existsByDenunciaUsuarioPK(PK)) {
+        if (!sesionDetails.getUsuario()
+                .equals(denunciaService.findById(JSOND.getIdDenuncia()).getDenunciante())) {
             respuesta.add("USTED NO ES EL PROPIETARIO DE ESTA DENUNCIA, NO PUEDE MODIFICARLA");
         }
 
@@ -63,9 +58,10 @@ public class ValidatorDenuncia {
             respuesta.add("ESTA DENUNCIA YA SE ENCUENTRA EN PROCESO, NO PUEDE MODIFICARLA");
         }
 
-        if (!JSOND.getAcusado().isBlank()) {
-            if (!usuarioService.existsByUsuario(JSOND.getAcusado())) {
-                respuesta.add(" NO EXISTE EL ACUSADO CON USUARIO: " + JSOND.getAcusado());
+        if (!JSOND.getAcusado().isEmpty()) {
+            for(String u: JSOND.getAcusado())
+            if (!usuarioService.existsByUsuario(u)) {
+                respuesta.add(" NO EXISTE EL ACUSADO CON USUARIO: " + u);
             }
         }
 

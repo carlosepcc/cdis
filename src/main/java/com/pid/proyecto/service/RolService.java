@@ -16,7 +16,7 @@ public class RolService {
     RolRepo repo;
 
     public Rol save(Rol rol) {
-       return repo.save(rol);
+        return repo.save(rol);
     }
 
     public Rol findByRol(String rol) {
@@ -43,8 +43,8 @@ public class RolService {
         repo.deleteAll(LR);
     }
 
-    public void saveAll(List<Rol> TodosLosRoles) {
-        repo.saveAll(TodosLosRoles);
+    public List<Rol> saveAll(List<Rol> TodosLosRoles) {
+        return repo.saveAll(TodosLosRoles);
     }
 
     public void deleteById(int id) {

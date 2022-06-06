@@ -1,5 +1,7 @@
 package com.pid.proyecto.Json.Modificar;
 
+import java.util.LinkedList;
+import java.util.List;
 
 public class JsonModificarDenuncia {
 
@@ -7,7 +9,7 @@ public class JsonModificarDenuncia {
 
     private String descripcion = "";
 
-    private String acusado = "";
+    private List<String> acusado = new LinkedList<>();
 
     public JsonModificarDenuncia() {
     }
@@ -28,11 +30,11 @@ public class JsonModificarDenuncia {
         this.descripcion = descripcion;
     }
 
-    public String getAcusado() {
+    public List<String> getAcusado() {
         return acusado;
     }
 
-    public void setAcusado(String acusado) {
+    public void setAcusado(List<String> acusado) {
         this.acusado = acusado;
     }
 

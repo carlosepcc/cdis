@@ -1,5 +1,7 @@
 package com.pid.proyecto.Json.Crear;
 
+import java.util.LinkedList;
+import java.util.List;
 import javax.validation.constraints.NotNull;
 
 public class JsonCrearDenuncia {
@@ -8,16 +10,16 @@ public class JsonCrearDenuncia {
     private String descripcion = "";
     
     @NotNull(message = "DEBE ESPECIFICAR A QUIEN ESTÁ DENUNCIANDO")
-    private String acusado = "";
+    private List<String> acusado = new LinkedList<>();
 
     public JsonCrearDenuncia() {
     }
 
-    public String getAcusado() {
+    public List<String> getAcusados() {
         return acusado;
     }
 
-    public void setAcusado(String acusado) {
+    public void setAcusados(List<String> acusado) {
         this.acusado = acusado;
     }
 

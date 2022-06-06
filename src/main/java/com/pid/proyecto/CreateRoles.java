@@ -2,15 +2,13 @@ package com.pid.proyecto;
 
 import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.entity.RolPermiso;
-import com.pid.proyecto.entity.RolPermisoPK;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.enums.PermisoNombre;
 import com.pid.proyecto.enums.RolNombre;
 import com.pid.proyecto.service.PermisoService;
-import com.pid.proyecto.service.RolPermisoService;
 import com.pid.proyecto.service.RolService;
 import com.pid.proyecto.service.UsuarioService;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +33,6 @@ public class CreateRoles implements CommandLineRunner {
     @Autowired
     PermisoService permisosService;
 
-    @Autowired
-    RolPermisoService rolPermisosService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -45,136 +41,38 @@ public class CreateRoles implements CommandLineRunner {
         if (rolSistemaService.findAll().isEmpty()
                 && permisosService.findAll().isEmpty()
                 && usuarioService.findAll().isEmpty()) {
+
             Usuario usuario = new Usuario();
-            List<Character> Lc = new LinkedList<>();
-            Lc.add('c');
-            Lc.add('r');
-            Lc.add('u');
-            Lc.add('d');
 
             // LISTA CON TODOS LOS PERMISOS QUE SE VAN A CREAR
             List<Permiso> TodosLosPermisos = new LinkedList<>();
             // LISTA CON TODOS LOS ROLES QUE SE VAN A CREAR
             List<Rol> TodosLosRoles = new LinkedList<>();
 
-            TodosLosPermisos.addAll(PermisosCaso(Lc));
-            TodosLosPermisos.addAll(PermisosDeclaracion(Lc));
-            TodosLosPermisos.addAll(PermisosDenuncia(Lc));
-            TodosLosPermisos.addAll(PermisosDenunciaUsuario(Lc));
-            TodosLosPermisos.addAll(PermisosPdfDictamen(Lc));
-            TodosLosPermisos.addAll(PermisosPdfExpediente(Lc));
-            TodosLosPermisos.addAll(PermisosPdfResolucionComisiones(Lc));
-            TodosLosPermisos.addAll(PermisosRolSistema(Lc));
-            TodosLosPermisos.addAll(PermisosUsuario(Lc));
-            TodosLosPermisos.addAll(PermisosComision(Lc));
-
-            TodosLosRoles.add(new Rol(RolNombre.ROLE_USUARIO.name()));
-//            TodosLosRoles.add(new Rol(RolNombre.ROLE_ACUSADO.name()));
-            TodosLosRoles.add(new Rol(RolNombre.ROLE_ADMIN.name()));
-            TodosLosRoles.add(new Rol(RolNombre.ROLE_DECANO.name()));
-//            TodosLosRoles.add(new Rol(RolNombre.ROLE_DECLARANTE.name()));
-//            TodosLosRoles.add(new Rol(RolNombre.ROLE_DENUNCIANTE.name()));
-            TodosLosRoles.add(new Rol(RolNombre.ROLE_PRESIDENTE_C.name(), true));
-            TodosLosRoles.add(new Rol(RolNombre.ROLE_SECRETARIO_C.name(), true));
-//            TodosLosRoles.add(new Rol(RolNombre.ROLE_SECRETARIO_D.name()));
+            TodosLosPermisos.addAll(ObtenerPermisos());
+            TodosLosRoles.addAll(ObtenerRoles());
 
             // SALVAMOS TODOS LOS ROLES Y PERMISOS
-            permisosService.saveAll(TodosLosPermisos);
             rolSistemaService.saveAll(TodosLosRoles);
+            TodosLosPermisos = permisosService.saveAll(TodosLosPermisos);
 
             // AHORA ENLAZAMOS LOS PERMISOS CON LOS ROLES
+            
             // ENLAZAR PERMISOS DE ADMIN CON EL ROL DE ADMIN
-            List<Permiso> permisosAdmin = TodosLosPermisos;
-            Rol rolAdmin = rolSistemaService
-                    .findByRol(RolNombre.ROLE_ADMIN.name());
-            GuardarRelaciones(rolAdmin, permisosAdmin);
-            rolSistemaService.save(rolAdmin);
-
+           Rol rolAdmin = RolPermisoAdmin(TodosLosPermisos);
             // ENLAZAR PERMISOS DE USUARIO CON EL ROL DE USUARIO
-            List<Permiso> permisosUser = new LinkedList<>();
-            permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_USUARIO.name()));
-            
-            permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DENUNCIA.name()));
-            permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DENUNCIA.name()));
-            permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DENUNCIA.name()));
-            permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DENUNCIA.name()));
-            
-            permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DECLARACION.name()));
-            
-            Rol rolUser = rolSistemaService
-                    .findByRol(RolNombre.ROLE_USUARIO.name());
-            GuardarRelaciones(rolUser, permisosUser);
-            rolSistemaService.save(rolUser);
-
-            List<Permiso> permisosPresidenteComision = new LinkedList();
-
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_COMISION.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_COMISION.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_COMISION.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_COMISION.name()));
-            
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_CASO.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_CASO.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_CASO.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_CASO.name()));
-            
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DECLARACION.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DECLARACION.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DECLARACION.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DECLARACION.name()));
-            
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DICTAMEN.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DICTAMEN.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DICTAMEN.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DICTAMEN.name()));
-            
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_EXPEDIENTE.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_EXPEDIENTE.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_EXPEDIENTE.name()));
-            permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_EXPEDIENTE.name()));
-
-            Rol rolPresidenteC = rolSistemaService.findByRol(RolNombre.ROLE_PRESIDENTE_C.name());
-
-            GuardarRelaciones(rolPresidenteC, permisosPresidenteComision);
-            rolSistemaService.save(rolPresidenteC);
-
-            List<Permiso> permisosSecretarioComision = new LinkedList();
-
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_COMISION.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_COMISION.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_COMISION.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_COMISION.name()));
-            
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_CASO.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_CASO.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_CASO.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_CASO.name()));
-            
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DECLARACION.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DECLARACION.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DECLARACION.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DECLARACION.name()));
-            
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DICTAMEN.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DICTAMEN.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DICTAMEN.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DICTAMEN.name()));
-            
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_EXPEDIENTE.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_EXPEDIENTE.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_EXPEDIENTE.name()));
-            permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_EXPEDIENTE.name()));
-
-            Rol rolSecretarioC = rolSistemaService.findByRol(RolNombre.ROLE_SECRETARIO_C.name());
-
-            GuardarRelaciones(rolSecretarioC, permisosSecretarioComision);
-            rolSistemaService.save(rolSecretarioC);
+            RolPermisoUsuario();
+            // ENLAZAR PERMISOS DE PRESIDENTE DE COMISION CON EL ROL DE PRESIDENTE DE COMISION
+            RolPermisoPresidenteComision();
+            // ENLAZAR PERMISOS DE SECRETARIO DE COMISION CON EL ROL DE SECRETARIO DE COMISION 
+            RolPermisoSecretarioComision();
 
             //        List<Permisos> permisosDecano = new LinkedList();
             //        List<Permisos> permisosSecretarioDocente = new LinkedList();
             //        List<Permisos> permisosAcusadoComision = new LinkedList();
             //        List<Permisos> permisosDeclarante = new LinkedList();
             //        List<Permisos> permisosDenunciante = new LinkedList();
+            
             // CREAMOS UN USUARIO ADMINISTRADOR POR DEFECTO EN NUESTRA BASE DE DATOS
             usuario.setNombre("admin");
             usuario.setCargo("ADMIN");
@@ -186,47 +84,31 @@ public class CreateRoles implements CommandLineRunner {
         }
     }
 
-    public List<Integer> GuardarRelaciones(Rol rol, List<Permiso> permisos) {
-        String NR = rol.getRol();
-        RolPermiso RP;
-        RolPermisoPK PK;
-        List<RolPermiso> LRP = new LinkedList<>();
-        List<Integer> ListaExistentes = new LinkedList<>();
+    public List<Permiso> ObtenerPermisos() {
 
-        for (Permiso p : permisos) {
-            PK = new RolPermisoPK(rol.getId(), p.getId());
-            RP = new RolPermiso(PK, NR, p.getPermiso());
+        List<Character> Lc = new LinkedList<>();
+        Lc.add('c');
+        Lc.add('r');
+        Lc.add('u');
+        Lc.add('d');
 
-            if (!rolPermisosService.existByRolPermisoPK(PK)) {
-                LRP.add(RP);
-            } else {
-                ListaExistentes.add(p.getId());
-            }
-        }
-        rolPermisosService.saveAll(LRP);
-        return ListaExistentes;
+        // LISTA CON TODOS LOS PERMISOS QUE SE VAN A CREAR
+        List<Permiso> TodosLosPermisos = new LinkedList<>();
+
+        TodosLosPermisos.addAll(PermisosCaso(Lc));
+        TodosLosPermisos.addAll(PermisosDeclaracion(Lc));
+        TodosLosPermisos.addAll(PermisosDenuncia(Lc));
+        TodosLosPermisos.addAll(PermisosDenunciaUsuario(Lc));
+        TodosLosPermisos.addAll(PermisosPdfDictamen(Lc));
+        TodosLosPermisos.addAll(PermisosPdfExpediente(Lc));
+        TodosLosPermisos.addAll(PermisosPdfResolucionComisiones(Lc));
+        TodosLosPermisos.addAll(PermisosRolSistema(Lc));
+        TodosLosPermisos.addAll(PermisosUsuario(Lc));
+        TodosLosPermisos.addAll(PermisosComision(Lc));
+
+        return TodosLosPermisos;
     }
 
-    public int EliminarRelaciones(Rol rol, List<Permiso> permisos) {
-        RolPermisoPK rolPermisosPK;
-        List<RolPermiso> LRP = new LinkedList<>();
-        RolPermiso RP;
-        int respuesta = 0;
-
-        // VERIFICAR QUE TODOS LOS PERMISOS EXISTAN DENTRO DE NUESTRO OBJETO ROL
-        for (Permiso p : permisos) {
-            rolPermisosPK = new RolPermisoPK(rol.getId(), p.getId());
-            if (rolPermisosService.existByRolPermisoPK(rolPermisosPK)) {
-                RP = rolPermisosService.findByRolPermisoPK(rolPermisosPK);
-                LRP.add(RP);
-            } else {
-                respuesta = rolPermisosPK.getIdp();
-                return respuesta;
-            }
-        }
-        rolPermisosService.deleteAll(LRP);
-        return respuesta;
-    }
 
     public List<Permiso> PermisosUsuario(List<Character> Lc) {
         List<Permiso> lista = new LinkedList<>();
@@ -434,5 +316,118 @@ public class CreateRoles implements CommandLineRunner {
         }
 
         return lista;
+    }
+
+    private Collection<? extends Rol> ObtenerRoles() {
+
+        List<Rol> TodosLosRoles = new LinkedList<>();
+
+        TodosLosRoles.add(new Rol(RolNombre.ROLE_USUARIO.name()));
+//            TodosLosRoles.add(new Rol(RolNombre.ROLE_ACUSADO.name()));
+        TodosLosRoles.add(new Rol(RolNombre.ROLE_ADMIN.name()));
+        TodosLosRoles.add(new Rol(RolNombre.ROLE_DECANO.name()));
+//            TodosLosRoles.add(new Rol(RolNombre.ROLE_DECLARANTE.name()));
+//            TodosLosRoles.add(new Rol(RolNombre.ROLE_DENUNCIANTE.name()));
+        TodosLosRoles.add(new Rol(RolNombre.ROLE_PRESIDENTE_C.name(), true));
+        TodosLosRoles.add(new Rol(RolNombre.ROLE_SECRETARIO_C.name(), true));
+//            TodosLosRoles.add(new Rol(RolNombre.ROLE_SECRETARIO_D.name()));
+
+        return TodosLosRoles;
+    }
+
+    private void RolPermisoUsuario() {
+
+        List<Permiso> permisosUser = new LinkedList<>();
+        permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_USUARIO.name()));
+
+        permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DENUNCIA.name()));
+        permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DENUNCIA.name()));
+        permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DENUNCIA.name()));
+        permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DENUNCIA.name()));
+        permisosUser.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DECLARACION.name()));
+
+        Rol rolUser = rolSistemaService
+                .findByRol(RolNombre.ROLE_USUARIO.name());
+
+        rolUser.setPermisoList(permisosUser);
+        rolSistemaService.save(rolUser);
+
+    }
+
+    private void RolPermisoPresidenteComision() {
+        List<Permiso> permisosPresidenteComision = new LinkedList();
+
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_COMISION.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_COMISION.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_COMISION.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_COMISION.name()));
+
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_CASO.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_CASO.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_CASO.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_CASO.name()));
+
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DECLARACION.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DECLARACION.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DECLARACION.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DECLARACION.name()));
+
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DICTAMEN.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DICTAMEN.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DICTAMEN.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DICTAMEN.name()));
+
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_EXPEDIENTE.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_EXPEDIENTE.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_EXPEDIENTE.name()));
+        permisosPresidenteComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_EXPEDIENTE.name()));
+
+        Rol rolPresidenteC = rolSistemaService.findByRol(RolNombre.ROLE_PRESIDENTE_C.name());
+
+        rolPresidenteC.setPermisoList(permisosPresidenteComision);
+        rolSistemaService.save(rolPresidenteC);
+    }
+
+    private void RolPermisoSecretarioComision() {
+        List<Permiso> permisosSecretarioComision = new LinkedList();
+
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_COMISION.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_COMISION.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_COMISION.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_COMISION.name()));
+
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_CASO.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_CASO.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_CASO.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_CASO.name()));
+
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DECLARACION.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DECLARACION.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DECLARACION.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DECLARACION.name()));
+
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_DICTAMEN.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_DICTAMEN.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_DICTAMEN.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_DICTAMEN.name()));
+
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_C_EXPEDIENTE.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_R_EXPEDIENTE.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_U_EXPEDIENTE.name()));
+        permisosSecretarioComision.add(permisosService.findByPermiso(PermisoNombre.ROLE_D_EXPEDIENTE.name()));
+
+        Rol rolSecretarioC = rolSistemaService.findByRol(RolNombre.ROLE_SECRETARIO_C.name());
+
+        rolSecretarioC.setPermisoList(permisosSecretarioComision);
+        rolSistemaService.save(rolSecretarioC);
+    }
+
+    private Rol RolPermisoAdmin(List<Permiso> TodosLosPermisos) {
+        List<Permiso> permisosAdmin = TodosLosPermisos;
+        Rol rolAdmin = rolSistemaService
+                .findByRol(RolNombre.ROLE_ADMIN.name());
+        
+        rolAdmin.setPermisoList(permisosAdmin);
+       return rolSistemaService.save(rolAdmin);
     }
 }
