@@ -4,9 +4,9 @@ import com.pid.proyecto.Json.Borrar.JsonBorrarRol;
 import com.pid.proyecto.Json.Crear.JsonCrearRol;
 import com.pid.proyecto.Json.Modificar.JsonModificarRol;
 import com.pid.proyecto.auxiliares.Mensaje;
-import com.pid.proyecto.entity.RolPermisoPK;
+import com.pid.proyecto.entity.Permiso;
+import com.pid.proyecto.entity.Rol;
 import com.pid.proyecto.service.PermisoService;
-import com.pid.proyecto.service.RolPermisoService;
 import com.pid.proyecto.service.RolService;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,8 +22,6 @@ public class ValidatorRol {
     PermisoService permisoService;
     @Autowired
     RolService rolService;
-    @Autowired
-    RolPermisoService rolPermisosService;
 
     public ResponseEntity<?> ValidarJsonCrearRol(JsonCrearRol JSONR) {
         List<String> respuesta = new LinkedList<>();
@@ -57,6 +55,7 @@ public class ValidatorRol {
 
     public ResponseEntity<?> ValidarJsonModificarRol(JsonModificarRol JSONR) {
 
+        Rol rol = rolService.findById(JSONR.getId());
         List<String> respuesta = new LinkedList<>();
 
         // VERIFICAR QUE EXISTE EL ROL CON EL ID ESPECIFICADO
@@ -80,7 +79,14 @@ public class ValidatorRol {
         if (!JSONR.getEliminarPermisos().isEmpty()) {
             // BUSCAMOS LOS PERMISOS EN LAS RELACIONES
             for (int Idp : JSONR.getEliminarPermisos()) {
-                if (!rolPermisosService.existByRolPermisoPK(new RolPermisoPK(JSONR.getId(), Idp))) {
+                boolean SeEncuentra = false;
+                for (Permiso p : rol.getPermisoList()) {
+                    if (p.getId() == Idp) {
+                        SeEncuentra = true;
+                        break;
+                    }
+                }
+                if (!SeEncuentra) {
                     respuesta.add(" NO EXISTE RELACION ENTRE EL ROL CON ID: "
                             + JSONR.getId() + ", Y EL PERMISO CON ID: " + Idp + "");
                 }

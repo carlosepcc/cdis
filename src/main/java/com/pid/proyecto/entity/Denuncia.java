@@ -14,6 +14,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -47,8 +50,8 @@ public class Denuncia implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "acusado")
-    private String acusado;
+    @Column(name = "denunciante")
+    private String denunciante;
     @Basic(optional = false)
     @NotNull
     @Column(name = "fecha")
@@ -58,10 +61,13 @@ public class Denuncia implements Serializable {
     @NotNull
     @Column(name = "procesada")
     private boolean procesada;
+    @JoinTable(name = "denuncia_usuario", joinColumns = {
+        @JoinColumn(name = "idd", referencedColumnName = "id")}, inverseJoinColumns = {
+        @JoinColumn(name = "idu", referencedColumnName = "usuario")})
+    @ManyToMany
+    private List<Usuario> usuarioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia1")
     private List<Caso> casoList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia")
-    private List<DenunciaUsuario> denunciaUsuarioList;
 
     public Denuncia() {
     }
@@ -70,10 +76,10 @@ public class Denuncia implements Serializable {
         this.id = id;
     }
 
-    public Denuncia(Integer id, String descripcion, String acusado, Date fecha, boolean procesada) {
+    public Denuncia(Integer id, String descripcion, String denunciante, Date fecha, boolean procesada) {
         this.id = id;
         this.descripcion = descripcion;
-        this.acusado = acusado;
+        this.denunciante = denunciante;
         this.fecha = fecha;
         this.procesada = procesada;
     }
@@ -94,12 +100,12 @@ public class Denuncia implements Serializable {
         this.descripcion = descripcion;
     }
 
-    public String getAcusado() {
-        return acusado;
+    public String getDenunciante() {
+        return denunciante;
     }
 
-    public void setAcusado(String acusado) {
-        this.acusado = acusado;
+    public void setDenunciante(String denunciante) {
+        this.denunciante = denunciante;
     }
 
     public Date getFecha() {
@@ -118,20 +124,20 @@ public class Denuncia implements Serializable {
         this.procesada = procesada;
     }
 
+    public List<Usuario> getUsuarioList() {
+        return usuarioList;
+    }
+
+    public void setUsuarioList(List<Usuario> usuarioList) {
+        this.usuarioList = usuarioList;
+    }
+
     public List<Caso> getCasoList() {
         return casoList;
     }
 
     public void setCasoList(List<Caso> casoList) {
         this.casoList = casoList;
-    }
-
-    public List<DenunciaUsuario> getDenunciaUsuarioList() {
-        return denunciaUsuarioList;
-    }
-
-    public void setDenunciaUsuarioList(List<DenunciaUsuario> denunciaUsuarioList) {
-        this.denunciaUsuarioList = denunciaUsuarioList;
     }
 
     @Override

@@ -15,11 +15,6 @@ import com.pid.proyecto.entity.Denuncia;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.DenunciaService;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,6 +131,7 @@ public class CasoController {
     public ResponseEntity<List<Caso>> listar() {
 
         List<Caso> list = casoService.findAll();
+        
 
         return new ResponseEntity<>(list, HttpStatus.OK);
     }

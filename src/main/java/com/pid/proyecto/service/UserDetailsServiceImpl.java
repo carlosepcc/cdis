@@ -2,7 +2,6 @@ package com.pid.proyecto.service;
 
 import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.entity.RolPermiso;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.auxiliares.UsuarioPrincipal;
 import java.util.LinkedList;
@@ -29,9 +28,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     RolService rolService;
 
-    @Autowired
-    RolPermisoService rolPermisoService;
-
     // cargamos usuarios por nombre de usuario
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -44,24 +40,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         // trabajar sobre ella con un service y obtener el id de cada relacion
         // con el id de cada relacion entre rolsistema y permisos puedo agregar al objeto usuario de 
         // aqui la lista de permisos que tanto me hace falta. :)
-        List<Permiso> p = devolverPermisosDeRol(rol);
+        List<Permiso> p = rol.getPermisoList();
 
 //        per.add(p);
         // construimos el UsuarioPrincipal
         return UsuarioPrincipal.build(usuario, p);
-    }
-
-    public List<Permiso> devolverPermisosDeRol(Rol rol) {
-        List<RolPermiso> rolPermisosLista = rolPermisoService.findAll();
-        List<Permiso> permisosLista = new LinkedList<>();
-        for (RolPermiso RP : rolPermisosLista) {
-
-            if (RP.getRol().equals(rol.getRol())) {
-                permisosLista.add(permisosService.findByPermiso(RP.getPermiso()));
-            }
-        }
-
-        return permisosLista;
     }
 
 }

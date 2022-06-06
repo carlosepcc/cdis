@@ -9,11 +9,7 @@ import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.CasoPK;
 import com.pid.proyecto.entity.Declaracion;
 import com.pid.proyecto.entity.DeclaracionPK;
-import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.entity.RolPermiso;
 import com.pid.proyecto.entity.Usuario;
-import com.pid.proyecto.enums.PermisoNombre;
-import com.pid.proyecto.enums.RolNombre;
 import com.pid.proyecto.service.CasoService;
 import com.pid.proyecto.service.DeclaracionService;
 import com.pid.proyecto.service.RolService;
@@ -46,7 +42,6 @@ public class ValidatorDeclaracion {
 
     public ResponseEntity ValidarJsonCrearDeclaracion(JsonCrearDeclaracion JSOND) {
 
-        boolean existe = false;
 
         List<String> respuesta = new LinkedList();
 

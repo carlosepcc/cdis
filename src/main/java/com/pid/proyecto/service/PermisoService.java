@@ -22,16 +22,16 @@ public class PermisoService {
         return repo.findById(id).get();
     }
 
-   public Permiso findByPermiso(String permiso) {
-       return repo.findByPermiso(permiso).get();
+    public Permiso findByPermiso(String permiso) {
+        return repo.findByPermiso(permiso).get();
     }
 
     public List<Permiso> findAll() {
         return repo.findAll();
     }
 
-    public void saveAll(List<Permiso> TodosLosPermisos) {
-        repo.saveAll(TodosLosPermisos);
+    public List<Permiso> saveAll(List<Permiso> TodosLosPermisos) {
+        return repo.saveAll(TodosLosPermisos);
     }
 
 }

@@ -8,11 +8,8 @@ import com.pid.proyecto.auxiliares.Convertidor;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.auxiliares.SesionDetails;
 import com.pid.proyecto.entity.Denuncia;
-import com.pid.proyecto.entity.DenunciaUsuario;
-import com.pid.proyecto.entity.DenunciaUsuarioPK;
 import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.DenunciaService;
-import com.pid.proyecto.service.DenunciaUsuarioService;
 import com.pid.proyecto.service.UsuarioService;
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -46,9 +43,6 @@ public class DenunciaController {
     DenunciaService denunciaService;
 
     @Autowired
-    DenunciaUsuarioService denunciaUsuarioService;
-
-    @Autowired
     Convertidor convertidor;
 
     @Autowired
@@ -79,26 +73,22 @@ public class DenunciaController {
         if (respuesta != null) {
             return respuesta;
         }
-        
-        Usuario acusado = usuarioService.findByUsuario(JSOND.getAcusado());
+        List<Usuario> acusados = new LinkedList<>();
+        for (String u : JSOND.getAcusados()) {
+            acusados.add(usuarioService.findByUsuario(u));
+        }
 
         Denuncia denuncia = new Denuncia();
 
-        denuncia.setAcusado(acusado.getUsuario());
-        denuncia.setDescripcion(JSOND.getDescripcion());
+        // SE AGREGAN LOS ACUSADOS A ESTA DENUNCIA
+        denuncia.setDenunciante(SesionDetails.getUsuario());
         denuncia.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));
         denuncia.setProcesada(false);
+        denuncia.setDescripcion(JSOND.getDescripcion());
+        denuncia.setUsuarioList(acusados);
 
         // GUARDAMOS
-        denuncia = denunciaService.save(denuncia);
-
-        // RELACIONAMOS
-        denunciaUsuarioService.save(new DenunciaUsuario(
-                new DenunciaUsuarioPK(
-                        denuncia.getId(),
-                        SesionDetails.getUsuario()),
-                SesionDetails.getUsuario()
-        ));
+        denunciaService.save(denuncia);
 
         return new ResponseEntity<>(
                 new Mensaje(" DENUNCIA CREADA"),
@@ -130,10 +120,13 @@ public class DenunciaController {
         if (!JSOND.getDescripcion().isBlank()) {
             denuncia.setDescripcion(JSOND.getDescripcion());
         }
-        
-        if (!JSOND.getAcusado().isBlank()) {
-            Usuario acusado = usuarioService.findByUsuario(JSOND.getAcusado());
-            denuncia.setAcusado(acusado.getUsuario());
+
+        if (!JSOND.getAcusado().isEmpty()) {
+            List<Usuario> acusados = new LinkedList<>();
+            for (String u : JSOND.getAcusado()) {
+                acusados.add(usuarioService.findByUsuario(u));
+            }
+            denuncia.setUsuarioList(acusados);
         }
         // ACTUALIZAMOS LA FECHA DE NUESTRA DENUNCIA
         denuncia.setFecha(convertidor.LocalDateToSqlDate(LocalDate.now()));

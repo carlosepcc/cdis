@@ -7,10 +7,8 @@ import com.pid.proyecto.Json.Modificar.JsonModificarRol;
 import com.pid.proyecto.Validator.ValidatorRol;
 import com.pid.proyecto.entity.Permiso;
 import com.pid.proyecto.entity.Rol;
-import com.pid.proyecto.entity.RolPermiso;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.service.PermisoService;
-import com.pid.proyecto.service.RolPermisoService;
 import com.pid.proyecto.service.RolService;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,9 +42,6 @@ public class RolController {
 
     @Autowired
     RolService rolService;
-
-    @Autowired
-    RolPermisoService rolPermisoService;
 
     @Autowired
     ValidatorRol validator;
@@ -87,8 +82,7 @@ public class RolController {
         for (int id : JSONR.getPermisos()) {
             LP.add(permisoService.findById(id));
         }
-        // GUARDAMOS LAS RELACIONES ENTRE EL NUEVO ROL CREADO Y LA LISTA DE PERMISOS
-        createRoles.GuardarRelaciones(rol, LP);
+        rol.setPermisoList(LP);
         return new ResponseEntity<>(
                 new Mensaje("ROL CREADO CON: " + LP.size() + " PERMISOS"),
                 HttpStatus.CREATED
@@ -114,41 +108,55 @@ public class RolController {
         }
 
         Rol rol = rolService.findById(JSONR.getId());
-        List<RolPermiso> ListaRolPermiso = rolPermisoService.findAllByRol(rol.getRol());
-        List<Permiso> permisos = new LinkedList<>();
+        List<Permiso> permisos = rol.getPermisoList();
+        List<Permiso> permisosM = new LinkedList<>();
 
         // CAMBIAR NOMBRE
         if (!JSONR.getRol().isBlank()) {
             rol.setRol(JSONR.getRol());
-            // CAMBIAR NOMBRE EN RELACIONES
-            for (RolPermiso RP : ListaRolPermiso) {
-                RP.setRol(JSONR.getRol());
-            }
-            rolPermisoService.saveAll(ListaRolPermiso);
         }
 
         // ELIMINAR PERMISOS
         if (!JSONR.getEliminarPermisos().isEmpty()) {
-            for (int idp : JSONR.getEliminarPermisos()) {
-                permisos.add(permisoService.findById(idp));
+
+            for (Permiso p : permisos) {
+                boolean ignorar = false;
+                for (int idp : JSONR.getEliminarPermisos()) {
+                    if (idp == p.getId()) {
+                        ignorar = true;
+                    }
+                }
+                if (!ignorar) {
+                    permisosM.add(p);
+                }
             }
-            createRoles.EliminarRelaciones(rol, permisos);
-            permisos.clear();
+
         }
-        
+
         // AGREGAR PERMISOS
         if (!JSONR.getAgregarPermisos().isEmpty()) {
-            for (int idp : JSONR.getAgregarPermisos()) {
-                permisos.add(permisoService.findById(idp));
+            
+            for (Permiso p : permisosM) {
+                boolean ignorar = false;
+                for (int idp : JSONR.getAgregarPermisos()) {
+                    if (idp == p.getId()) {
+                        ignorar = true;
+                    }
+                }
+                if (!ignorar) {
+                    permisosM.add(p);
+                }
             }
-            createRoles.GuardarRelaciones(rol, permisos);
         }
+        
+        if(!permisosM.isEmpty())
+            rol.setPermisoList(permisosM);
 
         // ESPECIFICAR TIPO DE ROL
         if (JSONR.isTipoComision()) {
             rol.setTipocomision(true);
         }
-        
+
         // SALVAR ROL
         rolService.save(rol);
 
@@ -171,7 +179,7 @@ public class RolController {
         for (int id : JSONR.getIDS()) {
             rolService.deleteById(id);
         }
-        
+
         return new ResponseEntity<>(
                 new Mensaje(" ROLES BORRADOS: [ " + JSONR.getIDS() + " ]"),
                 HttpStatus.OK

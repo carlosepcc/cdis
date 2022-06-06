@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -52,10 +53,10 @@ public class Usuario implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "cargo")
     private String cargo;
+    @ManyToMany(mappedBy = "usuarioList")
+    private List<Denuncia> denunciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
     private List<Declaracion> declaracionList;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
-    private List<DenunciaUsuario> denunciaUsuarioList;
     @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Rol rol;
@@ -108,20 +109,20 @@ public class Usuario implements Serializable {
         this.cargo = cargo;
     }
 
+    public List<Denuncia> getDenunciaList() {
+        return denunciaList;
+    }
+
+    public void setDenunciaList(List<Denuncia> denunciaList) {
+        this.denunciaList = denunciaList;
+    }
+
     public List<Declaracion> getDeclaracionList() {
         return declaracionList;
     }
 
     public void setDeclaracionList(List<Declaracion> declaracionList) {
         this.declaracionList = declaracionList;
-    }
-
-    public List<DenunciaUsuario> getDenunciaUsuarioList() {
-        return denunciaUsuarioList;
-    }
-
-    public void setDenunciaUsuarioList(List<DenunciaUsuario> denunciaUsuarioList) {
-        this.denunciaUsuarioList = denunciaUsuarioList;
     }
 
     public Rol getRol() {
