@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -28,12 +29,15 @@ public class ComisionUsuario implements Serializable {
     protected ComisionUsuarioPK comisionUsuarioPK;
     @JoinColumn(name = "idc", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private Comision comision;
     @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnore
     private Rol rol;
     @JoinColumn(name = "idu", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private Usuario usuario;
 
     public ComisionUsuario() {

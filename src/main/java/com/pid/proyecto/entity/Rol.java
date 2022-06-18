@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -50,8 +51,10 @@ public class Rol implements Serializable {
     @ManyToMany
     private List<Permiso> permisoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
+    @JsonIgnore
     private List<Usuario> usuarioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
+    @JsonIgnore
     private List<ComisionUsuario> comisionUsuarioList;
 
     public Rol() {

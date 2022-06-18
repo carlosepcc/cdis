@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -60,6 +61,7 @@ public class Declaracion implements Serializable {
     private Caso caso;
     @JoinColumn(name = "usuario", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private Usuario usuario1;
 
     public Declaracion() {

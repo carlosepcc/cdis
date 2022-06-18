@@ -4,6 +4,8 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -40,8 +42,10 @@ public class Comision implements Serializable {
     private List<Caso> casoList;
     @JoinColumn(name = "resolucion", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnoreProperties(value = "comisionList")
     private Resolucion resolucion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comision")
+    @JsonIgnore
     private List<ComisionUsuario> comisionUsuarioList;
 
     public Comision() {

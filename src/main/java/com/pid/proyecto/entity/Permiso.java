@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -41,6 +42,7 @@ public class Permiso implements Serializable {
     @Column(name = "permiso")
     private String permiso;
     @ManyToMany(mappedBy = "permisoList")
+    @JsonIgnore
     private List<Rol> rolList;
 
     public Permiso() {
