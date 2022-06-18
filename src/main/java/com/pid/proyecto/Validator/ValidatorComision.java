@@ -190,7 +190,7 @@ public class ValidatorComision {
 
     public ResponseEntity ValidarJsonBorrarComision(JsonBorrarComision JSONC) {
 
-        for (int id : JSONC.getIdComisiones()) {
+        for (int id : JSONC.getIds()) {
             if (!comisionService.existsById(id)) {
                 return new ResponseEntity<>(
                         new Mensaje("NO EXISTE LA COMISION CON ID: " + id),

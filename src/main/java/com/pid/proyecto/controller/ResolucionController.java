@@ -114,12 +114,12 @@ public class ResolucionController {
             return respuesta;
         }
 
-        for (int id : JSONR.getIdR()) {
+        for (int id : JSONR.getIds()) {
             resolucionService.deleteById(id);
         }
         
         return new ResponseEntity<>(
-                new Mensaje(" RESOLUCIONES BORRADAS: [ " + JSONR.getIdR().size() + " ]"),
+                new Mensaje(" RESOLUCIONES BORRADAS: [ " + JSONR.getIds().size() + " ]"),
                 HttpStatus.OK
         );
     }

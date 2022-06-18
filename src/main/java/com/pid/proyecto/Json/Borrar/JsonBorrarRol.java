@@ -5,17 +5,17 @@ import java.util.List;
 
 public class JsonBorrarRol {
     
-private List<Integer> IDS = new LinkedList();   
+private List<Integer> ids = new LinkedList();   
 
     public JsonBorrarRol() {
     }
 
-    public List<Integer> getIDS() {
-        return IDS;
+    public List<Integer> getIds() {
+        return ids;
     }
 
-    public void setIDS(List<Integer> IDS) {
-        this.IDS = IDS;
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
 
 

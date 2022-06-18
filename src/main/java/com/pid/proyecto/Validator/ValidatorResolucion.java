@@ -53,7 +53,7 @@ public class ValidatorResolucion {
 
         List<String> respuesta = new LinkedList<>();
 
-        for (int PK : JSONR.getIdR()) {
+        for (int PK : JSONR.getIds()) {
             if (!resolucionService.existsById(PK)) {
                 respuesta.add(" NO EXISTE LA RESOLUCION CON ID: " + PK);
             }

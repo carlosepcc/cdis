@@ -5,17 +5,17 @@ import java.util.List;
 
 public class JsonBorrarResolucion {
     
-   private List<Integer> idR = new LinkedList();
+   private List<Integer> ids = new LinkedList();
 
     public JsonBorrarResolucion() {
     }
 
-    public List<Integer> getIdR() {
-        return idR;
+    public List<Integer> getIds() {
+        return ids;
     }
 
-    public void setIdR(List<Integer> idR) {
-        this.idR = idR;
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
    
    

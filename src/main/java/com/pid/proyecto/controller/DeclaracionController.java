@@ -216,12 +216,12 @@ public class DeclaracionController {
             return respuesta;
         }
 
-        for (DeclaracionPK PK : JSOND.getLDPK()) {
+        for (DeclaracionPK PK : JSOND.getIds()) {
             declaracionService.deleteByDeclaracionPK(PK);
         }
 
         return new ResponseEntity<>(
-                new Mensaje(" DECLARACIONES BORRADAS: [ " + JSOND.getLDPK().size() + " ]"),
+                new Mensaje(" DECLARACIONES BORRADAS: [ " + JSOND.getIds().size() + " ]"),
                 HttpStatus.OK
         );
     }

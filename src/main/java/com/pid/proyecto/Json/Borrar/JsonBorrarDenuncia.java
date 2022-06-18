@@ -5,17 +5,17 @@ import java.util.List;
 
 public class JsonBorrarDenuncia {
     
-    List<Integer> idDenuncias = new LinkedList<>();
+    List<Integer> ids = new LinkedList<>();
 
     public JsonBorrarDenuncia() {
     }
 
-    public List<Integer> getIdDenuncias() {
-        return idDenuncias;
+    public List<Integer> getIds() {
+        return ids;
     }
 
-    public void setIdDenuncias(List<Integer> idDenuncias) {
-        this.idDenuncias = idDenuncias;
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
     
     

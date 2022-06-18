@@ -6,14 +6,14 @@ import java.util.List;
 
 public class JsonBorrarDeclaraciones {
 
-    private List<DeclaracionPK> LDPK = new LinkedList<>();
+    private List<DeclaracionPK> ids = new LinkedList<>();
 
-    public List<DeclaracionPK> getLDPK() {
-        return LDPK;
+    public List<DeclaracionPK> getIds() {
+        return ids;
     }
 
-    public void setLDPK(List<DeclaracionPK> LDPK) {
-        this.LDPK = LDPK;
+    public void setIds(List<DeclaracionPK> ids) {
+        this.ids = ids;
     }
 
     public JsonBorrarDeclaraciones() {

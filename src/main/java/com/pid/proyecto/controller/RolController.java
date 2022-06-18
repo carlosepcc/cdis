@@ -146,12 +146,12 @@ public class RolController {
             return respuesta;
         }
 
-        for (int id : JSONR.getIDS()) {
+        for (int id : JSONR.getIds()) {
             rolService.deleteById(id);
         }
 
         return new ResponseEntity<>(
-                new Mensaje(" ROLES BORRADOS: [ " + JSONR.getIDS() + " ]"),
+                new Mensaje(" ROLES BORRADOS: [ " + JSONR.getIds() + " ]"),
                 HttpStatus.OK
         );
     }

@@ -92,7 +92,7 @@ public class ValidatorCaso {
     public ResponseEntity ValidarJsonBorrarCaso(JsonBorrarCasos JSONC) {
         List<String> respuesta = new LinkedList<>();
 
-        for (CasoPK PK : JSONC.getLCPK()) {
+        for (CasoPK PK : JSONC.getIds()) {
             if (!casoService.existsByCasoPK(PK)) {
                 respuesta.add(" NO EXISTE EL CASO CON ID DE DENUNCIA: " + PK.getDenuncia() + " E ID DE COMISION: " + PK.getComision());
 

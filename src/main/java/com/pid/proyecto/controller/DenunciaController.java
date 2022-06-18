@@ -150,12 +150,12 @@ public class DenunciaController {
             return respuesta;
         }
 
-        for (int id : JSOND.getIdDenuncias()) {
+        for (int id : JSOND.getIds()) {
             denunciaService.deleteById(id);
         }
 
         return new ResponseEntity<>(
-                new Mensaje(" DENUNCIAS BORRADAS: [ " + JSOND.getIdDenuncias().size() + " ]"),
+                new Mensaje(" DENUNCIAS BORRADAS: [ " + JSOND.getIds().size() + " ]"),
                 HttpStatus.OK
         );
     }

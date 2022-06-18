@@ -6,17 +6,17 @@ import java.util.List;
 
 public class JsonBorrarCasos {
     
-   private List<CasoPK> LCPK = new LinkedList<>();
+   private List<CasoPK> ids = new LinkedList<>();
 
     public JsonBorrarCasos() {
     }
 
-    public List<CasoPK> getLCPK() {
-        return LCPK;
+    public List<CasoPK> getIds() {
+        return ids;
     }
 
-    public void setLCPK(List<CasoPK> LCPK) {
-        this.LCPK = LCPK;
+    public void setIds(List<CasoPK> ids) {
+        this.ids = ids;
     }
 
     

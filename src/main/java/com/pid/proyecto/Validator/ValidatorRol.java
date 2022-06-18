@@ -86,7 +86,7 @@ public class ValidatorRol {
     public ResponseEntity<?> ValidarJsonBorrarRol(JsonBorrarRol JSONR) {
 
         // VERIFICAR QUE EXISTE EL ROL CON EL ID ESPECIFICADO
-        for (int id : JSONR.getIDS()) {
+        for (int id : JSONR.getIds()) {
             if (!rolService.existsById(id)) {
                 return new ResponseEntity<>(
                         new Mensaje("EL ROL CON ID: " + id + " NO EXISTE"),

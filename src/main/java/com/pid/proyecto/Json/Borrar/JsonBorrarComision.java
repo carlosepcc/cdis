@@ -5,17 +5,17 @@ import java.util.List;
 
 public class JsonBorrarComision {
 
-    private List<Integer> idComisiones = new LinkedList<>();
+    private List<Integer> ids = new LinkedList<>();
 
     public JsonBorrarComision() {
     }
 
-    public List<Integer> getIdComisiones() {
-        return idComisiones;
+    public List<Integer> getIds() {
+        return ids;
     }
 
-    public void setIdComisiones(List<Integer> idComisiones) {
-        this.idComisiones = idComisiones;
+    public void setIds(List<Integer> ids) {
+        this.ids = ids;
     }
 
 }

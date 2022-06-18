@@ -134,7 +134,7 @@ public class ValidatorDeclaracion {
     public ResponseEntity ValidarJsonBorrarDeclaracion(JsonBorrarDeclaraciones JSOND) {
         List<String> respuesta = new LinkedList();
 
-        for (DeclaracionPK PK : JSOND.getLDPK()) {
+        for (DeclaracionPK PK : JSOND.getIds()) {
 
             if (!declaracionService.existsByDeclaracionPK(PK)) {
 

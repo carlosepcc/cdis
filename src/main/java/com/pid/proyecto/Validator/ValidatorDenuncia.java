@@ -78,7 +78,7 @@ public class ValidatorDenuncia {
 
         List<String> respuesta = new LinkedList<>();
 
-        for (int id : JSOND.getIdDenuncias()) {
+        for (int id : JSOND.getIds()) {
             if (!denunciaService.existsById(id)) {
                 if (respuesta.isEmpty()) {
                     respuesta.add(" NO EXISTE EL ID: ");

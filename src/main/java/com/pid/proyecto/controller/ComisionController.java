@@ -153,12 +153,12 @@ public class ComisionController {
             return respuesta;
         }
 
-        for (int id : JSONC.getIdComisiones()) {
+        for (int id : JSONC.getIds()) {
             comisionService.deleteById(id);
         }
 
         return new ResponseEntity<>(
-                new Mensaje("COMISIONES BORRADAS: [ " + JSONC.getIdComisiones().size() + " ]"),
+                new Mensaje("COMISIONES BORRADAS: [ " + JSONC.getIds().size() + " ]"),
                 HttpStatus.OK
         );
     }

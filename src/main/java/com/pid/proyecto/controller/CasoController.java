@@ -177,7 +177,7 @@ public class CasoController {
             return respuesta;
         }
 
-        List<CasoPK> LCPK = JSONC.getLCPK();
+        List<CasoPK> LCPK = JSONC.getIds();
         Denuncia denuncia;
         Caso caso;
 
