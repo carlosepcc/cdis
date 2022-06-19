@@ -27,6 +27,8 @@ import javax.persistence.Table;
  *
  * @author Angel
  */
+
+// @JsonIgnoreProperties(value = {"casoList", "resolucion", "comisionUsuarioList"})
 @Entity
 @Table(name = "comision")
 @NamedQueries({
@@ -40,13 +42,14 @@ public class Comision implements Serializable {
     @Column(name = "id")
     private Integer id;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comision1")
+    @JsonIgnoreProperties(value = {"comision1", "denuncia1", "declaracionList"})
     private List<Caso> casoList;
     @JoinColumn(name = "resolucion", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonIgnoreProperties(value = "comisionList")
+    @JsonIgnoreProperties(value = {"comisionList"})
     private Resolucion resolucion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comision")
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"comision", "rol", "usuario"})
     private List<ComisionUsuario> comisionUsuarioList;
 
     public Comision() {

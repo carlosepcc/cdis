@@ -2,16 +2,16 @@ package com.pid.proyecto.Json.Crear;
 
 public class JsonCrearResolucion {
     
-    private String Descripcion = "";
+    private String ano = "";
 
     public JsonCrearResolucion() {
     }
 
-    public String getDescripcion() {
-        return Descripcion;
+    public String getAno() {
+        return ano;
     }
 
-    public void setDescripcion(String Descripcion) {
-        this.Descripcion = Descripcion;
+    public void setAno(String ano) {
+        this.ano = ano;
     }
 }

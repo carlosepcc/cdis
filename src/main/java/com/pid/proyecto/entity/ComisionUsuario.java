@@ -5,6 +5,7 @@
 package com.pid.proyecto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
  *
  * @author Angel
  */
+// @JsonIgnoreProperties(value = {"comision", "rol", "usuario"})
 @Entity
 @Table(name = "comision_usuario")
 @NamedQueries({
@@ -29,13 +31,15 @@ public class ComisionUsuario implements Serializable {
     protected ComisionUsuarioPK comisionUsuarioPK;
     @JoinColumn(name = "idc", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"casoList", "resolucion", "comisionUsuarioList"})
     private Comision comision;
     @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnoreProperties(value = {"permisos", "usuarioList", "comisionUsuarioList"})
     private Rol rol;
     @JoinColumn(name = "idu", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
+    @JsonIgnoreProperties(value = {"denunciaList","declaracionList","rol","comisionUsuarioList"})
     private Usuario usuario;
 
     public ComisionUsuario() {

@@ -5,6 +5,7 @@ import com.pid.proyecto.entity.Caso;
 import com.pid.proyecto.entity.CasoPK;
 import com.pid.proyecto.entity.Declaracion;
 import com.pid.proyecto.entity.DeclaracionPK;
+import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.service.DeclaracionService;
 import com.pid.proyecto.service.FileServiceImp;
 import java.io.File;
@@ -31,7 +32,7 @@ public class GestionarFicheros {
 
     public Declaracion GestionarModificarDeclaracion(Declaracion declaracion, List<MultipartFile> files) {
         // RUTA HACIA LA CARPETA DE NUESTRA DECLARACION
-        Path root = Paths.get("CASOS_IDCOMISION_IDDENUNCIA/"
+        Path root = Paths.get("ARCHIVOS/CASOS_IDCOMISION_IDDENUNCIA/"
                 + "CASO_" + declaracion.getDeclaracionPK().getCasocomision() + "_"
                 + declaracion.getDeclaracionPK().getCasodenuncia() + "/DECLARACIONES/" + sesionDetails.getUsuario());
 
@@ -57,7 +58,7 @@ public class GestionarFicheros {
     public Caso GestionarCrearDictamen(Caso caso, List<MultipartFile> files) {
         CasoPK PK = caso.getCasoPK();
         String carpetaDictamen = "DICTAMEN";
-        Path root = Paths.get("CASOS_IDCOMISION_IDDENUNCIA/" + "CASO_" + PK.getComision() + "_" + PK.getDenuncia() + "/" + carpetaDictamen);
+        Path root = Paths.get("ARCHIVOS/CASOS_IDCOMISION_IDDENUNCIA/" + "CASO_" + PK.getComision() + "_" + PK.getDenuncia() + "/" + carpetaDictamen);
 
         File carpeta = root.toFile();
 
@@ -80,7 +81,7 @@ public class GestionarFicheros {
 
     public String CrearCarpetaCaso(Caso caso) {
         String carpetaCaso = "CASO_" + caso.getCasoPK().getComision() + "_" + caso.getCasoPK().getDenuncia();
-        Path root = Paths.get("CASOS_IDCOMISION_IDDENUNCIA/" + carpetaCaso);
+        Path root = Paths.get("ARCHIVOS/CASOS_IDCOMISION_IDDENUNCIA/" + carpetaCaso);
 
         File carpeta = root.toFile();
 
@@ -99,7 +100,7 @@ public class GestionarFicheros {
     public void CrearCarpetaDeclaracionesExpedientes(Declaracion declaracion) {
         String carpetaCaso = "CASO_" + declaracion.getDeclaracionPK().getCasocomision() + "_" + declaracion.getDeclaracionPK().getCasodenuncia();
 
-        Path root = Paths.get("CASOS_IDCOMISION_IDDENUNCIA/" + carpetaCaso + "/DECLARACIONES");
+        Path root = Paths.get("ARCHIVOS/CASOS_IDCOMISION_IDDENUNCIA/" + carpetaCaso + "/DECLARACIONES");
 
         File carpeta = root.toFile();
 
@@ -111,7 +112,7 @@ public class GestionarFicheros {
             }
         }
 
-        root = Paths.get("CASOS_IDCOMISION_IDDENUNCIA/" + carpetaCaso + "/EXPEDIENTES");
+        root = Paths.get("ARCHIVOS/CASOS_IDCOMISION_IDDENUNCIA/" + carpetaCaso + "/EXPEDIENTES");
         carpeta = root.toFile();
         if (!carpeta.exists()) {
             try {
@@ -126,7 +127,7 @@ public class GestionarFicheros {
 
         DeclaracionPK PK = declaracion.getDeclaracionPK();
         String carpetaDeclaracion = PK.getUsuario();
-        Path root = Paths.get("CASOS_IDCOMISION_IDDENUNCIA/" + "CASO_" + PK.getCasocomision() + "_" + PK.getCasodenuncia() + "/EXPEDIENTES/" + carpetaDeclaracion);
+        Path root = Paths.get("ARCHIVOS/CASOS_IDCOMISION_IDDENUNCIA/" + "CASO_" + PK.getCasocomision() + "_" + PK.getCasodenuncia() + "/EXPEDIENTES/" + carpetaDeclaracion);
 
         File carpeta = root.toFile();
 
@@ -143,7 +144,32 @@ public class GestionarFicheros {
         });
 
         declaracion.setDeclaracion(carpeta.getPath());
+        
         return declaracion;
+    }
+
+    public Resolucion GestionarCrearResolucion(String ano, MultipartFile file) {
+
+        Resolucion resolucion = new Resolucion();
+        
+        Path root = Paths.get("ARCHIVOS/RESOLUCIONES/RESOLUCION_" + ano);
+
+        File carpeta = root.toFile();
+
+        if (!carpeta.exists()) {
+            try {
+                Files.createDirectory(root);
+            } catch (IOException ex) {
+                throw new RuntimeException("NO SE PUEDE CREAR LA CARPETA: " + carpeta);
+            }
+        }
+
+        
+        
+        fileServiceImp.save(file, root);
+        
+        resolucion.setUrl(carpeta.getPath());
+        return resolucion;
     }
 
 }

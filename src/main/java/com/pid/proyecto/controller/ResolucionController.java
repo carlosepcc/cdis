@@ -4,9 +4,13 @@ import com.pid.proyecto.Json.Borrar.JsonBorrarResolucion;
 import com.pid.proyecto.Json.Crear.JsonCrearResolucion;
 import com.pid.proyecto.Json.Modificar.JsonModificarResolucion;
 import com.pid.proyecto.Validator.ValidatorResolucion;
+import com.pid.proyecto.auxiliares.FileService;
+import com.pid.proyecto.auxiliares.GestionarFicheros;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.service.ResolucionService;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import javax.validation.Valid;
@@ -23,8 +27,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/resolucion")
@@ -37,32 +43,24 @@ public class ResolucionController {
     @Autowired
     ValidatorResolucion validator;
 
+    @Autowired
+    FileService fileService;
+    @Autowired
+    GestionarFicheros gestionarFicheros;
+
     @PutMapping
     @PreAuthorize("hasRole('ROLE_C_RESOLUCION')")
     public ResponseEntity crear(
-            @Valid @RequestBody JsonCrearResolucion JSONR,
-            BindingResult BR
+            @RequestPart JsonCrearResolucion JSONR,
+            @RequestPart MultipartFile file
     ) {
-        // VALIDAR ERRORES
-        if (BR.hasErrors()) {
-            List<String> errores = new LinkedList<>();
-            for (FieldError FE : BR.getFieldErrors()) {
-                errores.add(FE.getDefaultMessage());
-            }
-            return new ResponseEntity<>(
-                    new Mensaje(errores.toString()),
-                    HttpStatus.PRECONDITION_FAILED
-            );
-        }
-
         ResponseEntity respuesta = validator.ValidarJsonCrearResolucion(JSONR);
         if (respuesta != null) {
             return respuesta;
         }
 
         Resolucion resolucion;
-        resolucion = new Resolucion();
-        resolucion.setDescripcion(JSONR.getDescripcion());
+        resolucion = gestionarFicheros.GestionarCrearResolucion(JSONR.getAno(), file);
         // GUARDAMOS
         resolucionService.save(resolucion);
 
@@ -79,30 +77,29 @@ public class ResolucionController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('ROLE_U_RESOLUCION')")
-    public ResponseEntity modificar(
-            @RequestBody JsonModificarResolucion JSONR
-    ) {
-        ResponseEntity respuesta = validator.ValidarJsonModificarResolucion(JSONR);
-        if (respuesta != null) {
-            return respuesta;
-        }
-        // BUSCAMOS LA RESOLUCION POR EL ID
-        Resolucion resolucion = resolucionService.findById(JSONR.getID());
-
-        if (!JSONR.getDescripcion().isBlank()) {
-            resolucion.setDescripcion(JSONR.getDescripcion());
-        }
-        // GUARDAMOS
-        resolucionService.save(resolucion);
-
-        return new ResponseEntity<>(
-                new Mensaje("RESOLUCION ACTUALIZADA"),
-                HttpStatus.OK
-        );
-    }
-
+//    @PostMapping
+//    @PreAuthorize("hasRole('ROLE_U_RESOLUCION')")
+//    public ResponseEntity modificar(
+//            @RequestBody JsonModificarResolucion JSONR
+//    ) {
+//        ResponseEntity respuesta = validator.ValidarJsonModificarResolucion(JSONR);
+//        if (respuesta != null) {
+//            return respuesta;
+//        }
+//        // BUSCAMOS LA RESOLUCION POR EL ID
+//        Resolucion resolucion = resolucionService.findById(JSONR.getID());
+//
+//        if (!JSONR.getDescripcion().isBlank()) {
+//            resolucion.setUrl(JSONR.getDescripcion());
+//        }
+//        // GUARDAMOS
+//        resolucionService.save(resolucion);
+//
+//        return new ResponseEntity<>(
+//                new Mensaje("RESOLUCION ACTUALIZADA"),
+//                HttpStatus.OK
+//        );
+//    }
     @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_RESOLUCION')")
     @ResponseBody
@@ -115,9 +112,11 @@ public class ResolucionController {
         }
 
         for (int id : JSONR.getIds()) {
+            Path root =Paths.get(resolucionService.findById(id).getUrl());
+            fileService.deleteAll(root);
             resolucionService.deleteById(id);
         }
-        
+
         return new ResponseEntity<>(
                 new Mensaje(" RESOLUCIONES BORRADAS: [ " + JSONR.getIds().size() + " ]"),
                 HttpStatus.OK

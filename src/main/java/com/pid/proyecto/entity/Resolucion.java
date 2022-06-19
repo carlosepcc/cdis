@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -24,6 +25,8 @@ import javax.validation.constraints.Size;
  *
  * @author Angel
  */
+
+// @JsonIgnoreProperties(value = {"comisionList"})
 @Entity
 @Table(name = "resolucion")
 @NamedQueries({
@@ -39,9 +42,10 @@ public class Resolucion implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "descripcion")
-    private String descripcion;
+    @Column(name = "url")
+    private String url;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolucion")
+    @JsonIgnoreProperties(value = {"casoList", "resolucion", "comisionUsuarioList"})
     private List<Comision> comisionList;
 
     public Resolucion() {
@@ -51,9 +55,9 @@ public class Resolucion implements Serializable {
         this.id = id;
     }
 
-    public Resolucion(Integer id, String descripcion) {
+    public Resolucion(Integer id, String url) {
         this.id = id;
-        this.descripcion = descripcion;
+        this.url = url;
     }
 
     public Integer getId() {
@@ -64,12 +68,12 @@ public class Resolucion implements Serializable {
         this.id = id;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getUrl() {
+        return url;
     }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public List<Comision> getComisionList() {

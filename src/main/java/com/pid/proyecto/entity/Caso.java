@@ -5,6 +5,7 @@
 package com.pid.proyecto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,8 @@ import javax.validation.constraints.Size;
  *
  * @author Angel
  */
+
+// @JsonIgnoreProperties(value = {"comision1", "denuncia1", "declaracionList"})
 @Entity
 @Table(name = "caso")
 @NamedQueries({
@@ -58,14 +61,14 @@ public class Caso implements Serializable {
     private String dictamen;
     @JoinColumn(name = "comision", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"casoList", "resolucion", "comisionUsuarioList"})
     private Comision comision1;
     @JoinColumn(name = "denuncia", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"usuarioList", "acusados"})
     private Denuncia denuncia1;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "caso")
-    @JsonIgnore
+    @JsonIgnoreProperties(value = {"caso", "usuario1"})
     private List<Declaracion> declaracionList;
 
     public Caso() {

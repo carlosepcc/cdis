@@ -4,6 +4,7 @@ import com.pid.proyecto.Json.Borrar.JsonBorrarResolucion;
 import com.pid.proyecto.Json.Crear.JsonCrearResolucion;
 import com.pid.proyecto.Json.Modificar.JsonModificarResolucion;
 import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.service.ResolucionService;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,18 @@ public class ValidatorResolucion {
 
     public ResponseEntity<?> ValidarJsonCrearResolucion(JsonCrearResolucion JSONR) {
         List<String> respuesta = new LinkedList<>();
+        List<Resolucion> resoluciones = resolucionService.findAll();
+        List<String> urls = new LinkedList<>();
+
+        if (JSONR.getAno().isBlank()) {
+            respuesta.add("DEBE DECIR EL AÑO DE ESTA RESOLUCIÓN");
+        }
+
+        for (Resolucion r : resoluciones) {
+            if (r.getUrl().equalsIgnoreCase("RESOLUCION_" + JSONR.getAno())) {
+                respuesta.add("YA EXISTE ESTA RESOLUCION");
+            }
+        }
 
         if (!respuesta.isEmpty()) {
             return new ResponseEntity<>(

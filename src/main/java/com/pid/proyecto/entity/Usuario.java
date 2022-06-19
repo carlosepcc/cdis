@@ -4,6 +4,7 @@
  */
 package com.pid.proyecto.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
@@ -26,6 +27,8 @@ import javax.validation.constraints.Size;
  *
  * @author Angel
  */
+
+// @JsonIgnoreProperties(value = {"denunciaList","declaracionList","rol","comisionUsuarioList"})
 @Entity
 @Table(name = "usuario")
 @NamedQueries({
@@ -55,13 +58,17 @@ public class Usuario implements Serializable {
     @Column(name = "cargo")
     private String cargo;
     @ManyToMany(mappedBy = "usuarioList")
+    @JsonIgnoreProperties(value = {"usuarioList", "acusados"})
     private List<Denuncia> denunciaList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario1")
+    @JsonIgnoreProperties(value = {"caso", "usuario1"})
     private List<Declaracion> declaracionList;
     @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
+    @JsonIgnoreProperties(value = {"permisos", "usuarioList", "comisionUsuarioList"})
     private Rol rol;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "usuario")
+    @JsonIgnoreProperties(value = {"comision", "rol", "usuario"})
     private List<ComisionUsuario> comisionUsuarioList;
 
     public Usuario() {
