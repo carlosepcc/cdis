@@ -5,6 +5,7 @@
 package com.pid.proyecto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -67,6 +68,7 @@ public class Denuncia implements Serializable {
         @JoinColumn(name = "idu", referencedColumnName = "usuario")})
     @ManyToMany
     @JsonIgnore
+    @JsonProperty(value = "acusados")
     private List<Usuario> usuarioList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "denuncia1")
     @JsonIgnore

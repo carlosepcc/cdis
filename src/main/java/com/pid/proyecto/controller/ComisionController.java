@@ -24,6 +24,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,7 +76,7 @@ public class ComisionController {
         comision = comisionService.save(comision);
 
         // recorremos la lista de todos los usuarios con sus roles para relacionarlos a esta comision
-        for (UsuarioRol us : JSONC.getIntegrantesComision()) {
+        for (UsuarioRol us : JSONC.getIntegrantes()) {
 
             Usuario usuario = usuarioService.findByUsuario(us.getUsuario());
 
@@ -103,7 +104,7 @@ public class ComisionController {
 
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
-
+    
     @PostMapping
     @PreAuthorize("hasRole('ROLE_U_COMISION')")
     public ResponseEntity<?> modificar(

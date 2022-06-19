@@ -8,7 +8,7 @@ public class JsonCrearComision {
 
     private int idResolucion;
     
-    private List<UsuarioRol> IntegrantesComision = new LinkedList<>();
+    private List<UsuarioRol> integrantes = new LinkedList<>();
 
     public JsonCrearComision() {
     }
@@ -21,12 +21,12 @@ public class JsonCrearComision {
         this.idResolucion = idResolucion;
     }
 
-    public List<UsuarioRol> getIntegrantesComision() {
-        return IntegrantesComision;
+    public List<UsuarioRol> getIntegrantes() {
+        return integrantes;
     }
 
-    public void setIntegrantesComision(List<UsuarioRol> IntegrantesComision) {
-        this.IntegrantesComision = IntegrantesComision;
+    public void setIntegrantes(List<UsuarioRol> integrantes) {
+        this.integrantes = integrantes;
     }
 
 }

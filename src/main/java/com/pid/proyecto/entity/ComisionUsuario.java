@@ -33,11 +33,9 @@ public class ComisionUsuario implements Serializable {
     private Comision comision;
     @JoinColumn(name = "rol", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    @JsonIgnore
     private Rol rol;
     @JoinColumn(name = "idu", referencedColumnName = "usuario", insertable = false, updatable = false)
     @ManyToOne(optional = false)
-    @JsonIgnore
     private Usuario usuario;
 
     public ComisionUsuario() {

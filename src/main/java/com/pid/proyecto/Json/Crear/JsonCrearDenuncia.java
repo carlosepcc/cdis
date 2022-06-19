@@ -10,17 +10,17 @@ public class JsonCrearDenuncia {
     private String descripcion = "";
     
     @NotNull(message = "DEBE ESPECIFICAR A QUIEN ESTÁ DENUNCIANDO")
-    private List<String> acusado = new LinkedList<>();
+    private List<String> acusados = new LinkedList<>();
 
     public JsonCrearDenuncia() {
     }
 
     public List<String> getAcusados() {
-        return acusado;
+        return acusados;
     }
 
     public void setAcusados(List<String> acusado) {
-        this.acusado = acusado;
+        this.acusados = acusado;
     }
 
     public String getDescripcion() {

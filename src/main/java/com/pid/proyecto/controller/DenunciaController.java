@@ -121,9 +121,9 @@ public class DenunciaController {
             denuncia.setDescripcion(JSOND.getDescripcion());
         }
 
-        if (!JSOND.getAcusado().isEmpty()) {
+        if (!JSOND.getAcusados().isEmpty()) {
             List<Usuario> acusados = new LinkedList<>();
-            for (String u : JSOND.getAcusado()) {
+            for (String u : JSOND.getAcusados()) {
                 acusados.add(usuarioService.findByUsuario(u));
             }
             denuncia.setUsuarioList(acusados);

@@ -58,8 +58,8 @@ public class ValidatorDenuncia {
             respuesta.add("ESTA DENUNCIA YA SE ENCUENTRA EN PROCESO, NO PUEDE MODIFICARLA");
         }
 
-        if (!JSOND.getAcusado().isEmpty()) {
-            for(String u: JSOND.getAcusado())
+        if (!JSOND.getAcusados().isEmpty()) {
+            for(String u: JSOND.getAcusados())
             if (!usuarioService.existsByUsuario(u)) {
                 respuesta.add(" NO EXISTE EL ACUSADO CON USUARIO: " + u);
             }

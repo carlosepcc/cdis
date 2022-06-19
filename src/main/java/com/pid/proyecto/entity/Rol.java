@@ -5,6 +5,7 @@
 package com.pid.proyecto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Basic;
@@ -49,6 +50,7 @@ public class Rol implements Serializable {
         @JoinColumn(name = "idr", referencedColumnName = "id")}, inverseJoinColumns = {
         @JoinColumn(name = "idp", referencedColumnName = "id")})
     @ManyToMany
+    @JsonProperty(value = "permisos")
     private List<Permiso> permisoList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "rol")
     @JsonIgnore

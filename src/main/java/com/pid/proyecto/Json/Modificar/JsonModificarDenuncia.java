@@ -9,7 +9,7 @@ public class JsonModificarDenuncia {
 
     private String descripcion = "";
 
-    private List<String> acusado = new LinkedList<>();
+    private List<String> acusados = new LinkedList<>();
 
     public JsonModificarDenuncia() {
     }
@@ -30,12 +30,12 @@ public class JsonModificarDenuncia {
         this.descripcion = descripcion;
     }
 
-    public List<String> getAcusado() {
-        return acusado;
+    public List<String> getAcusados() {
+        return acusados;
     }
 
-    public void setAcusado(List<String> acusado) {
-        this.acusado = acusado;
+    public void setAcusados(List<String> acusados) {
+        this.acusados = acusados;
     }
 
 }

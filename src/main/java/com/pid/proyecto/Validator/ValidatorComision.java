@@ -50,11 +50,11 @@ public class ValidatorComision {
         List<Comision> LC = comisionService.findAllByResolucion(resolucion);
 
         // RECORREMOS LA LISTA DE USUARIOS CON ROL
-        if (!JSONC.getIntegrantesComision().isEmpty()) {
+        if (!JSONC.getIntegrantes().isEmpty()) {
             Usuario usuario;
-            for (UsuarioRol UR : JSONC.getIntegrantesComision()) {
+            for (UsuarioRol UR : JSONC.getIntegrantes()) {
 
-                if (JSONC.getIntegrantesComision().size() < 2) {
+                if (JSONC.getIntegrantes().size() < 2) {
                     respuesta.add("DEBE AGREGAR AL MENOS 2 INTEGRANTES");
                 }
                 if (!usuarioService.existsByUsuario(UR.getUsuario())) {
