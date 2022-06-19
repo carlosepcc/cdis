@@ -49,7 +49,7 @@ public class Comision implements Serializable {
     @JsonIgnoreProperties(value = {"comisionList"})
     private Resolucion resolucion;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "comision")
-    @JsonIgnoreProperties(value = {"comision", "rol", "usuario"})
+    @JsonIgnoreProperties(value = {"comision"})
     private List<ComisionUsuario> comisionUsuarioList;
 
     public Comision() {
