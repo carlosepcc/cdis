@@ -78,7 +78,7 @@ public class UsuarioController {
 
         //LLENAMOS LAS VARIABLES A USAR
         usuario = new Usuario();
-        rol = rolService.findById(1);
+        rol = rolService.findById(JSONU.getIdrol());
         nombre = JSONU.getNombre();
         username = JSONU.getUsuario();
         password = JSONU.getContrasena();

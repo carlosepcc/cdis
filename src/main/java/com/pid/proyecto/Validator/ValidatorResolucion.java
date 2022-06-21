@@ -9,6 +9,7 @@ import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.ComisionUsuario;
 import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.service.ResolucionService;
+import com.pid.proyecto.service.UsuarioService;
 import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class ValidatorResolucion {
 
     @Autowired
     ResolucionService resolucionService;
+    @Autowired
+    UsuarioService usuarioService;
 
     public ResponseEntity<?> ValidarJsonCrearResolucion(JsonCrearResolucion JSONR) {
         List<String> respuesta = new LinkedList<>();
@@ -29,10 +32,11 @@ public class ValidatorResolucion {
             respuesta.add("DEBE DECIR EL AÑO DE ESTA RESOLUCIÓN");
         }
         List<Resolucion> LR = resolucionService.findAll();
-        for(Resolucion r: LR){
-        
-            if(r.getUrl().contains(JSONR.getAno()))
-                respuesta.add("YA EXISTE UNA RESOLUCION PARA ESTE AÑO");            
+        for (Resolucion r : LR) {
+
+            if (r.getUrl().contains(JSONR.getAno())) {
+                respuesta.add("YA EXISTE UNA RESOLUCION PARA ESTE AÑO");
+            }
         }
 
         List<String> LCU = new LinkedList<>();
@@ -52,6 +56,12 @@ public class ValidatorResolucion {
                         respuesta.add("EL USUARIO " + cuu + "ESTA REPETIDO");
                     }
                 }
+            }
+        }
+
+        for (String cu : LCU) {
+            if (!usuarioService.existsByUsuario(cu)) {
+                respuesta.add("EL USUARIO " + cu + " NO EXISTE");
             }
         }
 

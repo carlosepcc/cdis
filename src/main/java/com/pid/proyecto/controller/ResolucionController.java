@@ -67,8 +67,8 @@ public class ResolucionController {
         
         Resolucion resolucion = new Resolucion();
         resolucion.setUrl("ARCHIVOS/RESOLUCIONES/" + JSONR.getAno());
-        resolucion = resolucionService.save(resolucion);
         resolucion.setComisionList(new LinkedList<Comision>());
+        resolucion = resolucionService.save(resolucion);
         
         for (ComisionReducida c : JSONR.getComisiones()) {
             Comision co = new Comision();

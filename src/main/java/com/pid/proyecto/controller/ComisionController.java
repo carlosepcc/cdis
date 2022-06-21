@@ -54,45 +54,6 @@ public class ComisionController {
     @Autowired
     ValidatorComision validator;
 
-    @PutMapping
-    @PreAuthorize("hasRole('ROLE_C_COMISION')")
-    public ResponseEntity<?> crear(
-            @RequestBody JsonCrearComision JSONC
-    ) {
-
-        ResponseEntity respuesta = validator.ValidarJsonCrearComision(JSONC);
-        if (respuesta != null) {
-            return respuesta;
-        }
-
-        Comision comision = new Comision();
-        ComisionUsuario comisionUsuario = new ComisionUsuario();
-
-        // obtenemos la resolucion en donde vamos a crear la comision
-        comision.setResolucion(resolucionService.findById(JSONC.getIdResolucion()));
-
-        // guardamos parcialmente la comision dentro de esta resolucion para poder usar su id
-        comision = comisionService.save(comision);
-
-        // recorremos la lista de todos los usuarios con sus roles para relacionarlos a esta comision
-        for (UsuarioRol us : JSONC.getIntegrantes()) {
-
-            Usuario usuario = usuarioService.findByUsuario(us.getUsuario());
-
-            comisionUsuario.setComisionUsuarioPK(new ComisionUsuarioPK(comision.getId(),
-                    usuario.getUsuario()));
-            comisionUsuario.setRol(rolService.findById(us.getIdRol()));
-
-            comisionUsuarioService.save(comisionUsuario);
-            comisionUsuario = new ComisionUsuario();
-        }
-
-        return new ResponseEntity<>(
-                new Mensaje("COMISION CREADA"),
-                HttpStatus.CREATED
-        );
-    }
-
     // RRR
     // MOSTRAMOS TODOS LOS OBJETOS
     @GetMapping
