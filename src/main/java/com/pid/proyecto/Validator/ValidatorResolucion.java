@@ -53,7 +53,7 @@ public class ValidatorResolucion {
                 if (cuu.equals(usuario)) {
                     c++;
                     if (c > 1) {
-                        respuesta.add("EL USUARIO " + cuu + "ESTA REPETIDO");
+                        respuesta.add("EL USUARIO " + cuu + " ESTA REPETIDO");
                     }
                 }
             }
