@@ -89,22 +89,17 @@ public class ResolucionController {
 
             ComisionUsuario cup = new ComisionUsuario();
             cup.setComisionUsuarioPK(new ComisionUsuarioPK(c.getId(), cr.getPresidente()));
-            cup.setComision(c);
             cup.setRol(rolService.findById(cr.getIdRolP()));
-            cup.setUsuario(usuarioService.findByUsuario(cr.getPresidente()));
             comisionUsuarioService.save(cup);
             LCU.add(cup);
 
             ComisionUsuario cus = new ComisionUsuario();
             cus.setComisionUsuarioPK(new ComisionUsuarioPK(c.getId(), cr.getSecretario()));
-            cus.setComision(c);
             cus.setRol(rolService.findById(cr.getIdRolS()));
-            cus.setUsuario(usuarioService.findByUsuario(cr.getSecretario()));
             comisionUsuarioService.save(cus);
             LCU.add(cus);
 
             c.setComisionUsuarioList(LCU);
-            c = comisionService.save(c);
 
             LC.add(c);
             c = new Comision();
