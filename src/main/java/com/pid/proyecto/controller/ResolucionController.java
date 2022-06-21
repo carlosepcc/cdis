@@ -98,10 +98,7 @@ public class ResolucionController {
             comisionUsuarioService.save(cus);
 
             LC.add(c);
-            c = new Comision();
             LCU.clear();
-            cup = new ComisionUsuario();
-            cus = new ComisionUsuario();
         }
         resolucion.setComisionList(LC);
 
