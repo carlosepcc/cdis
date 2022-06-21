@@ -14,6 +14,7 @@ import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.ComisionUsuarioService;
 import com.pid.proyecto.service.ResolucionService;
 import com.pid.proyecto.service.RolService;
+import com.pid.proyecto.service.UsuarioService;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
@@ -54,6 +55,8 @@ public class ResolucionController {
     ComisionService comisionService;
     @Autowired
     RolService rolService;
+    @Autowired
+    UsuarioService usuarioService;
     
     @PutMapping
     @PreAuthorize("hasRole('ROLE_C_RESOLUCION')")
@@ -79,9 +82,13 @@ public class ResolucionController {
             
             ComisionUsuario cuP = new ComisionUsuario(co.getId(), c.getPresidente());
             cuP.setRol(rolService.findById(4));
+            cuP.setUsuario(usuarioService.findByUsuario(c.getPresidente()));
+            cuP.setComision(co);
             cuL.add(cuP);
             ComisionUsuario cuS = new ComisionUsuario(co.getId(), c.getSecretario());
             cuS.setRol(rolService.findById(5));
+            cuS.setUsuario(usuarioService.findByUsuario(c.getSecretario()));
+            cuS.setComision(co);
             cuL.add(cuS);
             
             co.setComisionUsuarioList(cuL);
