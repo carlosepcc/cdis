@@ -144,32 +144,45 @@ public class GestionarFicheros {
         });
 
         declaracion.setDeclaracion(carpeta.getPath());
-        
+
         return declaracion;
     }
 
-    public Resolucion GestionarCrearResolucion(String ano, MultipartFile file) {
-
-        Resolucion resolucion = new Resolucion();
-        
-        Path root = Paths.get("ARCHIVOS/RESOLUCIONES/RESOLUCION_" + ano);
-
-        File carpeta = root.toFile();
-
-        if (!carpeta.exists()) {
-            try {
-                Files.createDirectory(root);
-            } catch (IOException ex) {
-                throw new RuntimeException("NO SE PUEDE CREAR LA CARPETA: " + carpeta);
-            }
-        }
-
-        
-        
-        fileServiceImp.save(file, root);
-        
-        resolucion.setUrl(carpeta.getPath());
-        return resolucion;
-    }
+////    public Resolucion GestionarCrearResolucion(String ano, MultipartFile file) {
+////
+////        // Obtén el nombre original
+////        String fileName = file.getOriginalFilename();
+////        // Obtener el nombre del sufijo
+////        // String suffixName = fileName.substring(fileName.lastIndexOf("."));
+////        // Ruta para guardar el archivo
+////        String filePath = "d:/upload/";
+////        // Cambiar el nombre del archivo para evitar la duplicación
+////        fileName = filePath + UUID.randomUUID() + fileName;
+////        // objeto de archivo
+////        File dest = new File(fileName);
+////        // Determinar si la ruta existe y crearla si no existe
+////        if (!dest.getParentFile().exists()) {
+////            dest.getParentFile().mkdirs();
+////        }
+////        file.transferTo(dest);
+////        
+////
+////        Resolucion resolucion = new Resolucion();
+////
+////        Path root = Paths.get("ARCHIVOS/RESOLUCIONES/RESOLUCION_" + ano);
+////
+////        File carpeta = root.toFile();
+////
+////        if (!carpeta.exists()) {
+////            try {
+////                Files.createDirectory(root);
+////            } catch (IOException ex) {
+////                throw new RuntimeException("NO SE PUEDE CREAR LA CARPETA: " + carpeta.getName());
+////            }
+////        }
+////        fileServiceImp.save(file, root);
+////        resolucion.setUrl(carpeta.getPath() + "\\" + file.getOriginalFilename());
+////        return resolucion;
+////    }
 
 }

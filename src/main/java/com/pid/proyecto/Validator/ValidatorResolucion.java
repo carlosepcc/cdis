@@ -2,8 +2,11 @@ package com.pid.proyecto.Validator;
 
 import com.pid.proyecto.Json.Borrar.JsonBorrarResolucion;
 import com.pid.proyecto.Json.Crear.JsonCrearResolucion;
+import com.pid.proyecto.Json.EntidadesAuxiliares.ComisionReducida;
 import com.pid.proyecto.Json.Modificar.JsonModificarResolucion;
 import com.pid.proyecto.auxiliares.Mensaje;
+import com.pid.proyecto.entity.Comision;
+import com.pid.proyecto.entity.ComisionUsuario;
 import com.pid.proyecto.entity.Resolucion;
 import com.pid.proyecto.service.ResolucionService;
 import java.util.LinkedList;
@@ -21,16 +24,34 @@ public class ValidatorResolucion {
 
     public ResponseEntity<?> ValidarJsonCrearResolucion(JsonCrearResolucion JSONR) {
         List<String> respuesta = new LinkedList<>();
-        List<Resolucion> resoluciones = resolucionService.findAll();
-        List<String> urls = new LinkedList<>();
 
         if (JSONR.getAno().isBlank()) {
             respuesta.add("DEBE DECIR EL AÑO DE ESTA RESOLUCIÓN");
         }
+        List<Resolucion> LR = resolucionService.findAll();
+        for(Resolucion r: LR){
+        
+            if(r.getUrl().contains(JSONR.getAno()))
+                respuesta.add("YA EXISTE UNA RESOLUCION PARA ESTE AÑO");            
+        }
 
-        for (Resolucion r : resoluciones) {
-            if (r.getUrl().equalsIgnoreCase("RESOLUCION_" + JSONR.getAno())) {
-                respuesta.add("YA EXISTE ESTA RESOLUCION");
+        List<String> LCU = new LinkedList<>();
+
+        for (ComisionReducida c : JSONR.getComisiones()) {
+            LCU.add(c.getPresidente());
+            LCU.add(c.getSecretario());
+        }
+
+        for (String cu : LCU) {
+            int c = 0;
+            String usuario = cu;
+            for (String cuu : LCU) {
+                if (cuu.equals(usuario)) {
+                    c++;
+                    if (c > 1) {
+                        respuesta.add("EL USUARIO " + cuu + "ESTA REPETIDO");
+                    }
+                }
             }
         }
 
@@ -66,9 +87,9 @@ public class ValidatorResolucion {
 
         List<String> respuesta = new LinkedList<>();
 
-        for (int PK : JSONR.getIds()) {
-            if (!resolucionService.existsById(PK)) {
-                respuesta.add(" NO EXISTE LA RESOLUCION CON ID: " + PK);
+        for (int id : JSONR.getIds()) {
+            if (!resolucionService.existsById(id)) {
+                respuesta.add(" NO EXISTE LA RESOLUCION CON ID: " + id);
             }
         }
 

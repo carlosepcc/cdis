@@ -60,7 +60,6 @@ public class FileServiceImp implements FileService {
 
     @Override
     public void save(MultipartFile file, Path ruta) {
-
         try {
             //copy (que queremos copiar, a donde queremos copiar)
             Files.copy(file.getInputStream(),

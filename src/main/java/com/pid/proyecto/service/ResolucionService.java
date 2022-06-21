@@ -14,8 +14,8 @@ public class ResolucionService {
     @Autowired
     ResolucionRepo repo;
 
-    public void save(Resolucion resolucion) {
-        repo.save(resolucion);
+    public Resolucion save(Resolucion resolucion) {
+       return repo.save(resolucion);
     }
 
     public Resolucion findById(int id) {
