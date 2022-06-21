@@ -9,7 +9,9 @@ import com.pid.proyecto.auxiliares.GestionarFicheros;
 import com.pid.proyecto.auxiliares.Mensaje;
 import com.pid.proyecto.entity.Comision;
 import com.pid.proyecto.entity.ComisionUsuario;
+import com.pid.proyecto.entity.ComisionUsuarioPK;
 import com.pid.proyecto.entity.Resolucion;
+import com.pid.proyecto.entity.Usuario;
 import com.pid.proyecto.service.ComisionService;
 import com.pid.proyecto.service.ComisionUsuarioService;
 import com.pid.proyecto.service.ResolucionService;
@@ -38,13 +40,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/resolucion")
 @CrossOrigin("*")
 public class ResolucionController {
-    
+
     @Autowired
     ResolucionService resolucionService;
-    
+
     @Autowired
     ValidatorResolucion validator;
-    
+
     @Autowired
     FileService fileService;
     @Autowired
@@ -57,7 +59,7 @@ public class ResolucionController {
     RolService rolService;
     @Autowired
     UsuarioService usuarioService;
-    
+
     @PutMapping
     @PreAuthorize("hasRole('ROLE_C_RESOLUCION')")
     public ResponseEntity crear(
@@ -67,70 +69,83 @@ public class ResolucionController {
         if (respuesta != null) {
             return respuesta;
         }
-        
+        List<Comision> LC = new LinkedList<>();
+
         Resolucion resolucion = new Resolucion();
         resolucion.setUrl("ARCHIVOS/RESOLUCIONES/" + JSONR.getAno());
-        resolucion.setComisionList(new LinkedList<Comision>());
+        resolucion.setComisionList(LC);
         resolucion = resolucionService.save(resolucion);
-        List<ComisionUsuario> cuL = new LinkedList<>();
-        
-        for (ComisionReducida c : JSONR.getComisiones()) {
-            
-            
-            Comision co = new Comision();
-            co.setResolucion(resolucion);
-            co = comisionService.save(co);
-            resolucion.getComisionList().add(co);
-            
-            ComisionUsuario cuP = new ComisionUsuario(co.getId(), c.getPresidente());
-            cuP.setRol(rolService.findById(4));
-            cuP.setUsuario(usuarioService.findByUsuario(c.getPresidente()));
-            cuP.setComision(co);
-            cuL.add(cuP);
-            ComisionUsuario cuS = new ComisionUsuario(co.getId(), c.getSecretario());
-            cuS.setRol(rolService.findById(5));
-            cuS.setUsuario(usuarioService.findByUsuario(c.getSecretario()));
-            cuS.setComision(co);
-            cuL.add(cuS);
-            
-            co.setComisionUsuarioList(cuL);
-            comisionService.save(co);
-            comisionUsuarioService.save(cuP);
-            comisionUsuarioService.save(cuS);
-            cuL.clear();
+
+        for (ComisionReducida cr : JSONR.getComisiones()) {
+            Comision c = new Comision();
+
+            List<ComisionUsuario> LCU = new LinkedList<>();
+
+            c.setResolucion(resolucion);
+            c.setComisionUsuarioList(LCU);
+            c.setCasoList(new LinkedList<>());
+
+            c = comisionService.save(c);
+
+            ComisionUsuario cup = new ComisionUsuario();
+            cup.setComisionUsuarioPK(new ComisionUsuarioPK(c.getId(), cr.getPresidente()));
+            cup.setComision(c);
+            cup.setRol(rolService.findById(cr.getIdRolP()));
+            cup.setUsuario(usuarioService.findByUsuario(cr.getPresidente()));
+            comisionUsuarioService.save(cup);
+            LCU.add(cup);
+
+            ComisionUsuario cus = new ComisionUsuario();
+            cus.setComisionUsuarioPK(new ComisionUsuarioPK(c.getId(), cr.getSecretario()));
+            cus.setComision(c);
+            cus.setRol(rolService.findById(cr.getIdRolS()));
+            cus.setUsuario(usuarioService.findByUsuario(cr.getSecretario()));
+            comisionUsuarioService.save(cus);
+            LCU.add(cus);
+
+            c.setComisionUsuarioList(LCU);
+            c = comisionService.save(c);
+
+            LC.add(c);
+            c = new Comision();
+            LCU.clear();
+            cup = new ComisionUsuario();
+            cus = new ComisionUsuario();
         }
+        resolucion.setComisionList(LC);
+
         resolucion = resolucionService.save(resolucion);
-        
+
         return new ResponseEntity<>(
                 resolucion,
                 HttpStatus.CREATED
         );
     }
-    
+
     @GetMapping
     @PreAuthorize("hasRole('ROLE_R_RESOLUCION')")
     public ResponseEntity<List<Resolucion>> listar() {
         List<Resolucion> list = resolucionService.findAll();
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
-    
+
     @DeleteMapping
     @PreAuthorize("hasRole('ROLE_D_RESOLUCION')")
     @ResponseBody
     public ResponseEntity borrar(
             @RequestBody JsonBorrarResolucion JSONR) {
-        
+
         ResponseEntity respuesta = validator.ValidarJsonBorrarResolucion(JSONR);
         if (respuesta != null) {
             return respuesta;
         }
-        
+
         for (int id : JSONR.getIds()) {
             Path root = Paths.get(resolucionService.findById(id).getUrl());
             fileService.deleteAll(root);
             resolucionService.deleteById(id);
         }
-        
+
         return new ResponseEntity<>(
                 new Mensaje(" RESOLUCIONES BORRADAS: [ " + JSONR.getIds().size() + " ]"),
                 HttpStatus.OK
