@@ -75,6 +75,8 @@ public class ResolucionController {
         List<ComisionUsuario> cuL = new LinkedList<>();
         
         for (ComisionReducida c : JSONR.getComisiones()) {
+            
+            
             Comision co = new Comision();
             co.setResolucion(resolucion);
             co = comisionService.save(co);
@@ -95,6 +97,7 @@ public class ResolucionController {
             comisionService.save(co);
             comisionUsuarioService.save(cuP);
             comisionUsuarioService.save(cuS);
+            cuL.clear();
         }
         resolucion = resolucionService.save(resolucion);
         
