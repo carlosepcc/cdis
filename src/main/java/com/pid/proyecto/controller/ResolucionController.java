@@ -69,6 +69,7 @@ public class ResolucionController {
         resolucion.setUrl("ARCHIVOS/RESOLUCIONES/" + JSONR.getAno());
         resolucion.setComisionList(new LinkedList<Comision>());
         resolucion = resolucionService.save(resolucion);
+        List<ComisionUsuario> cuL = new LinkedList<>();
         
         for (ComisionReducida c : JSONR.getComisiones()) {
             Comision co = new Comision();
@@ -78,9 +79,13 @@ public class ResolucionController {
             
             ComisionUsuario cuP = new ComisionUsuario(co.getId(), c.getPresidente());
             cuP.setRol(rolService.findById(4));
+            cuL.add(cuP);
             ComisionUsuario cuS = new ComisionUsuario(co.getId(), c.getSecretario());
             cuS.setRol(rolService.findById(5));
+            cuL.add(cuS);
             
+            co.setComisionUsuarioList(cuL);
+            comisionService.save(co);
             comisionUsuarioService.save(cuP);
             comisionUsuarioService.save(cuS);
         }
