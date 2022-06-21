@@ -45,7 +45,7 @@ public class Resolucion implements Serializable {
     @Column(name = "url")
     private String url;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "resolucion")
-    @JsonIgnoreProperties(value = {"casoList", "resolucion", "comisionUsuarioList"})
+    @JsonIgnoreProperties(value = {"casoList", "resolucion"})
     private List<Comision> comisionList;
 
     public Resolucion() {
