@@ -6,6 +6,7 @@ package com.pid.proyecto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +39,7 @@ import javax.validation.constraints.Size;
 public class Caso implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @JsonProperty(value = "id")
     @EmbeddedId
     protected CasoPK casoPK;
     @Basic(optional = false)

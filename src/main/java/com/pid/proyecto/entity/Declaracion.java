@@ -6,6 +6,7 @@ package com.pid.proyecto.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Basic;
@@ -37,6 +38,7 @@ public class Declaracion implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
+    @JsonProperty(value = "id")
     protected DeclaracionPK declaracionPK;
     @Basic(optional = false)
     @NotNull
